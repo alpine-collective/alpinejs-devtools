@@ -2,7 +2,7 @@
 
 <p align="center"><img width="720px" src="alpine-devtools-screenshot.png" alt="screenshot"></p>
 
-alpinejs-devtools is a simple extension to help you debug [Alpine Js](https://github.com/alpinejs/alpine) apps easily.
+alpinejs-devtools is a simple extension to help you debug [Alpine.js](https://github.com/alpinejs/alpine) apps easily.
 
 > Note: this extension is mainly inspired by [Vue Devtools](https://github.com/vuejs/vue-devtools). so some of the code is borrowed from those awesome folks.
 
