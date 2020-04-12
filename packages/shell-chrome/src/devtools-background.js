@@ -26,7 +26,7 @@ function createPanelIfHasAlpine() {
       clearInterval(checkAlpineInterval);
       created = true;
       chrome.devtools.panels.create(
-        "Alpine Js",
+        "Alpine.js",
         "alpine_extension.png",
         "panel.html",
         panel => {
