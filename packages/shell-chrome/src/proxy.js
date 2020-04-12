@@ -1,7 +1,7 @@
 // This is a content-script that is injected only when the devtools are
 // activated. Because it is not injected using eval, it has full privilege
 // to the chrome runtime API. It serves as a proxy between the injected
-// backend and the Alpine Js devtools panel.
+// backend and the Alpine.js devtools panel.
 
 var port = chrome.runtime.connect({
   name: "content-script",
