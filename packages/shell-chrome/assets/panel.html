@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="./style.css">
+
+    <style>
+        .verticalLine {
+            border-right-width: 1px;
+            border-right-color: #161e2e;
+        }
+
+        .component:hover {
+            background-color: #e5f2ff;
+        }
+
+        .arrow {
+            display: inline-block;
+            width: 0;
+            height: 0;
+            margin-left: -5px;
+        }
+
+        .right {
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+            border-left: 6px solid #444;
+        }
+
+        .down {
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 6px solid #444;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg-white pl-2 pt-4 ">
+        <div class="relative w-full mx-auto">
+            <div>
+                <h2 class="text-3xl leading-9 tracking-tight font-extrabold text-gray-900 sm:text-4xl sm:leading-10 ">
+                    Alpine Js Is Ready
+                </h2>
+
+            </div>
+            <div id="components" x-data="{components : [] }"
+                class="mt-6 grid gap-16 border-t-2 border-gray-100 pt-10 grid-cols-2">
+                <div class="verticalLine h-full">
+
+                    <template x-for="(component,index) in components">
+
+                        <a :class="{'bg-blue-300' : component.isOpened}"
+                            @mouseenter="alpineState.hoverOnComponent(component)"
+                            @mouseleave="alpineState.hoverLeftComponent(component)"
+                            @click=" alpineState.renderComponentData(component)" class="block component cursor-pointer"
+                            :style="`margin-left: ${component.depth * 20}px; `">
+                            <h5 class="mt-1 leading-7 font-semibold flex items-center">
+                                <span x-text="component.tagName" class="text-sm ml-2" style="color:#334E68;"></span>
+                            </h5>
+                        </a>
+
+
+                    </template>
+                </div>
+
+                <div>
+                    <h4 class="text-base" style="color:#486887">data</h4>
+                    <template x-for="(singleComponent, componentIndex) in components">
+                        <div x-show="singleComponent.isOpened">
+
+                            <template x-for="(singleData,index) in singleComponent.flattenedData">
+                                <div class="pl-2 flex" style="align-items: center;">
+                                    <a :style="`margin-left: ${singleData.depth}px; `"
+                                        @click="alpineState.toggleDataAttribute(singleData)"
+                                        class="block component cursor-pointer" x-show="singleData.isOpened">
+
+                                        <h5 class="leading-7 flex items-center">
+                                            <span x-show="singleData.hasArrow" class="arrow"
+                                                :class="{ 'right': !singleData.isArrowDown , 'down' : singleData.isArrowDown }"></span>
+                                            <span x-text="singleData.attributeName" class="text-sm ml-2"
+                                                style="color:#881391;">
+
+                                            </span>
+                                            <span class="text-black text-sm ">:</span>
+                                            <span class="text-black text-sm ml-1" x-show="!singleData.inEditingMode"
+                                                x-text="singleData.attributeValue"></span>
+
+                                        </h5>
+                                    </a>
+                                    <span class="ml-2" x-show="!singleData.hasArrow && singleData.isOpened">
+                                        <svg fill="none" stroke="currentColor" stroke-linecap="round"
+                                            x-show="!singleData.inEditingMode"
+                                            @click="alpineState.editAttribute(singleData)" stroke-linejoin="round"
+                                            stroke-width="2" viewBox="0 0 24 24"
+                                            class="w-4 h-4 cursor-pointer hover:bg-blue-100">
+                                            <path
+                                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
+                                            </path>
+                                        </svg>
+
+                                        <div class="flex" style="align-items: center;">
+                                            <input x-show="singleData.inEditingMode"
+                                                class="shadow appearance-none border rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                                type="text" x-model="singleData.editAttributeValue">
+
+                                            <svg x-show="singleData.inEditingMode" fill="none" stroke="currentColor"
+                                                @click="alpineState.saveEditing(singleData)" stroke-linecap="round"
+                                                stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
+                                                class="w-6 h-6 cursor-pointer ml-2 hover:bg-blue-100">
+                                                <path
+                                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4">
+                                                </path>
+                                            </svg>
+
+                                            <svg x-show="singleData.inEditingMode" fill="none" stroke="currentColor"
+                                                stroke-linecap="round" @click="alpineState.cancelEditing(singleData)"
+                                                stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
+                                                class="w-6 h-6 ml-2 cursor-pointer hover:bg-blue-100">
+                                                <path
+                                                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z">
+                                                </path>
+                                            </svg>
+                                        </div>
+                                    </span>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <script src="./panel.js"></script>
+</body>
+
+</html>
