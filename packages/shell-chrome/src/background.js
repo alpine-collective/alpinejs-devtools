@@ -76,7 +76,6 @@ function doublePipe (id, one, two) {
 
 chrome.runtime.onMessage.addListener((req, sender) => {
   if (sender.tab && req.alpineDetected) {
-    console.log('here')
     chrome.browserAction.setIcon({
       tabId: sender.tab.id,
       path: {
