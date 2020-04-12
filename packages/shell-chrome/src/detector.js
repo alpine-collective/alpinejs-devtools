@@ -1,4 +1,4 @@
-const isFirefox = false;
+import { isFirefox } from './env';
 
 window.addEventListener('message', e => {
   if (e.source === window && e.data.alpineDetected) {
