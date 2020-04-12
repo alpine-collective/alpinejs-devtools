@@ -17,7 +17,8 @@ mix
   .js("packages/shell-chrome/src/devtools-background.js", "dist/chrome/devtools-background.js")
   .js("packages/shell-chrome/src/backend.js", "dist/chrome/backend.js")
   .js("packages/shell-chrome/src/panel.js", "dist/chrome/panel.js")
-  .js("packages/shell-chrome/src/proxy.js", "dist/chrome/proxy.js");
+  .js("packages/shell-chrome/src/proxy.js", "dist/chrome/proxy.js")
+  .js("packages/shell-chrome/src/detector.js", "dist/chrome/detector.js");
 
   mix.postCss('packages/shell-chrome/src/style.css', 'dist/chrome/style.css', [
     require('tailwindcss'),
