@@ -9,9 +9,9 @@
     "128": "icons/128.png"
   },
   "browser_action": {
+    "default_icon": "alpine_extension_grey.png",
     "default_title": "AlpineJs Devtools",
-    "default_popup": "popups/not-found.html",
-    "default_icon": "alpine_extension.png"
+    "default_popup": "popups/not-found.html"
   },
   "permissions": [
     "http://*/*",
@@ -34,5 +34,16 @@
     "backend.js"
   ],
 
-  "content_security_policy": "script-src 'self' 'unsafe-eval'  https://cdn.jsdelivr.net; object-src"
+  "content_security_policy": "script-src 'self' 'unsafe-eval'  https://cdn.jsdelivr.net; object-src",
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "detector.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
 }
