@@ -1,5 +1,4 @@
-//this script is called when the VueDevtools panel is activated.
-
+import './style.css'
 import State from "./state";
 import 'alpinejs'
 

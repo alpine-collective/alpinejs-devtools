@@ -3,13 +3,13 @@
 // to the chrome runtime API. It serves as a proxy between the injected
 // backend and the Alpine.js devtools panel.
 
-var port = chrome.runtime.connect({
+let connector = chrome.runtime.connect({
   name: "content-script",
 });
 
-port.onMessage.addListener(sendMessageToBackend);
+connector.onMessage.addListener(sendMessageToBackend);
 window.addEventListener("message", sendMessageToDevtools);
-port.onDisconnect.addListener(handleDisconnect);
+connector.onDisconnect.addListener(handleDisconnect);
 
 sendMessageToBackend("init");
 
@@ -25,7 +25,7 @@ function sendMessageToBackend(payload) {
 
 function sendMessageToDevtools(e) {
   if (e.data && e.data.source === "alpine-devtools-backend") {
-    port.postMessage(e.data.payload);
+    connector.postMessage(e.data.payload);
   } else if (e.data && e.data.source === "alpine-devtools-backend-injection") {
     if (e.data.payload === "listening") {
       sendMessageToBackend("init");

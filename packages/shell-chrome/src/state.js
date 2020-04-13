@@ -9,6 +9,7 @@ export default class State {
 
   renderComponentsFromBackend(components) {
     components.forEach((component, index) => {
+        console.log(component)
       component.index = index;
       component.isOpened = this.renderedComponentId == component.id;
 
