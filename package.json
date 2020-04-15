@@ -4,7 +4,8 @@
     "description": "Simple Devtools for Alpine.js To Make Your Life Simpler",
     "homepage": "https://github.com/Te7a-Houdini/alpinejs-devtools",
     "scripts": {
-        "build": "rollup -c",
+        "dev": "rollup -c",
+        "prod": "NODE_ENV=production rollup -c",
         "watch": "rollup -c -w"
     },
     "license": "MIT",
