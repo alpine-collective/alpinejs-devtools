@@ -21,12 +21,11 @@ alpinejs-devtools is a simple extension to help you debug [Alpine.js](https://gi
 
 #### Installing the dev extension on Firefox
 
-1. Follow the [Development](#development) instructions to get a devlopment build.
+1. Follow the [Development](#development) instructions to get a development build.
 2. Go to [about:debugging](about:debugging) in Firefox
 3. Click the "This Firefox" tab (left side nav)
 4. Click "Load Temporary Add-on..."
 5. Open one of the files in the built extension folder ([./dist/chrome](./dist/chrome))
-
 
 ### License
 
