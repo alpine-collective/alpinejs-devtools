@@ -9,7 +9,7 @@ alpinejs-devtools is a simple extension to help you debug [Alpine.js](https://gi
 ## Installation
 
 - [Get the Chrome Extension](https://chrome.google.com/webstore/detail/alpinejs-devtools/fopaemeedckajflibkpifppcankfmbhk)
-- _Coming soon_ Firefox Extension, for now see [Installing the dev extensions on Firefox](#installing-the-dev-extension-on-firefox)
+- [Get the Firefox Extension](https://addons.mozilla.org/firefox/addon/alpinejs-devtools/)
 
 ### Development
 
