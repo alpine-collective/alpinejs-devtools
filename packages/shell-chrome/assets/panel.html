@@ -62,8 +62,9 @@
                         <template x-for="(singleData,index) in singleComponent.flattenedData">
                             <div class="pl-2 flex" style="align-items: center;">
                                 <a :style="`margin-left: ${singleData.depth}px; `"
-                                    @click="alpineState.toggleDataAttribute(singleData)"
-                                    class="block component cursor-pointer" x-show="singleData.isOpened">
+                                    @click="alpineState.toggleDataAttribute(singleData)" class="block" :class="{
+                                        'component cursor-pointer': !singleData.readOnly
+                                    }" x-show="singleData.isOpened">
 
                                     <h5 class="leading-7 flex items-center">
                                         <span x-show="singleData.hasArrow" class="arrow"
