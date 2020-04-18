@@ -65,6 +65,8 @@ export default class State {
   }
 
   toggleDataAttribute(attribute) {
+    // don't toggle anything if the attribute is read-only
+    if (attribute.readOnly) return;
     if (attribute.hasArrow) {
       let childrenIdLength = attribute.id.split("*").length + 1;
 

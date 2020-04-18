@@ -33,6 +33,7 @@ export function flattenSingleAttribute(
       : value,
     depth: margin,
     hasArrow: value instanceof Object,
+    readOnly: type === 'function',
     id: generatedId,
     inEditingMode: false,
     isOpened : id.length == 0,
