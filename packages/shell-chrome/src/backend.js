@@ -106,7 +106,10 @@ function discoverComponents(isThroughMutation = false) {
     var data = {};
 
     for (let [key, value] of Object.entries(rootEl.__x.getUnobservedData())) {
-      data[key] = typeof value == "function" ? "function" : value;
+        data[key] = {
+            value: typeof value === "function" ? "function" : value,
+            type: typeof value
+        }
     }
 
     components.push({
