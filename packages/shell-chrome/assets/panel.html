@@ -94,7 +94,7 @@
                                     <div class="flex flex-row items-center">
                                         <input x-show="singleData.inEditingMode"
                                             class="flex w-2/3 shadow appearance-none border rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                            type="text" x-model="singleData.editAttributeValue">
+                                            :type="singleData.inputType" x-model="singleData.editAttributeValue">
 
                                         <svg x-show="singleData.inEditingMode" fill="none" stroke="currentColor"
                                             @click="alpineState.saveEditing(singleData)" stroke-linecap="round"
