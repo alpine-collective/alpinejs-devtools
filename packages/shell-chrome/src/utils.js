@@ -8,6 +8,16 @@ export function flattenData(data) {
   return flattenedData;
 }
 
+function mapDataTypeToInputType(dataType) {
+    switch(dataType) {
+        case 'boolean': return 'checkbox';
+        case 'number': return 'number';
+        case 'string':
+        default:
+            return 'text';
+    }
+}
+
 export function flattenSingleAttribute(
   flattenedData,
   attributeName,
@@ -34,6 +44,7 @@ export function flattenSingleAttribute(
     depth: margin,
     hasArrow: value instanceof Object,
     readOnly: type === 'function',
+    inputType: mapDataTypeToInputType(type),
     id: generatedId,
     inEditingMode: false,
     isOpened : id.length == 0,
