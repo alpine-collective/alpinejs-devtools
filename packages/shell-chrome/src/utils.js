@@ -64,6 +64,7 @@ export function flattenSingleAttribute(
         flattenedData,
         objectKey,
         value[objectKey],
+        typeof value[objectKey],
         margin,
         (id ? id : attributeName) + "*" + objectKey,
         id ? id : attributeName
