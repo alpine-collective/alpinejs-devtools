@@ -164,7 +164,7 @@ export default class State {
     this.components[clickedAttribute.parentComponentId].flattenedData.forEach(
       (f) => {
         if (f.id == clickedAttribute.id) {
-          f.attributeValue = clickedAttribute.editAttributeValue;
+          f.attributeValue = clickedAttribute.attributeValue;
         }
       }
     );
