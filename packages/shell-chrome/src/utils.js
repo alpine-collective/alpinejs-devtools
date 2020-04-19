@@ -10,9 +10,11 @@ export function flattenData(data) {
 
 function mapDataTypeToInputType(dataType) {
     switch(dataType) {
-        case 'boolean': return 'checkbox';
-        case 'number': return 'number';
-        case 'string':
+        case 'boolean':
+            return 'checkbox';
+        case 'number':
+            return 'number';
+        // strings will fall through to "text"
         default:
             return 'text';
     }
