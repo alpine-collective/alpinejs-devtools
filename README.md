@@ -29,4 +29,4 @@ alpinejs-devtools is a simple extension to help you debug [Alpine.js](https://gi
 
 ### License
 
-[MIT](http://opensource.org/licenses/MIT)
+[MIT](LICENSE.md)
