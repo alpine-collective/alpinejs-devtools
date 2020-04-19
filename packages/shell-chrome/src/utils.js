@@ -1,8 +1,8 @@
 export function flattenData(data) {
   let flattenedData = [];
- 
+
   for (var key in data) {
-    flattenSingleAttribute(flattenedData, key, data[key]);
+    flattenSingleAttribute(flattenedData, key, data[key].value, data[key].type);
   }
 
   return flattenedData;
@@ -12,6 +12,7 @@ export function flattenSingleAttribute(
   flattenedData,
   attributeName,
   value,
+  type,
   margin = 0,
   id = "",
   directParentId = '',
@@ -32,6 +33,7 @@ export function flattenSingleAttribute(
       : value,
     depth: margin,
     hasArrow: value instanceof Object,
+    readOnly: type === 'function',
     id: generatedId,
     inEditingMode: false,
     isOpened : id.length == 0,
@@ -48,6 +50,7 @@ export function flattenSingleAttribute(
         flattenedData,
         index,
         value[index],
+        typeof value,
         margin,
         (id ? id : attributeName) + "*" + index,
         id ? id : attributeName
@@ -61,6 +64,7 @@ export function flattenSingleAttribute(
         flattenedData,
         objectKey,
         value[objectKey],
+        typeof value[objectKey],
         margin,
         (id ? id : attributeName) + "*" + objectKey,
         id ? id : attributeName

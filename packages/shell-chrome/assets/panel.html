@@ -36,12 +36,10 @@
         <h2 class="flex text-2xl leading-9 tracking-tight font-extrabold text-gray-900 sm:text-4xl sm:leading-10">
             Alpine.js is Ready
         </h2>
-        <div
-            id="components"
-            x-data="{components : []}"
-            class="flex flex-1 flex-col sm:flex-row mt-6 border-t-2 border-gray-100 pt-10"
-        >
-            <div class="flex flex-col w-full sm:w-1/2 max-h-full border-solid sm:border-r border-gray-900 mb-6 pl-2 overflow-y-scroll">
+        <div id="components" x-data="{components : []}"
+            class="flex flex-1 flex-col sm:flex-row mt-6 border-t-2 border-gray-100 pt-10">
+            <div
+                class="flex flex-col w-full sm:w-1/2 max-h-full border-solid sm:border-r border-gray-900 mb-6 pl-2 overflow-y-scroll">
                 <h4 class="text-base" style="color:#486887">components</h4>
                 <template x-for="(component,index) in components">
                     <a :class="{'bg-blue-300' : component.isOpened}"
@@ -56,16 +54,17 @@
                 </template>
             </div>
 
-            <div class="flex flex-col w-full sm:w-1/2 border-solid border-t sm:border-t-0 pt-4 sm:pt-0 border-gray-900 pl-2 overflow-x-scroll h-full">
+            <div
+                class="flex flex-col w-full sm:w-1/2 border-solid border-t sm:border-t-0 pt-4 sm:pt-0 border-gray-900 pl-2 overflow-x-scroll h-full">
                 <h4 class="text-base" style="color:#486887">data</h4>
                 <template x-for="(singleComponent, componentIndex) in components">
                     <div x-show="singleComponent.isOpened">
-
                         <template x-for="(singleData,index) in singleComponent.flattenedData">
                             <div class="pl-2 flex" style="align-items: center;">
                                 <a :style="`margin-left: ${singleData.depth}px; `"
-                                    @click="alpineState.toggleDataAttribute(singleData)"
-                                    class="block component cursor-pointer" x-show="singleData.isOpened">
+                                    @click="alpineState.toggleDataAttribute(singleData)" class="block" :class="{
+                                        'component cursor-pointer': !singleData.readOnly
+                                    }" x-show="singleData.isOpened">
 
                                     <h5 class="leading-7 flex items-center">
                                         <span x-show="singleData.hasArrow" class="arrow"
@@ -80,7 +79,8 @@
 
                                     </h5>
                                 </a>
-                                <span class="flex flex-col ml-2" x-show="!singleData.hasArrow && singleData.isOpened">
+                                <span class="flex flex-col ml-2"
+                                    x-show="!singleData.hasArrow && !singleData.readOnly && singleData.isOpened">
                                     <svg fill="none" stroke="currentColor" stroke-linecap="round"
                                         x-show="!singleData.inEditingMode"
                                         @click="alpineState.editAttribute(singleData)" stroke-linejoin="round"
@@ -92,8 +92,7 @@
                                     </svg>
 
                                     <div class="flex flex-row items-center">
-                                        <input
-                                            x-show="singleData.inEditingMode"
+                                        <input x-show="singleData.inEditingMode"
                                             class="flex w-2/3 shadow appearance-none border rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                             type="text" x-model="singleData.editAttributeValue">
 
