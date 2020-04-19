@@ -1,3 +1,5 @@
+import { set } from './utils';
+
 window.addEventListener("message", handshake);
 window.__alpineDevtool = {};
 
@@ -50,32 +52,27 @@ function handleMessages(e) {
     }
 
     if (e.data.payload.action == "editAttribute") {
-      var attributes = "";
+        Alpine.discoverComponents((component) => {
+            if (component.__alpineDevtool.id == e.data.payload.componentId) {
+                const data = component.__x.getUnobservedData();
+                const { attributeSequence, attributeValue } = e.data.payload;
 
-      Alpine.discoverComponents((component) => {
-        if (component.__alpineDevtool.id == e.data.payload.componentId) {
-          var splittedAttrs = e.data.payload.attributeSequence.split("*");
+                // nested path descriptor, eg. array*0*property needs to update array[0].property
+                if (attributeSequence.includes('*')) {
+                    // convert array*0*property to array.0.property
+                    // to pass to the set function
+                    const attributePath = attributeSequence.replace(/\*/g, '.');
+                    set(data, attributePath, attributeValue);
+                } else {
+                    data[attributeSequence] = attributeValue;
+                }
 
-          for (index in splittedAttrs) {
-            attributes += '["' + splittedAttrs[index] + '"]';
-          }
-
-          var data = component.__x.getUnobservedData();
-
-          // nested path descriptor, eg. array*0*property needs to update array[0].property
-          if (attributeSequence.includes('*')) {
-            eval(`(data${attributes} = '${e.data.payload.attributeValue}')`);
-          } else {
-            // don't need "eval" to set single top-level attribute
-            data[e.data.payload.attributeSequence] = e.data.payload.attributeValue;
-          }
-
-          component.__x.$el.setAttribute("x-data", JSON.stringify(data));
-        }
-        setTimeout(() => {
-          window.__alpineDevtool.stopMutationObserver = false;
-        }, 10);
-      });
+                component.__x.$el.setAttribute("x-data", JSON.stringify(data));
+            }
+            setTimeout(() => {
+                window.__alpineDevtool.stopMutationObserver = false;
+            }, 10);
+        });
     }
   }
 }

@@ -86,3 +86,20 @@ export function flattenSingleAttribute(
     }
   }
 }
+
+/**
+* Loose port of Lodash#set with "." as the delimiter, see https://lodash.com/docs#set
+*
+* @param {object} object - object to update
+* @param {string} path - path to set in the form `a.0.b.c`
+* @param {any} value - value to set to
+*/
+export function set(object, path, value) {
+   const [nextProperty, ...rest] = path.split('.');
+   if (rest.length === 0){
+       object[nextProperty] = value;
+       return object;
+   }
+   set(object[nextProperty], rest.join('.'), value);
+   return object
+}
