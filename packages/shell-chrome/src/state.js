@@ -1,4 +1,4 @@
-import { flattenData } from "./utils";
+import { flattenData, convertInputDataToType } from "./utils";
 
 export default class State {
   constructor() {
@@ -68,7 +68,7 @@ export default class State {
     // don't toggle anything if the attribute is read-only
     if (attribute.readOnly) return;
     if (attribute.hasArrow) {
-      let childrenIdLength = attribute.id.split("*").length + 1;
+      let childrenIdLength = attribute.id.split(".").length + 1;
 
       //this code generate something like that \\w+\\*\\w+\\*\\w+$
       let closeRegexStr = "";
@@ -93,8 +93,8 @@ export default class State {
         }
 
         return (
-          a.startsWith(attribute.id + "*") &&
-          a.split("*").length == childrenIdLength
+          a.startsWith(attribute.id + ".") &&
+          a.split(".").length == childrenIdLength
         );
       });
 
@@ -138,7 +138,7 @@ export default class State {
   }
 
   hoverOnComponent(component) {
-    window.__alpineDevtool["port"].postMessage({
+    window.__alpineDevtool.port.postMessage({
       componentId: component.id,
       action: "hover",
       source: "alpineDevtool",
@@ -146,7 +146,7 @@ export default class State {
   }
 
   hoverLeftComponent(component) {
-    window.__alpineDevtool["port"].postMessage({
+    window.__alpineDevtool.port.postMessage({
       componentId: component.id,
       action: "hoverLeft",
       source: "alpineDevtool",
@@ -158,7 +158,7 @@ export default class State {
   }
 
   saveEditing(clickedAttribute) {
-    clickedAttribute.attributeValue = clickedAttribute.editAttributeValue;
+    clickedAttribute.attributeValue = convertInputDataToType(clickedAttribute.inputType, clickedAttribute.editAttributeValue);
     clickedAttribute.inEditingMode = false;
 
     this.components[clickedAttribute.parentComponentId].flattenedData.forEach(
@@ -169,7 +169,7 @@ export default class State {
       }
     );
 
-    window.__alpineDevtool["port"].postMessage({
+    window.__alpineDevtool.port.postMessage({
       componentId: clickedAttribute.parentComponentId,
       attributeSequence: clickedAttribute.id,
       attributeValue: clickedAttribute.attributeValue,

@@ -1,6 +1,7 @@
 export function flattenData(data) {
     let flattenedData = [];
 
+    console.log(data);
     for (var key in data) {
         flattenSingleAttribute(flattenedData, key, data[key].value, data[key].type);
     }
@@ -20,6 +21,16 @@ function mapDataTypeToInputType(dataType) {
     }
 }
 
+export function convertInputDataToType(inputType, value) {
+    switch (inputType) {
+        case 'number':
+            return parseFloat(value);
+        // checkbox and text are already the right type
+        default:
+            return value;
+    }
+}
+
 export function flattenSingleAttribute(
     flattenedData,
     attributeName,
@@ -29,7 +40,7 @@ export function flattenSingleAttribute(
     id = "",
     directParentId = '',
 ) {
-    let generatedId = id ? id : attributeName;
+    const generatedId = id ? id : attributeName;
 
     flattenedData.push({
         attributeName: attributeName,
@@ -55,51 +66,30 @@ export function flattenSingleAttribute(
     });
 
     if (Array.isArray(value)) {
-        margin = margin + 10;
-
-        for (var index in value) {
-
+        value.forEach((val, index) => {
+            const elementId = id ? id : attributeName;
             flattenSingleAttribute(
                 flattenedData,
                 index,
-                value[index],
-                typeof value,
-                margin,
-                (id ? id : attributeName) + "*" + index,
-                id ? id : attributeName
+                val,
+                typeof val,
+                margin + 10,
+                `${elementId}.${index}`,
+                elementId
             );
-        }
+        });
     } else if (value instanceof Object) {
-        margin = margin + 10;
-
-        for (var objectKey in value) {
+        Object.keys(value).forEach((objectKey) => {
+            const elementId = id ? id : attributeName;
             flattenSingleAttribute(
                 flattenedData,
                 objectKey,
                 value[objectKey],
                 typeof value[objectKey],
-                margin,
-                (id ? id : attributeName) + "*" + objectKey,
-                id ? id : attributeName
-
+                margin + 10,
+                `${elementId}.${objectKey}`,
+                elementId
             );
-        }
+        });
     }
-}
-
-/**
-* Loose port of Lodash#set with "." as the delimiter, see https://lodash.com/docs#set
-*
-* @param {object} object - object to update
-* @param {string} path - path to set in the form `a.0.b.c`
-* @param {any} value - value to set to
-*/
-export function set(object, path, value) {
-    const [nextProperty, ...rest] = path.split('.');
-    if (rest.length === 0) {
-        object[nextProperty] = value;
-        return object;
-    }
-    set(object[nextProperty], rest.join('.'), value);
-    return object
 }

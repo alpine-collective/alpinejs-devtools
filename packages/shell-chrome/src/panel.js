@@ -1,6 +1,6 @@
 import './style.css'
 import State from "./state";
-import 'alpinejs'
+import 'alpinejs';
 
 injectScript(chrome.runtime.getURL("./backend.js"), () => {
   window.alpineState = new State();
