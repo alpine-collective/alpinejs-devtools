@@ -1,6 +1,8 @@
 # alpinejs-devtools
 
-<p align="center"><img width="720px" src="alpine-devtools-screenshot.png" alt="screenshot"></p>
+<p align="center">
+    <img src="docs/alpine-devtools-screenshot.png" alt="Screenshot of Alpine.js DevTools">
+</p>
 
 alpinejs-devtools is a simple extension to help you debug [Alpine.js](https://github.com/alpinejs/alpine) apps easily.
 
