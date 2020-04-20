@@ -57,16 +57,23 @@ function handleMessages(e) {
           var splittedAttrs = e.data.payload.attributeSequence.split("*");
 
           for (index in splittedAttrs) {
-            attributes = attributes + '["' + splittedAttrs[index] + '"]';
+            attributes += '["' + splittedAttrs[index] + '"]';
           }
 
           var data = component.__x.getUnobservedData();
 
-          eval(`(data${attributes} = '${e.data.payload.attributeValue}')`);
-          component.__x.$el.setAttribute("x-data", `${JSON.stringify(data)}`);
+          // nested path descriptor, eg. array*0*property needs to update array[0].property
+          if (attributeSequence.includes('*')) {
+            eval(`(data${attributes} = '${e.data.payload.attributeValue}')`);
+          } else {
+            // don't need "eval" to set single top-level attribute
+            data[e.data.payload.attributeSequence] = e.data.payload.attributeValue;
+          }
+
+          component.__x.$el.setAttribute("x-data", JSON.stringify(data));
         }
         setTimeout(() => {
-          window.__alpineDevtool["stopMutationObserver"] = false;
+          window.__alpineDevtool.stopMutationObserver = false;
         }, 10);
       });
     }
