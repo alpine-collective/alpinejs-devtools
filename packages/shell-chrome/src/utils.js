@@ -1,7 +1,6 @@
 export function flattenData(data) {
     let flattenedData = [];
 
-    console.log(data);
     for (var key in data) {
         flattenSingleAttribute(flattenedData, key, data[key].value, data[key].type);
     }
@@ -79,13 +78,13 @@ export function flattenSingleAttribute(
             );
         });
     } else if (value instanceof Object) {
-        Object.keys(value).forEach((objectKey) => {
+        Object.entries(value).forEach(([objectKey, objectValue]) => {
             const elementId = id ? id : attributeName;
             flattenSingleAttribute(
                 flattenedData,
                 objectKey,
-                value[objectKey],
-                typeof value[objectKey],
+                objectValue,
+                typeof objectValue,
                 margin + 10,
                 `${elementId}.${objectKey}`,
                 elementId
