@@ -142,9 +142,11 @@ function discoverComponents(isThroughMutation = false) {
         {
             source: "alpine-devtools-backend",
             payload: {
-                // stringify to deal with proxies
+                // stringify to unfurl proxies
                 // there's no way to detect proxies but
                 // we need to get rid of them
+                // this avoids `DataCloneError: The object could not be cloned.`
+                // see https://github.com/Te7a-Houdini/alpinejs-devtools/issues/17
                 components: JSON.stringify(components),
                 type: "render-components",
                 isThroughMutation: isThroughMutation,
