@@ -1,6 +1,6 @@
 {
-  "name": "alpinejs-devtools",
-  "description": "Simple Devtools for Alpine.js To Make Your Life Simpler",
+  "name": "Alpine.js devtools",
+  "description": "DevTools extension for debugging Alpine.js applications.",
   "version": "0.0.2",
   "manifest_version": 2,
   "icons": {
