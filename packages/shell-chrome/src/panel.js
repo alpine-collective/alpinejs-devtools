@@ -20,7 +20,7 @@ injectScript(chrome.runtime.getURL("./backend.js"), () => {
 
   port.onMessage.addListener(function (message) {
     if (message.type == "render-components") {
-      alpineState.renderComponentsFromBackend(message.components);
+      alpineState.renderComponentsFromBackend(JSON.parse(message.components));
 
       window.__alpineDevtool["port"] = port;
     }

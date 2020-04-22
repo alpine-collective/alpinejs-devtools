@@ -122,9 +122,10 @@ function discoverComponents(isThroughMutation = false) {
         var data = {};
 
         for (let [key, value] of Object.entries(rootEl.__x.getUnobservedData())) {
+            const type = typeof value;
             data[key] = {
-                value: typeof value === "function" ? "function" : value,
-                type: typeof value
+                value: type === "function" ? "function" : value,
+                type
             }
         }
 
@@ -141,7 +142,10 @@ function discoverComponents(isThroughMutation = false) {
         {
             source: "alpine-devtools-backend",
             payload: {
-                components: components,
+                // stringify to deal with proxies
+                // there's no way to detect proxies but
+                // we need to get rid of them
+                components: JSON.stringify(components),
                 type: "render-components",
                 isThroughMutation: isThroughMutation,
             },
