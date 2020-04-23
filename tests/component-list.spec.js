@@ -19,7 +19,7 @@ test('component list > single component', async () => {
         expect(document.querySelectorAll('[data-testid=component-name]')).toHaveLength(1);
     });
 
-    expect(document.querySelectorAll('[data-testid=component-name]')[0].innerText).toEqual('DIV');
+    expect(document.querySelector('[data-testid=component-name]').innerText).toEqual('DIV');
 });
 
 test('component list > clicking on the component opens the data tab', async () => {
