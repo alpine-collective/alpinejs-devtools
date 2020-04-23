@@ -33,7 +33,7 @@ test('editing a string', async () => {
 
     Alpine.start();
     alpineState.renderComponentsFromBackend([
-        createComponent('DIV', { str: 'some-string' })
+        createComponent('DIV', { str: 'initial-string' })
     ]);
 
     await openSingleComponentWithEditableField();
@@ -45,7 +45,7 @@ test('editing a string', async () => {
     await waitFor(() => {
         expect(input).toBeVisible();
         expect(input.type).toEqual('text');
-        expect(input.value).toEqual('some-string');
+        expect(input.value).toEqual('initial-string');
     });
 
 
@@ -163,4 +163,53 @@ test('function properties are read-only', async () => {
     expect(document.querySelector('[data-testid=data-property-name]').innerText).toEqual('myFn');
     expect(document.querySelector('[data-testid=data-property-value]').innerText).toEqual('function');
     expect(document.querySelector('[data-testid=edit-icon]')).not.toBeVisible();
+});
+
+test('cancelling editing', async () => {
+    const mockPostMessage = mockDevtoolPostMessage(window);
+    const alpineState = new State();
+    window.alpineState = alpineState;
+    document.body.innerHTML = getPanelHtml();
+
+    Alpine.start();
+    alpineState.renderComponentsFromBackend([
+        createComponent('DIV', { str: 'initial-string' })
+    ]);
+
+    await openSingleComponentWithEditableField();
+
+    fireEvent.click(document.querySelector('[data-testid=edit-icon]'));
+
+    const input = document.querySelector('input');
+
+    await waitFor(() => {
+        expect(input).toBeVisible();
+        expect(input.type).toEqual('text');
+        expect(input.value).toEqual('initial-string');
+    });
+
+
+    fireEvent.input(input, { target: { value: 'new-string' } });
+    await waitFor(() => expect(input.value).toEqual('new-string'))
+
+    const cancelIcon = document.querySelector('[data-testid=cancel-icon]');
+    expect(cancelIcon).toBeVisible();
+    fireEvent.click(cancelIcon);
+
+    await waitFor(() => expect(cancelIcon).not.toBeVisible());
+
+    expect(input).not.toBeVisible();
+    expect(mockPostMessage).not.toHaveBeenCalled();
+    expect(document.querySelector('[data-testid=edit-icon]')).toBeVisible();
+    expect(document.querySelectorAll('[data-testid=data-property]')).toHaveLength(1);
+    expect(document.querySelector('[data-testid=data-property-name]').innerText).toEqual('str');
+    expect(document.querySelector('[data-testid=data-property-value]').innerText).toEqual('initial-string');
+
+    fireEvent.click(document.querySelector('[data-testid=edit-icon]'));
+
+    await waitFor(() => {
+        expect(input).toBeVisible();
+        expect(input.type).toEqual('text');
+        expect(input.value).toEqual('initial-string');
+    });
 });
