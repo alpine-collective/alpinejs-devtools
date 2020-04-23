@@ -69,6 +69,7 @@
 
                                     <h5 data-testid="data-property" class="leading-7 flex items-center">
                                         <span x-show="singleData.hasArrow" class="arrow"
+                                            :data-testid="singleData.isArrowDown ? 'arrow-down' : 'arrow-right'"
                                             :class="{ 'right': !singleData.isArrowDown , 'down' : singleData.isArrowDown }"></span>
                                         <span class="text-sm ml-2" style="color:#881391;"
                                             x-text="singleData.attributeName" data-testid="data-property-name"></span>
@@ -81,8 +82,7 @@
                                 <span class="flex flex-col ml-2"
                                     x-show="!singleData.hasArrow && !singleData.readOnly && singleData.isOpened">
                                     <svg fill="none" stroke="currentColor" stroke-linecap="round"
-                                        x-show="!singleData.inEditingMode"
-                                        data-testid="edit-icon"
+                                        x-show="!singleData.inEditingMode" data-testid="edit-icon"
                                         @click="alpineState.editAttribute(singleData)" stroke-linejoin="round"
                                         stroke-width="2" viewBox="0 0 24 24"
                                         class="w-4 h-4 cursor-pointer hover:bg-blue-100">
