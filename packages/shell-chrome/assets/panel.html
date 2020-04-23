@@ -41,14 +41,15 @@
             <div
                 class="flex flex-col w-full sm:w-1/2 max-h-full border-solid sm:border-r border-gray-900 mb-6 pl-2 overflow-y-scroll">
                 <h4 class="text-base" style="color:#486887">components</h4>
-                <template x-for="(component,index) in components">
+                <template x-for="(component, index) in components">
                     <a :class="{'bg-blue-300' : component.isOpened}"
                         @mouseenter="alpineState.hoverOnComponent(component)"
                         @mouseleave="alpineState.hoverLeftComponent(component)"
                         @click=" alpineState.renderComponentData(component)" class="block component cursor-pointer"
                         :style="`margin-left: ${component.depth * 20}px; `">
                         <h5 class="mt-1 leading-7 font-semibold flex items-center">
-                            <span x-text="component.tagName" class="text-sm ml-2" style="color:#334E68;"></span>
+                            <span data-testid="component-name" x-text="component.tagName" class="text-sm ml-2"
+                                style="color:#334E68;"></span>
                         </h5>
                     </a>
                 </template>
@@ -66,16 +67,14 @@
                                         'component cursor-pointer': !singleData.readOnly
                                     }" x-show="singleData.isOpened">
 
-                                    <h5 class="leading-7 flex items-center">
+                                    <h5 data-testid="data-property" class="leading-7 flex items-center">
                                         <span x-show="singleData.hasArrow" class="arrow"
                                             :class="{ 'right': !singleData.isArrowDown , 'down' : singleData.isArrowDown }"></span>
-                                        <span x-text="singleData.attributeName" class="text-sm ml-2"
-                                            style="color:#881391;">
-
-                                        </span>
+                                        <span class="text-sm ml-2" style="color:#881391;"
+                                            x-text="singleData.attributeName" data-testid="data-property-name"></span>
                                         <span class="text-black text-sm ">:</span>
                                         <span class="text-black text-sm ml-1" x-show="!singleData.inEditingMode"
-                                            x-text="singleData.attributeValue"></span>
+                                            x-text="singleData.attributeValue" data-testid="data-property-value"></span>
 
                                     </h5>
                                 </a>
