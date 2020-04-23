@@ -119,15 +119,14 @@ function discoverComponents(isThroughMutation = false) {
             });
         }
 
-        var data = {};
-
-        for (let [key, value] of Object.entries(rootEl.__x.getUnobservedData())) {
+        const data = Object.entries(rootEl.__x.getUnobservedData()).reduce((acc, [key, value]) => {
             const type = typeof value;
-            data[key] = {
+            acc[key] = {
                 value: type === "function" ? "function" : value,
                 type
             }
-        }
+            return acc;
+        }, {})
 
         components.push({
             tagName: rootEl.tagName,
