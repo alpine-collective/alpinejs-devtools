@@ -119,14 +119,14 @@ function discoverComponents(isThroughMutation = false) {
             });
         }
 
-        var data = {};
-
-        for (let [key, value] of Object.entries(rootEl.__x.getUnobservedData())) {
-            data[key] = {
-                value: typeof value === "function" ? "function" : value,
-                type: typeof value
+        const data = Object.entries(rootEl.__x.getUnobservedData()).reduce((acc, [key, value]) => {
+            const type = typeof value;
+            acc[key] = {
+                value: type === "function" ? "function" : value,
+                type
             }
-        }
+            return acc;
+        }, {})
 
         components.push({
             tagName: rootEl.tagName,
@@ -141,7 +141,12 @@ function discoverComponents(isThroughMutation = false) {
         {
             source: "alpine-devtools-backend",
             payload: {
-                components: components,
+                // stringify to unfurl proxies
+                // there's no way to detect proxies but
+                // we need to get rid of them
+                // this avoids `DataCloneError: The object could not be cloned.`
+                // see https://github.com/Te7a-Houdini/alpinejs-devtools/issues/17
+                components: JSON.stringify(components),
                 type: "render-components",
                 isThroughMutation: isThroughMutation,
             },

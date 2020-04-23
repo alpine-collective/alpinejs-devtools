@@ -3,28 +3,28 @@ import State from "./state";
 import 'alpinejs';
 
 injectScript(chrome.runtime.getURL("./backend.js"), () => {
-  window.alpineState = new State();
+    window.alpineState = new State();
+    window.__alpineDevtool = {};
 
-  // 2. connect to background to setup proxy
-  const port = chrome.runtime.connect({
-    name: "" + chrome.devtools.inspectedWindow.tabId,
-  });
+    // 2. connect to background to setup proxy
+    const port = chrome.runtime.connect({
+        name: "" + chrome.devtools.inspectedWindow.tabId,
+    });
 
-  let disconnected = false;
+    let disconnected = false;
 
-  port.onDisconnect.addListener(() => {
-    disconnected = true;
-  });
+    port.onDisconnect.addListener(() => {
+        disconnected = true;
+    });
 
-  window.__alpineDevtool = {};
+    port.onMessage.addListener(function (message) {
+        if (message.type == "render-components") {
+            // message.components is a serialised JSON string
+            alpineState.renderComponentsFromBackend(JSON.parse(message.components));
 
-  port.onMessage.addListener(function (message) {
-    if (message.type == "render-components") {
-      alpineState.renderComponentsFromBackend(message.components);
-
-      window.__alpineDevtool["port"] = port;
-    }
-  });
+            window.__alpineDevtool.port = port;
+        }
+    });
 });
 
 /**
@@ -36,7 +36,7 @@ injectScript(chrome.runtime.getURL("./backend.js"), () => {
  */
 
 function injectScript(scriptName, cb) {
-  const src = `
+    const src = `
     (function() {
       var script = document.constructor.prototype.createElement.call(document, 'script');
       script.src = "${scriptName}";
@@ -44,10 +44,10 @@ function injectScript(scriptName, cb) {
       script.parentNode.removeChild(script);
     })()
   `;
-  chrome.devtools.inspectedWindow.eval(src, function (res, err) {
-    if (err) {
-      console.log(err);
-    }
-    cb();
-  });
+    chrome.devtools.inspectedWindow.eval(src, function (res, err) {
+        if (err) {
+            console.log(err);
+        }
+        cb();
+    });
 }
