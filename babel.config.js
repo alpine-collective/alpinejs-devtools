@@ -1,5 +1,5 @@
 module.exports = {
-    presets: [
+    presets: process.env.NODE_ENV === 'test' ? [
         [
             '@babel/preset-env',
             {
@@ -8,5 +8,5 @@ module.exports = {
                 },
             },
         ],
-    ],
+    ] : []
 };
