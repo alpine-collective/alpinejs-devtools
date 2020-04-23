@@ -18,6 +18,16 @@ export function getPanelHtml() {
     return panelHtml;
 }
 
+export function mockDevtoolPostMessage(window) {
+    const stub = jest.fn();
+    window.__alpineDevtool = {
+        port: {
+            postMessage: stub
+        }
+    };
+    return stub;
+}
+
 export function createComponent(tagName = 'DIV', data = {}, { id = 'component-id', index = 0, depth = 0 } = {}) {
     return {
         index,
