@@ -2,7 +2,7 @@ import Alpine from 'alpinejs';
 import { getPanelHtml } from './utils';
 import State from '../packages/shell-chrome/src/state';
 
-test('initialisation > sanity check that the empty panel initialises without error', async () => {
+test('initialisation, the "panel" Alpine app launches without error', async () => {
     const alpineState = new State();
     window.alpineState = alpineState;
     document.body.innerHTML = getPanelHtml();

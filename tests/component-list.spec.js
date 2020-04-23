@@ -1,8 +1,6 @@
-import '@testing-library/jest-dom';
 import Alpine from 'alpinejs';
-import { waitFor, queryAllByTestId, getAllByTestId, getByTestId, getNodeText } from '@testing-library/dom';
-import { getPanelHtml, createComponent } from './utils';
-import State from '../packages/shell-chrome/src/state';
+import { waitFor } from '@testing-library/dom';
+import { getPanelHtml, createComponent, State } from './utils';
 
 test('component list > single component', async () => {
     const alpineState = new State();
@@ -11,17 +9,17 @@ test('component list > single component', async () => {
 
     Alpine.start();
 
-    expect(queryAllByTestId(document.body, 'component-name')).toHaveLength(0);
+    expect(document.querySelectorAll('[data-testid=component-name]')).toHaveLength(0);
 
     alpineState.renderComponentsFromBackend([
-        createComponent('DIV', { bool: false })
+        createComponent('DIV', { property: 'some-value' })
     ]);
 
     await waitFor(() => {
-        expect(getAllByTestId(document.body, 'component-name')).toHaveLength(1);
+        expect(document.querySelectorAll('[data-testid=component-name]')).toHaveLength(1);
     });
 
-    expect(getByTestId(document.body, 'component-name').innerText).toEqual('DIV');
+    expect(document.querySelector('[data-testid=component-name]').innerText).toEqual('DIV');
 });
 
 test('component list > clicking on the component opens the data tab', async () => {
@@ -31,21 +29,22 @@ test('component list > clicking on the component opens the data tab', async () =
 
     Alpine.start();
     alpineState.renderComponentsFromBackend([
-        createComponent('DIV', { bool: false })
+        createComponent('DIV', { property: 'some-value' })
     ]);
 
     await waitFor(() => {
-        expect(getAllByTestId(document.body, 'component-name')).toHaveLength(1);
+
+        expect(document.querySelectorAll('[data-testid=component-name]')).toHaveLength(1);
     });
 
-    expect(getByTestId(document.body, 'data-property')).not.toBeVisible();
+    expect(document.querySelector('[data-testid=data-property]')).not.toBeVisible();
 
-    getByTestId(document.body, 'component-name').click();
+    document.querySelector('[data-testid=component-name]').click()
 
     await waitFor(() => {
-        expect(getByTestId(document.body, 'data-property')).toBeVisible();
+        expect(document.querySelector('[data-testid=data-property]')).toBeVisible();
     });
 
-    expect(getByTestId(document.body, 'data-property-name').innerText).toEqual('bool');
-    expect(getByTestId(document.body, 'data-property-value').innerText).toEqual(false);
+    expect(document.querySelector('[data-testid=data-property-name]').innerText).toEqual('property');
+    expect(document.querySelector('[data-testid=data-property-value]').innerText).toEqual('some-value');
 });

@@ -1,7 +1,9 @@
+import '@testing-library/jest-dom';
 import fs from 'fs';
 
-const bodyContentRegex = /(?<=(\<body\>)).*(?=(<\/body>))/gms
+export { default as State } from '../packages/shell-chrome/src/state';
 
+const bodyContentRegex = /(?<=(\<body\>)).*(?=(<\/body>))/gms
 let panelHtml = '';
 
 export function getPanelHtml() {
@@ -14,6 +16,16 @@ export function getPanelHtml() {
 
     panelHtml = bodyHtml;
     return panelHtml;
+}
+
+export function mockDevtoolPostMessage(window) {
+    const stub = jest.fn();
+    window.__alpineDevtool = {
+        port: {
+            postMessage: stub
+        }
+    };
+    return stub;
 }
 
 export function createComponent(tagName = 'DIV', data = {}, { id = 'component-id', index = 0, depth = 0 } = {}) {
