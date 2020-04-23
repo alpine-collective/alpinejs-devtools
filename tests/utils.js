@@ -1,7 +1,9 @@
+import '@testing-library/jest-dom';
 import fs from 'fs';
 
-const bodyContentRegex = /(?<=(\<body\>)).*(?=(<\/body>))/gms
+export { default as State } from '../packages/shell-chrome/src/state';
 
+const bodyContentRegex = /(?<=(\<body\>)).*(?=(<\/body>))/gms
 let panelHtml = '';
 
 export function getPanelHtml() {
