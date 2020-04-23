@@ -70,11 +70,11 @@ export default class State {
     if (attribute.hasArrow) {
       let childrenIdLength = attribute.id.split(".").length + 1;
 
-      //this code generate something like that \\w+\\*\\w+\\*\\w+$
+      // this code generate something like that \\w+\\.\\w+\\.\\w+$
       let closeRegexStr = "";
 
       for (let i = 0; i < childrenIdLength - 1; i++) {
-        closeRegexStr += String.raw`\w+\*`;
+        closeRegexStr += String.raw`\w+\.`;
       }
 
       closeRegexStr += String.raw`\w+$`;
@@ -84,7 +84,7 @@ export default class State {
       let childrenAttributesIds = Object.keys(
         this.allDataAttributes[attribute.parentComponentId]
       ).filter((a) => {
-        if (attribute.isArrowDown == true) {
+        if (attribute.isArrowDown)  {
           return (
             a.startsWith(attribute.id) &&
             a != attribute.id &&
@@ -93,16 +93,16 @@ export default class State {
         }
 
         return (
-          a.startsWith(attribute.id + ".") &&
-          a.split(".").length == childrenIdLength
+          a.startsWith(`${attribute.id}.`) &&
+          a.split('.').length === childrenIdLength
         );
       });
 
       childrenAttributesIds.forEach((childId) => {
         this.components[attribute.parentComponentId].flattenedData.forEach(
           (d) => {
-            if (d.id == childId) {
-              d.isOpened = attribute.isArrowDown ? false : true;
+            if (d.id === childId) {
+              d.isOpened = !attribute.isArrowDown;
 
               if (d.hasArrow && attribute.isArrowDown) {
                 d.isArrowDown = false;
