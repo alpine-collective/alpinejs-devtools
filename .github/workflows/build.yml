@@ -25,9 +25,9 @@ jobs:
     - name: test (with coverage)
       run: npm t -- --coverage
     - name: build
-      run: npm run prod
+      run: npm run package
     - name: Archive production artifacts
       uses: actions/upload-artifact@v1
       with:
         name: alpine-devtools
-        path: dist/chrome
+        path: dist

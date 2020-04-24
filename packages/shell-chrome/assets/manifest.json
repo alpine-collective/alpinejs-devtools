@@ -1,7 +1,7 @@
 {
   "name": "Alpine.js devtools",
   "description": "DevTools extension for debugging Alpine.js applications.",
-  "version": "0.0.3",
+  "version": "__version__",
   "manifest_version": 2,
   "icons": {
     "16": "icons/16.png",
