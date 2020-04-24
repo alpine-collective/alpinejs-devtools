@@ -3,6 +3,7 @@ import copy from 'rollup-plugin-copy'
 import { terser } from 'rollup-plugin-terser'
 import resolve from '@rollup/plugin-node-resolve'
 import postcss from 'rollup-plugin-postcss'
+import pkg from './package.json'
 
 export default {
     input: [
@@ -24,7 +25,18 @@ export default {
         postcss(),
         copy({
             targets: [
-                { src: 'packages/shell-chrome/assets/**/*', dest: 'dist/chrome' }
+                {
+                    src: 'packages/shell-chrome/assets/**/*',
+                    dest: 'dist/chrome',
+                },
+                {
+                    src: 'packages/shell-chrome/assets/manifest.json',
+                    dest: 'dist/chrome',
+                    // inject version into manifest
+                    transform(contents) {
+                        return contents.toString().replace('__version__', pkg.version)
+                    }
+                }
             ]
         }),
         filesize(),

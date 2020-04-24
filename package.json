@@ -8,7 +8,9 @@
         "dev": "rollup -c",
         "prod": "NODE_ENV=production rollup -c",
         "watch": "rollup -c -w",
-        "test": "jest"
+        "test": "jest",
+        "prepackage": "npm run prod",
+        "package": "cd ./dist/chrome && zip -r ../alpine-devtools-$npm_package_version.zip ."
     },
     "license": "MIT",
     "devDependencies": {
