@@ -45,7 +45,7 @@
                     <a :class="{'bg-blue-300' : component.isOpened}"
                         @mouseenter="alpineState.hoverOnComponent(component)"
                         @mouseleave="alpineState.hoverLeftComponent(component)"
-                        @click=" alpineState.renderComponentData(component)" class="block component cursor-pointer"
+                        @click=" alpineState.selectComponent(component)" class="block component cursor-pointer"
                         :style="`margin-left: ${component.depth * 20}px; `">
                         <h5 class="mt-1 leading-7 font-semibold flex items-center">
                             <span data-testid="component-name" x-text="component.tagName" class="text-sm ml-2"

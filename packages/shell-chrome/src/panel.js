@@ -18,11 +18,16 @@ injectScript(chrome.runtime.getURL("./backend.js"), () => {
     });
 
     port.onMessage.addListener(function (message) {
-        if (message.type == "render-components") {
+        if (message.type === "render-components") {
             // message.components is a serialised JSON string
             alpineState.renderComponentsFromBackend(JSON.parse(message.components));
 
             window.__alpineDevtool.port = port;
+        }
+        if (message.type === "render-data") {
+            const { id, data } = message;
+            // data is a serialised JSON string
+            alpineState.renderDataFromBackend(id, JSON.parse(data));
         }
     });
 });

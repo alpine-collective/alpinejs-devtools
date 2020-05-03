@@ -33,6 +33,21 @@ function handleMessages(e) {
     if (e.data.source === "alpine-devtools-proxy") {
         window.__alpineDevtool.stopMutationObserver = true;
 
+        if (e.data.payload.action === "selectComponent") {
+            const { componentId } = e.data.payload
+            Alpine.discoverComponents((component) => {
+                if (
+                    component.__alpineDevtool &&
+                    component.__alpineDevtool.id == componentId
+                ) {
+                    syncComponentData(component);
+                }
+            });
+            setTimeout(() => {
+                window.__alpineDevtool.stopMutationObserver = false;
+            }, 10);
+        }
+
         if (e.data.payload.action == "hover") {
             Alpine.discoverComponents((component) => {
                 if (
@@ -89,6 +104,35 @@ function handleMessages(e) {
     }
 }
 
+function syncComponentData(rootEl) {
+    const data = Object.entries(rootEl.__x.getUnobservedData()).reduce((acc, [key, value]) => {
+        const type = typeof value;
+        acc[key] = {
+            value: type === "function" ? "function" : value,
+            type
+        }
+        return acc;
+    }, {})
+
+    window.postMessage(
+        {
+            source: "alpine-devtools-backend",
+            payload: {
+                // stringify to unfurl proxies
+                // there's no way to detect proxies but
+                // we need to get rid of them
+                // this avoids `DataCloneError: The object could not be cloned.`
+                // see https://github.com/Te7a-Houdini/alpinejs-devtools/issues/17
+                data: JSON.stringify(data),
+                id: rootEl.__alpineDevtool.id,
+                type: "render-data",
+            },
+        },
+        "*"
+    );
+}
+
+
 function discoverComponents(isThroughMutation = false) {
     var rootEls = document.querySelectorAll("[x-data]");
 
@@ -119,19 +163,9 @@ function discoverComponents(isThroughMutation = false) {
             });
         }
 
-        const data = Object.entries(rootEl.__x.getUnobservedData()).reduce((acc, [key, value]) => {
-            const type = typeof value;
-            acc[key] = {
-                value: type === "function" ? "function" : value,
-                type
-            }
-            return acc;
-        }, {})
-
         components.push({
             tagName: rootEl.tagName,
             depth: depth,
-            data: data,
             index: index,
             id: rootEl.__alpineDevtool.id,
         });
