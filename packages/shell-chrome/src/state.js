@@ -10,45 +10,51 @@ export default class State {
     renderComponentsFromBackend(components) {
         components.forEach((component, index) => {
             component.index = index;
-            component.isOpened = this.renderedComponentId == component.id;
-
-            component.flattenedData = flattenData(component.data);
-
-            component.flattenedData.forEach((d) => {
-                if (
-                    (this.allDataAttributes[component.id] &&
-                        this.allDataAttributes[component.id][d.id] &&
-                        this.allDataAttributes[component.id][d.id].isOpened) ||
-                    (d.directParentId.length &&
-                        this.allDataAttributes[component.id][d.directParentId] &&
-                        this.allDataAttributes[component.id][d.directParentId].isArrowDown)
-                ) {
-                    d.isOpened = true;
-                }
-
-                if (
-                    this.allDataAttributes[component.id] &&
-                    this.allDataAttributes[component.id][d.id] &&
-                    this.allDataAttributes[component.id][d.id].hasArrow
-                ) {
-                    d.isArrowDown = this.allDataAttributes[component.id][
-                        d.id
-                    ].isArrowDown;
-                }
-
-                d.parentComponentId = component.id;
-
-                if (!this.allDataAttributes[component.id]) {
-                    this.allDataAttributes[component.id] = {};
-                }
-
-                this.allDataAttributes[component.id][d.id] = d;
-            });
+            component.isOpened = false;
 
             this.components[component.id] = component;
         });
 
         this.updateXdata();
+    }
+
+    renderDataFromBackend(id, data) {
+        const component = this.components[id];
+
+        component.flattenedData = flattenData(data);
+        component.flattenedData.forEach((d) => {
+            if (
+                (this.allDataAttributes[component.id] &&
+                    this.allDataAttributes[component.id][d.id] &&
+                    this.allDataAttributes[component.id][d.id].isOpened) ||
+                (d.directParentId.length &&
+                    this.allDataAttributes[component.id][d.directParentId] &&
+                    this.allDataAttributes[component.id][d.directParentId].isArrowDown)
+            ) {
+                d.isOpened = true;
+            }
+
+            if (
+                this.allDataAttributes[component.id] &&
+                this.allDataAttributes[component.id][d.id] &&
+                this.allDataAttributes[component.id][d.id].hasArrow
+            ) {
+                d.isArrowDown = this.allDataAttributes[component.id][
+                    d.id
+                ].isArrowDown;
+            }
+
+            d.parentComponentId = component.id;
+
+            if (!this.allDataAttributes[component.id]) {
+                this.allDataAttributes[component.id] = {};
+            }
+
+            this.allDataAttributes[component.id][d.id] = d;
+        });
+        this.components[id] = component
+
+        this.renderComponentData(component);
     }
 
     renderComponentData(component) {
@@ -135,6 +141,14 @@ export default class State {
             )},
         }`
         );
+    }
+
+    selectComponent(component) {
+        window.__alpineDevtool.port.postMessage({
+            componentId: component.id,
+            action: "selectComponent",
+            source: "alpineDevtool",
+        });
     }
 
     hoverOnComponent(component) {
