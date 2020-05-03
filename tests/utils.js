@@ -28,12 +28,12 @@ export function mockDevtoolPostMessage(window) {
     return stub;
 }
 
-export function createComponent(tagName = 'DIV', data = {}, { id = 'component-id', index = 0, depth = 0 } = {}) {
+export function createComponent(name = 'DIV', data = {}, { id = 'component-id', index = 0, depth = 0 } = {}) {
     return {
         index,
         depth,
         id,
-        tagName: tagName.toUpperCase(),
+        name: name.toUpperCase(),
         data: Object.entries(data).reduce((acc, [property, value]) => {
             acc[property] = {
                 value: typeof value === 'function' ? 'function' : value,

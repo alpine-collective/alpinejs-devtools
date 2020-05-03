@@ -89,6 +89,28 @@ function handleMessages(e) {
     }
 }
 
+// See https://github.com/Te7a-Houdini/alpinejs-devtools/issues/28#issuecomment-616719252
+function getComponentName(element) {
+    if (element.id) {
+        return element.id
+    }
+    const nameAttr = element.getAttribute('name');
+    if (nameAttr) {
+        return nameAttr
+    }
+    const xDataAttr = element.getAttribute('x-data').trim();
+    // match `x-data="someFunctionName()"` but not `x-data="{ hello: 'world' }"`
+    if (xDataAttr.endsWith(")") && !xDataAttr.startsWith("{")) {
+        return xDataAttr.split('(')[0]
+    }
+    const roleAttr = element.getAttribute('role');
+    if (roleAttr) {
+        return roleAttr;
+    }
+
+    return element.tagName;
+}
+
 function discoverComponents(isThroughMutation = false) {
     var rootEls = document.querySelectorAll("[x-data]");
 
@@ -129,7 +151,7 @@ function discoverComponents(isThroughMutation = false) {
         }, {})
 
         components.push({
-            tagName: rootEl.tagName,
+            name: getComponentName(rootEl),
             depth: depth,
             data: data,
             index: index,
