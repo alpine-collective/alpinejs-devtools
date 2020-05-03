@@ -2,7 +2,6 @@ import Alpine from 'alpinejs';
 import { waitFor, fireEvent } from '@testing-library/dom';
 import { getPanelHtml, createComponent, mockDevtoolPostMessage, State } from './utils';
 
-
 async function openSingleComponentWithEditableField() {
     await waitFor(() => {
         expect(document.querySelectorAll('[data-testid=component-name]')).toHaveLength(1);

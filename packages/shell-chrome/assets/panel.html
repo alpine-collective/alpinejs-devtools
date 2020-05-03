@@ -93,6 +93,9 @@
 
                                     <div class="flex flex-row items-center">
                                         <input x-show="singleData.inEditingMode"
+                                            @keydown.enter.stop="alpineState.saveEditing(singleData)"
+                                            @keydown.escape.stop="alpineState.cancelEditing(singleData)"
+                                            @blur="alpineState.cancelEditing(singleData)"
                                             class="flex w-2/3 shadow appearance-none border rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                             :type="singleData.inputType" x-model="singleData.editAttributeValue">
 
