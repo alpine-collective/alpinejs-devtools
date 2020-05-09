@@ -10,8 +10,29 @@ alpinejs-devtools is a simple extension to help you debug [Alpine.js](https://gi
 
 ## Installation
 
-- [Get the Chrome Extension](https://chrome.google.com/webstore/detail/alpinejs-devtools/fopaemeedckajflibkpifppcankfmbhk)
-- [Get the Firefox Extension](https://addons.mozilla.org/firefox/addon/alpinejs-devtools/)
+-   [Get the Chrome Extension](https://chrome.google.com/webstore/detail/alpinejs-devtools/fopaemeedckajflibkpifppcankfmbhk)
+-   [Get the Firefox Extension](https://addons.mozilla.org/firefox/addon/alpinejs-devtools/)
+
+If you are using Google Chrome, make sure that you are have gave the extension a permission to `Access to File URLs`, you can do this by following these steps:
+
+1. Open chrome settings
+2. Go to `extensions` tab
+3. Choose `Alpine.js devtools` and press details
+4. enable `Allow access to file URLs`
+
+Check the following screenshot with it enabled
+
+<p align="center">
+    <img src="docs/alpine-devtools-chrome-permission.png" alt="Screenshot of Alpine.js DevTools">
+</p>
+
+You can add `name` attribute to components to easily identify them while debugging, example:
+
+```
+<div name="component" x-data="{ hello: 'world' }">
+    <span x-text="hello"></span>
+</div>
+```
 
 ### Development
 
@@ -19,7 +40,7 @@ alpinejs-devtools is a simple extension to help you debug [Alpine.js](https://gi
 2. Run `npm install`
 3. Run `npm run dev`
 4. Load unpacked extension inside dist/chrome directory
-4. Open any html file that imports alpine js then inspect by dev chrome inspection tool.
+5. Open any html file that imports alpine js then inspect by dev chrome inspection tool.
 
 #### Installing the dev extension on Firefox
 
