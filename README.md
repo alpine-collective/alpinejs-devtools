@@ -1,8 +1,6 @@
 # alpinejs-devtools
 
-<p align="center">
-    <img src="docs/alpine-devtools-screenshot.png" alt="Screenshot of Alpine.js DevTools">
-</p>
+![Screenshot of Alpine.js DevTools](docs/alpine-devtools-screenshot.png)
 
 alpinejs-devtools is a simple extension to help you debug [Alpine.js](https://github.com/alpinejs/alpine) apps easily.
 
@@ -10,8 +8,23 @@ alpinejs-devtools is a simple extension to help you debug [Alpine.js](https://gi
 
 ## Installation
 
-- [Get the Chrome Extension](https://chrome.google.com/webstore/detail/alpinejs-devtools/fopaemeedckajflibkpifppcankfmbhk)
-- [Get the Firefox Extension](https://addons.mozilla.org/firefox/addon/alpinejs-devtools/)
+-   [Get the Chrome Extension](https://chrome.google.com/webstore/detail/alpinejs-devtools/fopaemeedckajflibkpifppcankfmbhk)
+-   [Get the Firefox Extension](https://addons.mozilla.org/firefox/addon/alpinejs-devtools/)
+
+If you are using Google Chrome, Alpine Devtools won't work with local files unless you configure the extension to be allowed `Access to File URLs`. You can allow it by following these steps:
+
+1. Open chrome settings
+2. Go to `extensions` tab
+3. Choose `Alpine.js devtools` and press details
+4. Enable `Allow access to file URLs`
+
+Check the following screenshot with it enabled
+
+![Allow access to file URLs permission](docs/alpine-devtools-chrome-permission.png)
+
+To help with inspection, component "names" are be computed from the following attributes (if present and in order of precedence): id, name, x-data function name (if a function is used), tag name.
+
+![Naming a component example](docs/alpine-devtools-component-name.png)
 
 ### Development
 
@@ -19,7 +32,7 @@ alpinejs-devtools is a simple extension to help you debug [Alpine.js](https://gi
 2. Run `npm install`
 3. Run `npm run dev`
 4. Load unpacked extension inside dist/chrome directory
-4. Open any html file that imports alpine js then inspect by dev chrome inspection tool.
+5. Open any html file that imports alpine js then inspect by dev chrome inspection tool.
 
 #### Installing the dev extension on Firefox
 
