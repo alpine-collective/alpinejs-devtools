@@ -1,8 +1,6 @@
 # alpinejs-devtools
 
-<p align="center">
-    <img src="docs/alpine-devtools-screenshot.png" alt="Screenshot of Alpine.js DevTools">
-</p>
+![Screenshot of Alpine.js DevTools](docs/alpine-devtools-screenshot.png)
 
 alpinejs-devtools is a simple extension to help you debug [Alpine.js](https://github.com/alpinejs/alpine) apps easily.
 
@@ -22,15 +20,11 @@ If you are using Google Chrome, Alpine Devtools won't work with local files unle
 
 Check the following screenshot with it enabled
 
-<p align="center">
-    <img src="docs/alpine-devtools-chrome-permission.png" alt="Screenshot of Alpine.js DevTools">
-</p>
+![Allow access to file URLs permission](docs/alpine-devtools-chrome-permission.png)
 
 To help with inspection, component "names" are be computed from the following attributes (if present and in order of precedence): id, name, x-data function name (if a function is used), tag name.
 
-<p align="center">
-    <img src="docs/alpine-devtools-component-name.png" alt="Screenshot of Alpine.js DevTools">
-</p>
+![Naming a component example](docs/alpine-devtools-component-name.png)
 
 ### Development
 
