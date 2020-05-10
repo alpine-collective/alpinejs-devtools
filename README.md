@@ -13,12 +13,12 @@ alpinejs-devtools is a simple extension to help you debug [Alpine.js](https://gi
 -   [Get the Chrome Extension](https://chrome.google.com/webstore/detail/alpinejs-devtools/fopaemeedckajflibkpifppcankfmbhk)
 -   [Get the Firefox Extension](https://addons.mozilla.org/firefox/addon/alpinejs-devtools/)
 
-If you are using Google Chrome, make sure that you are have gave the extension a permission to `Access to File URLs`, you can do this by following these steps:
+If you are using Google Chrome, Alpine Devtools won't work with local files unless you configure the extension to be allowed `Access to File URLs`. You can allow it by following these steps:
 
 1. Open chrome settings
 2. Go to `extensions` tab
 3. Choose `Alpine.js devtools` and press details
-4. enable `Allow access to file URLs`
+4. Enable `Allow access to file URLs`
 
 Check the following screenshot with it enabled
 
@@ -26,13 +26,11 @@ Check the following screenshot with it enabled
     <img src="docs/alpine-devtools-chrome-permission.png" alt="Screenshot of Alpine.js DevTools">
 </p>
 
-You can add `name` attribute to components to easily identify them while debugging, example:
+To help with inspection, component "names" are be computed from the following attributes (if present and in order of precedence): id, name, x-data function name (if a function is used), tag name.
 
-```
-<div name="component" x-data="{ hello: 'world' }">
-    <span x-text="hello"></span>
-</div>
-```
+<p align="center">
+    <img src="docs/alpine-devtools-component-name.png" alt="Screenshot of Alpine.js DevTools">
+</p>
 
 ### Development
 
