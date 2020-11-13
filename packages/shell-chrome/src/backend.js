@@ -91,6 +91,17 @@ function handleMessages(e) {
 
 // See https://github.com/Te7a-Houdini/alpinejs-devtools/issues/28#issuecomment-616719252
 function getComponentName(element) {
+    const wireIdAttr = element.getAttribute('wire:id');
+    if (wireIdAttr && window.livewire) {
+        try {
+            const wire = window.livewire.find(wireIdAttr);
+
+            if(wire.__instance){
+                return wire.__instance.fingerprint.name;
+            }
+        } catch(e) {}
+    }
+    
     if (element.id) {
         return element.id
     }
