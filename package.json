@@ -29,7 +29,5 @@
         "rollup-plugin-terser": "^5.3.0",
         "tailwindcss": "^1.9.6"
     },
-    "dependencies": {
-        "split.js": "^1.6.2"
-    }
+    "dependencies": {}
 }

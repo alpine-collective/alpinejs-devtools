@@ -177,6 +177,7 @@ export default class State {
             (f) => {
                 if (f.id == clickedAttribute.id) {
                     f.attributeValue = clickedAttribute.attributeValue;
+                    f.editAttributeValue = clickedAttribute.editAttributeValue;
                 }
             }
         );

@@ -6,6 +6,7 @@ injectScript(chrome.runtime.getURL("./backend.js"), () => {
     window.alpineState = new State();
     window.__alpineDevtool = {};
 
+
     // 2. connect to background to setup proxy
     const port = chrome.runtime.connect({
         name: "" + chrome.devtools.inspectedWindow.tabId,
