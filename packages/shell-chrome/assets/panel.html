@@ -40,7 +40,11 @@
 
             get isLatest(){
                 return this.version == this.latest
-            }
+            },
+
+            get detected(){
+                return this.version? `Alpine.js v${this.version} detected` : 'Alpine.js'
+            },
         }"
         class="flex p-2 pr-4 text-base leading-9 tracking-tight font-bold sm:leading-10 text-gray-800">
             <div class="flex-1 flex items-center">
@@ -50,17 +54,19 @@
                     'bg-green-100 text-green-800': isLatest,
                     'bg-orange-100 text-orange-800': !isLatest,
                 }"
-                class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium leading-4"
+                class="inline-flex items-center px-1 py-0.5 rounded text-xs font-medium leading-4"
                 :title="isLatest? 'Latest Version' : `Latest Version: ${latest}`">
-                    <svg 
-                    :class="{
-                        'text-green-400': isLatest,
-                        'text-orange-400': !isLatest,
-                    }"
-                    class="mr-1.5 h-2 w-2" fill="currentColor" viewBox="0 0 8 8">
-                        <circle cx="4" cy="4" r="3" />
-                    </svg>
-                    <span x-text="`v${version} detected`"></span>
+                    <template x-if="version">
+                        <svg 
+                        :class="{
+                            'text-green-400': isLatest,
+                            'text-orange-400': !isLatest,
+                        }"
+                        class="mr-1.5 h-2 w-2" fill="currentColor" viewBox="0 0 8 8">
+                            <circle cx="4" cy="4" r="3" />
+                        </svg>
+                    </template>
+                    <span x-text="detected"></span>
                 </div>
             </div>
 
