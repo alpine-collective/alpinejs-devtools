@@ -31,6 +31,7 @@ function createPanelIfHasAlpine() {
         "panel.html",
         panel => {
           // panel loaded
+          console.log(panel)
           console.log('panel loaded')
         }
       );

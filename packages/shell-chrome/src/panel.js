@@ -24,6 +24,12 @@ injectScript(chrome.runtime.getURL("./backend.js"), () => {
 
             window.__alpineDevtool.port = port;
         }
+
+        if (message.type == "set-version") {
+            alpineState.setAlpineVersionFromBackend(message.version);
+            
+            window.__alpineDevtool.port = port;
+        }
     });
 });
 

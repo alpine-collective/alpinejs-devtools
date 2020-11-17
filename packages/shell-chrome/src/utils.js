@@ -44,7 +44,7 @@ export function flattenSingleAttribute(
     flattenedData.push({
         attributeName: attributeName,
         attributeValue: Array.isArray(value)
-            ? "Array"
+            ? `Array[${value.length}]`
             : value instanceof Object
                 ? "Object"
                 : value,
@@ -56,6 +56,7 @@ export function flattenSingleAttribute(
         depth: margin,
         hasArrow: value instanceof Object,
         readOnly: type === 'function',
+        dataType: type,
         inputType: mapDataTypeToInputType(type),
         id: generatedId,
         inEditingMode: false,

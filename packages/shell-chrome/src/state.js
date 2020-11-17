@@ -5,6 +5,7 @@ export default class State {
         this.components = {};
         this.allDataAttributes = {};
         this.renderedComponentId = null;
+        this.version = null;
     }
 
     renderComponentsFromBackend(components) {
@@ -49,6 +50,10 @@ export default class State {
         });
 
         this.updateXdata();
+    }
+
+    setAlpineVersionFromBackend(version){
+        this.version = version;
     }
 
     renderComponentData(component) {
@@ -125,15 +130,22 @@ export default class State {
     }
 
     updateXdata() {
+        document.getElementById("header").setAttribute(
+            "x-data",
+            `{
+                version : '${this.version}',
+            }`
+        );
+
         document.getElementById("components").setAttribute(
             "x-data",
             `{
-          components : ${JSON.stringify(
-                Object.values(this.components).sort(function (a, b) {
-                    return a.index - b.index;
-                })
-            )},
-        }`
+                components : ${JSON.stringify(
+                    Object.values(this.components).sort(function (a, b) {
+                        return a.index - b.index;
+                    })
+                )},
+            }`
         );
     }
 
