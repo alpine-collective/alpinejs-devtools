@@ -5,7 +5,10 @@ export default class State {
         this.components = {};
         this.allDataAttributes = {};
         this.renderedComponentId = null;
-        this.version = null;
+        this.version = {
+            detected: null,
+            latest: '2.7.3',
+        };
     }
 
     renderComponentsFromBackend(components) {
@@ -53,7 +56,7 @@ export default class State {
     }
 
     setAlpineVersionFromBackend(version){
-        this.version = version;
+        this.version.detected = version;
     }
 
     renderComponentData(component) {
@@ -130,23 +133,14 @@ export default class State {
     }
 
     updateXdata() {
-        document.getElementById("header").setAttribute(
-            "x-data",
-            `{
-                version : '${this.version}',
-            }`
-        );
+        let headerData = document.getElementById("header").__x.$data;
+        headerData.version = this.version.detected;
+        headerData.latest = this.version.latest;
 
-        document.getElementById("components").setAttribute(
-            "x-data",
-            `{
-                components : ${JSON.stringify(
-                    Object.values(this.components).sort(function (a, b) {
-                        return a.index - b.index;
-                    })
-                )},
-            }`
-        );
+        let componentsData = document.getElementById("components").__x.$data;
+        componentsData.components = Object.values(this.components).sort(function (a, b) {
+            return a.index - b.index;
+        });
     }
 
     hoverOnComponent(component) {
