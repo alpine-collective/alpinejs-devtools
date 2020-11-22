@@ -31,6 +31,12 @@ function handshake(e) {
 
 function handleMessages(e) {
     if (e.data.source === "alpine-devtools-proxy") {
+        if (e.data.payload === 'shutdown') {
+            window.removeEventListener("message", handleMessages);
+            window.addEventListener("message", handshake);
+            disconnectObserver();
+            return;
+        }
         window.__alpineDevtool.stopMutationObserver = true;
 
         if (e.data.payload.action == "hover") {
@@ -177,6 +183,8 @@ function discoverComponents(isThroughMutation = false) {
     );
 }
 
+observer = null
+
 function observeNode(node) {
     const observerOptions = {
         childList: true,
@@ -184,11 +192,17 @@ function observeNode(node) {
         subtree: true,
     };
 
-    const observer = new MutationObserver((mutations) => {
+    observer = new MutationObserver((mutations) => {
         if (!window.__alpineDevtool.stopMutationObserver) {
             discoverComponents((isThroughMutation = true));
         }
     });
 
     observer.observe(node, observerOptions);
+}
+
+function disconnectObserver () {
+    if (observer) {
+        observer.disconnect();
+    }
 }
