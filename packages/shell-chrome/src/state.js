@@ -137,7 +137,16 @@ export default class State {
         );
     }
 
+    _hasNoDevtools(methodName) {
+        if (!window.__alpineDevtool.port) {
+            console.warn(`${methodName} no devtools available`);
+            return true;
+        }
+        return false;
+    }
+
     hoverOnComponent(component) {
+        if (this._hasNoDevtools('hoverOnComponent')) return;
         window.__alpineDevtool.port.postMessage({
             componentId: component.id,
             action: "hover",
@@ -146,6 +155,7 @@ export default class State {
     }
 
     hoverLeftComponent(component) {
+        if (this._hasNoDevtools('hoverLeftComponent')) return;
         window.__alpineDevtool.port.postMessage({
             componentId: component.id,
             action: "hoverLeft",
@@ -158,6 +168,7 @@ export default class State {
     }
 
     saveEditing(clickedAttribute) {
+        if (this._hasNoDevtools('saveEditing')) return;
         clickedAttribute.attributeValue = convertInputDataToType(clickedAttribute.inputType, clickedAttribute.editAttributeValue);
         clickedAttribute.inEditingMode = false;
 

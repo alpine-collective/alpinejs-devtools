@@ -2,30 +2,38 @@ import './style.css'
 import State from "./state";
 import 'alpinejs';
 
-injectScript(chrome.runtime.getURL("./backend.js"), () => {
-    window.alpineState = new State();
-    window.__alpineDevtool = {};
+function connect() {
+    injectScript(chrome.runtime.getURL("./backend.js"), () => {
+        window.alpineState = new State();
+        window.__alpineDevtool = {};
 
-    // 2. connect to background to setup proxy
-    const port = chrome.runtime.connect({
-        name: "" + chrome.devtools.inspectedWindow.tabId,
+        // 2. connect to background to setup proxy
+        const port = chrome.runtime.connect({
+            name: "" + chrome.devtools.inspectedWindow.tabId,
+        });
+
+        let disconnected = false;
+
+        port.onDisconnect.addListener(() => {
+            disconnected = true;
+        });
+
+        port.onMessage.addListener(function (message) {
+            // ignore further messages
+            if (disconnected) return;
+            if (message.type == "render-components") {
+                // message.components is a serialised JSON string
+                alpineState.renderComponentsFromBackend(JSON.parse(message.components));
+
+                window.__alpineDevtool.port = port;
+            }
+        });
     });
+}
 
-    let disconnected = false;
-
-    port.onDisconnect.addListener(() => {
-        disconnected = true;
-    });
-
-    port.onMessage.addListener(function (message) {
-        if (message.type == "render-components") {
-            // message.components is a serialised JSON string
-            alpineState.renderComponentsFromBackend(JSON.parse(message.components));
-
-            window.__alpineDevtool.port = port;
-        }
-    });
-});
+function onReload (reloadFn) {
+    chrome.devtools.network.onNavigated.addListener(reloadFn)
+}
 
 /**
  * Inject a globally evaluated script, in the same context with the actual
@@ -51,3 +59,8 @@ function injectScript(scriptName, cb) {
         cb();
     });
 }
+
+connect();
+onReload(() => {
+    connect();
+});
