@@ -5,6 +5,20 @@ import resolve from '@rollup/plugin-node-resolve'
 import postcss from 'rollup-plugin-postcss'
 import pkg from './package.json'
 
+import fs from 'fs';
+import path from 'path';
+
+if (process.env.ROLLUP_WATCH === 'true') {
+    fs.watch('./packages/shell-chrome/assets', { recursive: true }, (_event, filename) => {
+        try {
+            console.info(`Copying asset "${filename}" to dist/chrome`);
+            fs.copyFileSync(path.join('./packages/shell-chrome/assets/', filename), path.join('./dist/chrome', filename));
+        } catch(e) {
+            console.error(e);
+        }
+    });
+}
+
 export default {
     input: [
         'packages/shell-chrome/src/background.js',
