@@ -5,6 +5,10 @@ export default class State {
         this.components = {};
         this.allDataAttributes = {};
         this.renderedComponentId = null;
+        this.version = {
+            detected: null,
+            latest: '2.7.3',
+        };
     }
 
     renderComponentsFromBackend(components) {
@@ -49,6 +53,10 @@ export default class State {
         });
 
         this.updateXdata();
+    }
+
+    setAlpineVersionFromBackend(version){
+        this.version.detected = version;
     }
 
     renderComponentData(component) {
@@ -125,16 +133,14 @@ export default class State {
     }
 
     updateXdata() {
-        document.getElementById("components").setAttribute(
-            "x-data",
-            `{
-          components : ${JSON.stringify(
-                Object.values(this.components).sort(function (a, b) {
-                    return a.index - b.index;
-                })
-            )},
-        }`
-        );
+        let headerData = document.getElementById("header").__x.$data;
+        headerData.version = this.version.detected;
+        headerData.latest = this.version.latest;
+
+        let componentsData = document.getElementById("components").__x.$data;
+        componentsData.components = Object.values(this.components).sort(function (a, b) {
+            return a.index - b.index;
+        });
     }
 
     _hasNoDevtools(methodName) {
@@ -176,6 +182,7 @@ export default class State {
             (f) => {
                 if (f.id == clickedAttribute.id) {
                     f.attributeValue = clickedAttribute.attributeValue;
+                    f.editAttributeValue = clickedAttribute.editAttributeValue;
                 }
             }
         );

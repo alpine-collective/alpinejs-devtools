@@ -23,6 +23,7 @@ function handshake(e) {
         window.removeEventListener("message", handshake);
         window.addEventListener("message", handleMessages);
 
+        getAlpineVersion();
         discoverComponents();
 
         document.querySelectorAll("[x-data]").forEach((el) => observeNode(el));
@@ -113,8 +114,7 @@ function getComponentName(element) {
     if (roleAttr) {
         return roleAttr;
     }
-
-    return element.tagName;
+    return element.tagName.toLowerCase();
 }
 
 function discoverComponents(isThroughMutation = false) {
@@ -177,6 +177,19 @@ function discoverComponents(isThroughMutation = false) {
                 components: JSON.stringify(components),
                 type: "render-components",
                 isThroughMutation: isThroughMutation,
+            },
+        },
+        "*"
+    );
+}
+
+function getAlpineVersion(){
+    window.postMessage(
+        {
+            source: "alpine-devtools-backend",
+            payload: {
+                version: window.Alpine.version,
+                type: "set-version",
             },
         },
         "*"
