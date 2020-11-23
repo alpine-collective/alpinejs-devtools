@@ -2,8 +2,8 @@
     "name": "alpinejs-devtools",
     "version": "0.0.4",
     "private": true,
-    "description": "Simple Devtools for Alpine.js To Make Your Life Simpler",
-    "homepage": "https://github.com/Te7a-Houdini/alpinejs-devtools",
+    "description": "DevTools extension for debugging Alpine.js applications. ",
+    "homepage": "https://github.com/alpine-collective/alpinejs-devtools",
     "scripts": {
         "dev": "rollup -c",
         "prod": "NODE_ENV=production rollup -c",
