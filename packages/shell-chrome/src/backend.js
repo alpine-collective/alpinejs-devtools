@@ -106,7 +106,7 @@ function getComponentName(element) {
             const wire = window.livewire.find(wireIdAttr);
 
             if(wire.__instance){
-                return wire.__instance.fingerprint.name;
+                return 'livewire:' + wire.__instance.fingerprint.name;
             }
         } catch(e) {}
     }
