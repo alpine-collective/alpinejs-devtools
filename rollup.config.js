@@ -33,7 +33,7 @@ export default {
     plugins: [
         resolve(),
         postcss({
-            extract: 'dist/chrome/styles.css',
+            extract: 'styles.css',
         }),
         copy({
             targets: [
