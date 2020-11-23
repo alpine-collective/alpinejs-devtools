@@ -13,7 +13,11 @@ module.exports = {
         '6xl': '4rem',
     },
 
-    extend: {},
+    extend: {
+      animation: {
+        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      }
+    },
   },
   variants: {
   	opacity: ['responsive', 'hover', 'focus', 'group-hover'],
