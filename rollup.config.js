@@ -36,7 +36,9 @@ export default {
         terser({
             exclude: ['proxy.js']
         }),
-        postcss(),
+        postcss({
+            extract: 'styles.css',
+        }),
         copy({
             targets: [
                 {

@@ -3,6 +3,8 @@
 
 <head>
     <meta charset="utf-8">
+    <!-- configured in rollup.config.js -->
+    <link rel="stylesheet" href="./styles.css"></link>
 
     <style>
         .component:hover {
@@ -32,7 +34,7 @@
 <body class="antialiased">
 
     <div class="bg-white flex flex-col relative h-screen w-full mx-auto">
-        <div 
+        <div
         id="header"
         x-data="{
             version: null,
@@ -49,7 +51,7 @@
         class="flex p-2 pr-4 text-base leading-9 tracking-tight font-bold sm:leading-10 text-gray-800">
             <div class="flex-1 flex items-center">
                 <img src="alpine_extension.png" class="w-10 h-10 mr-2">
-                <div 
+                <div
                 :class="{
                     'bg-green-100 text-green-800': isLatest,
                     'bg-orange-100 text-orange-800': !isLatest,
@@ -57,7 +59,7 @@
                 class="inline-flex items-center px-1 py-0.5 rounded text-xs font-medium leading-4"
                 :title="isLatest? 'Latest Version' : `Latest Version: ${latest}`">
                     <template x-if="version">
-                        <svg 
+                        <svg
                         :class="{
                             'text-green-400': isLatest,
                             'text-orange-400': !isLatest,
@@ -83,8 +85,8 @@
             </div>
         </div>
 
-        <div 
-        id="components" 
+        <div
+        id="components"
         x-data="{
             components : [],
 
@@ -95,7 +97,7 @@
             },
         }"
         class="flex-1 flex flex-col border-t border-gray-300 sm:flex-row overflow-hidden">
-            
+
             <div class="flex-1 flex flex-col max-h-full sm:border-r border-gray-300 overflow-scroll">
                 <div class="p-2">
                     <template x-for="(component, index) in components">
@@ -110,9 +112,9 @@
                             @click=" alpineState.renderComponentData(component)">
                             <h5 class="flex items-center px-2 leading-7 font-mono">
                                 <span class="opacity-25">&lt;</span>
-                                <span 
-                                data-testid="component-name" 
-                                x-text="component.name" 
+                                <span
+                                data-testid="component-name"
+                                x-text="component.name"
                                 class="text-base"></span>
                                 <span class="opacity-25">&gt;</span>
                             </h5>
@@ -145,51 +147,51 @@
                                 <template x-for="(singleData, index) in singleComponent.flattenedData">
                                     <div class="group flex items-center">
                                         <a :style="`margin-left: ${singleData.depth}px; `"
-                                            @click="alpineState.toggleDataAttribute(singleData)" 
-                                            class="block px-1 rounded" 
+                                            @click="alpineState.toggleDataAttribute(singleData)"
+                                            class="block px-1 rounded"
                                             :class="{
                                                 'component cursor-pointer': !singleData.readOnly
-                                            }" 
+                                            }"
                                             x-show="singleData.isOpened">
 
                                             <h5 data-testid="data-property" class="flex items-center relative pl-3 leading-6 text-sm">
                                                 <div class="absolute left-0 h-full flex items-center">
-                                                    <span 
-                                                    x-show="singleData.hasArrow" 
+                                                    <span
+                                                    x-show="singleData.hasArrow"
                                                     class="arrow"
                                                     :data-testid="singleData.isArrowDown ? 'arrow-down' : 'arrow-right'"
-                                                    :class="{ 
+                                                    :class="{
                                                         'right': !singleData.isArrowDown,
-                                                        'down': singleData.isArrowDown 
+                                                        'down': singleData.isArrowDown
                                                     }"></span>
                                                 </div>
-                                                
-                                                <span 
+
+                                                <span
                                                 style="color:#881391;"
                                                 x-text="singleData.attributeName"
                                                 data-testid="data-property-name"></span>
-                                                
+
                                                 <span class="text-black">:</span>
-                                                
+
                                                 <div
-                                                class="text-black ml-1" 
+                                                class="text-black ml-1"
                                                 x-show="!singleData.inEditingMode">
                                                     <template x-if="singleData.dataType == 'string'">
-                                                        &quot;<span 
-                                                        class="text-red-700" 
+                                                        &quot;<span
+                                                        class="text-red-700"
                                                         x-text="singleData.attributeValue"
                                                         data-testid="data-property-value"></span>&quot;
                                                     </template>
 
                                                     <template x-if="singleData.dataType == 'boolean'">
-                                                        <span 
-                                                        class="text-blue-700" 
+                                                        <span
+                                                        class="text-blue-700"
                                                         x-text="singleData.attributeValue"
                                                         data-testid="data-property-value"></span>
                                                     </template>
 
                                                     <template x-if="['string', 'boolean'].includes(singleData.dataType) === false">
-                                                        <span 
+                                                        <span
                                                         x-text="singleData.attributeValue"
                                                         data-testid="data-property-value"></span>
                                                     </template>
@@ -198,13 +200,13 @@
                                         </a>
 
                                         <div class="flex flex-col"
-                                            x-show="!singleData.hasArrow 
-                                                && !singleData.readOnly 
+                                            x-show="!singleData.hasArrow
+                                                && !singleData.readOnly
                                                 && singleData.isOpened">
 
                                             <svg fill="currentColor"
                                                 x-show="!singleData.inEditingMode
-                                                    && singleData.dataType !== 'boolean'" 
+                                                    && singleData.dataType !== 'boolean'"
                                                 data-testid="edit-icon"
                                                 @click="alpineState.editAttribute(singleData)"
                                                 viewBox="0 0 20 20"
@@ -213,7 +215,7 @@
                                             </svg>
 
                                             <template x-if="singleData.dataType == 'boolean'">
-                                                <input 
+                                                <input
                                                 type="checkbox"
                                                 x-model="singleData.editAttributeValue"
                                                 @change.stop="$nextTick(() => alpineState.saveEditing(singleData))"
@@ -221,8 +223,8 @@
                                             </template>
 
                                             <template x-if="singleData.dataType !== 'boolean'">
-                                                <div 
-                                                x-show="singleData.inEditingMode" 
+                                                <div
+                                                x-show="singleData.inEditingMode"
                                                 class="flex flex-row items-center">
                                                     <input
                                                     @keydown.enter.stop="alpineState.saveEditing(singleData)"
@@ -231,9 +233,9 @@
                                                     type="text"
                                                     x-model="singleData.editAttributeValue">
 
-                                                    <svg 
+                                                    <svg
                                                     fill="currentColor"
-                                                    data-testid="save-icon" 
+                                                    data-testid="save-icon"
                                                     @click="alpineState.saveEditing(singleData)"
                                                     viewBox="0 0 20 20"
                                                     class="flex w-5 h-5 cursor-pointer ml-2 hover:opacity-75">
