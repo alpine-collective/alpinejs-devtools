@@ -1,6 +1,5 @@
 import filesize from 'rollup-plugin-filesize'
 import copy from 'rollup-plugin-copy'
-import { terser } from 'rollup-plugin-terser'
 import resolve from '@rollup/plugin-node-resolve'
 import postcss from 'rollup-plugin-postcss'
 import pkg from './package.json'
@@ -33,10 +32,9 @@ export default {
     },
     plugins: [
         resolve(),
-        terser({
-            exclude: ['proxy.js']
+        postcss({
+            extract: 'dist/chrome/styles.css',
         }),
-        postcss(),
         copy({
             targets: [
                 {
