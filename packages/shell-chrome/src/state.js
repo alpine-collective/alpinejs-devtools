@@ -133,12 +133,12 @@ export default class State {
     }
 
     updateXdata() {
-        let headerData = document.getElementById("header").__x.$data;
-        headerData.version = this.version.detected;
-        headerData.latest = this.version.latest;
+        let appData = document.getElementById("app").__x.$data;
+        
+        appData.version = this.version.detected;
+        appData.latest = this.version.latest;
 
-        let componentsData = document.getElementById("components").__x.$data;
-        componentsData.components = Object.values(this.components).sort(function (a, b) {
+        appData.components = Object.values(this.components).sort(function (a, b) {
             return a.index - b.index;
         });
     }
