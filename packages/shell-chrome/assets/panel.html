@@ -58,7 +58,7 @@
         latest: null,
         components : [],
         showTools: false,
-        showTimeout: 1000,
+        showTimeout: 1500,
         activeTheme: 'dark-header',
 
         themes: {
@@ -111,10 +111,18 @@
         },
     }"
     x-init="() => {
-        $watch('components', value => {
-            setTimeout(() => {
-                showTools = true
-            }, showTimeout)
+        $watch('components', () => {
+            if (!showTools && components.length > 0) {
+                fetchWithTimeout('https://registry.npmjs.com/alpinejs', { timeout: showTimeout })
+                    .then((data) => {
+                        latest = data['dist-tags'].latest;
+                        showTools = true;
+                    }).catch(error => {
+                        console.error('Could not load Alpine.js version data from registry.npmjs.com');
+                        // latest will be as defaulted in state.js
+                        showTools = true
+                    })
+            }
         })
     }">
         <div class="bg-white flex flex-col relative h-screen w-full mx-auto">
