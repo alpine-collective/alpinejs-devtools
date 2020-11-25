@@ -1,3 +1,16 @@
+export function fetchWithTimeout(resource, options) {
+    const { timeout = 3000 } = options;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeout);
+    return fetch(resource, {...options, signal: controller.signal}).then((res) => {
+        clearTimeout(timer);
+        if (!res.ok) {
+            throw new Error('Request not ok');
+        }
+        return res.json();
+    });
+}
+
 export function flattenData(data) {
     let flattenedData = [];
 
