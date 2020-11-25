@@ -24,12 +24,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: install
       run: npm ci
-    - name: check formatting
-      run: npm run format
-    - name: Commit changes
-      uses: stefanzweifel/git-auto-commit-action@v4
-      with:
-        commit_message: Apply formatting changes
     - name: build
       run: npm run package
     - name: Archive production artifacts
@@ -37,3 +31,9 @@ jobs:
       with:
         name: alpine-devtools
         path: dist
+    - name: check formatting
+      run: npm run format
+    - name: Commit changes
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: Apply formatting changes
