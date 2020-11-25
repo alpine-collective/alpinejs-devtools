@@ -1,4 +1,3 @@
-import { dependencies } from '../../../package-lock.json';
 import { flattenData, convertInputDataToType } from "./utils";
 
 export default class State {
@@ -8,7 +7,7 @@ export default class State {
         this.renderedComponentId = null;
         this.version = {
             detected: null,
-            latest: dependencies.alpinejs.version,
+            latest: '__alpine_version__',
         };
     }
 
@@ -135,7 +134,7 @@ export default class State {
 
     updateXdata() {
         let appData = document.getElementById("app").__x.$data;
-        
+
         appData.version = this.version.detected;
         appData.latest = this.version.latest;
 
