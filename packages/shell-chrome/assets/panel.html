@@ -58,7 +58,7 @@
         latest: null,
         components : [],
         showTools: false,
-        showTimeout: 1000,
+        showTimeout: 1500,
         activeTheme: 'dark-header',
 
         themes: {
@@ -77,16 +77,27 @@
             },
         },
 
-        get isLatest(){
-            return this.version === this.latest
+        get isLatest() {
+            if (!this.version || !this.latest) return null;
+            const requiredArray = this.latest.split('.').map(v => parseInt(v, 10));
+            const currentArray = this.version.split('.').map(v => parseInt(v, 10));
+            for (let i = 0; i < requiredArray.length; i++) {
+                if (!currentArray[i] || currentArray[i] < requiredArray[i]) {
+                    return false;
+                }
+                if (currentArray[i] > requiredArray[i]) {
+                    return true;
+                }
+            }
+            return true
         },
 
         get detected(){
-            if(!this.showTools){
+            if (!this.showTools) {
                 return 'Alpine.js tools loading'
             }
 
-            return this.version? `Alpine.js v${this.version} detected` : 'Alpine.js'
+            return this.version ? `Alpine.js v${this.version} detected` : 'Alpine.js <v2.3.1 detected'
         },
 
         get openComponent () {
@@ -100,10 +111,18 @@
         },
     }"
     x-init="() => {
-        $watch('components', value => {
-            setTimeout(() => {
-                showTools = true
-            }, showTimeout)
+        $watch('components', () => {
+            if (!showTools && components.length > 0) {
+                fetchWithTimeout('https://registry.npmjs.com/alpinejs', { timeout: showTimeout })
+                    .then((data) => {
+                        latest = data['dist-tags'].latest;
+                        showTools = true;
+                    }).catch(error => {
+                        console.error('Could not load Alpine.js version data from registry.npmjs.com');
+                        // latest will be as defaulted in state.js
+                        showTools = true
+                    })
+            }
         })
     }">
         <div class="bg-white flex flex-col relative h-screen w-full mx-auto">
@@ -153,7 +172,11 @@
                             class="mr-1.5 h-2 w-2 transition transition-colors duration-700 ease-in-out" fill="currentColor" viewBox="0 0 8 8">
                                 <circle cx="4" cy="4" r="3" />
                             </svg>
-                            <span x-text="detected"></span>
+                            <a
+                                :class="isLatest ? 'pointer-events-none' : ''"
+                                :href="isLatest ? '#' : 'https://github.com/alpinejs/alpine/releases'"
+                                x-text="detected"
+                            ></a>
                         </div>
                     </div>
                 </div>
