@@ -77,8 +77,19 @@
             },
         },
 
-        get isLatest(){
-            return this.version === this.latest
+        get isLatest() {
+            if (!this.version || !this.latest) return null;
+            const requiredArray = this.latest.split('.').map(v => parseInt(v, 10));
+            const currentArray = this.version.split('.').map(v => parseInt(v, 10));
+            for (let i = 0; i < requiredArray.length; i++) {
+                if (!currentArray[i] || currentArray[i] < requiredArray[i]) {
+                    return false;
+                }
+                if (currentArray[i] > requiredArray[i]) {
+                    return true;
+                }
+            }
+            return true
         },
 
         get detected(){
