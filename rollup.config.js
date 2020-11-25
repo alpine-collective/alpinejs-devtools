@@ -1,8 +1,10 @@
 import filesize from 'rollup-plugin-filesize'
+import replace from '@rollup/plugin-replace'
 import copy from 'rollup-plugin-copy'
 import resolve from '@rollup/plugin-node-resolve'
 import postcss from 'rollup-plugin-postcss'
 import pkg from './package.json'
+import { dependencies } from './package-lock.json';
 
 import fs from 'fs';
 import path from 'path';
@@ -31,6 +33,9 @@ export default {
         dir: 'dist/chrome'
     },
     plugins: [
+        replace({
+            __alpine_version__: dependencies.alpinejs.version
+        }),
         resolve(),
         postcss({
             extract: 'styles.css',

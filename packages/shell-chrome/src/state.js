@@ -7,7 +7,7 @@ export default class State {
         this.renderedComponentId = null;
         this.version = {
             detected: null,
-            latest: '2.7.3',
+            latest: '__alpine_version__',
         };
     }
 
@@ -134,7 +134,7 @@ export default class State {
 
     updateXdata() {
         let appData = document.getElementById("app").__x.$data;
-        
+
         appData.version = this.version.detected;
         appData.latest = this.version.latest;
 
