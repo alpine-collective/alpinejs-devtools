@@ -93,11 +93,11 @@
         },
 
         get detected(){
-            if(!this.showTools){
+            if (!this.showTools) {
                 return 'Alpine.js tools loading'
             }
 
-            return this.version? `Alpine.js v${this.version} detected` : 'Alpine.js'
+            return this.version ? `Alpine.js v${this.version} detected` : 'Alpine.js <v2.3.1 detected'
         },
 
         get openComponent () {
