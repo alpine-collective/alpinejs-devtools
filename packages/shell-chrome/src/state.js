@@ -1,3 +1,4 @@
+import { dependencies } from '../../../package-lock.json';
 import { flattenData, convertInputDataToType } from "./utils";
 
 export default class State {
@@ -7,7 +8,7 @@ export default class State {
         this.renderedComponentId = null;
         this.version = {
             detected: null,
-            latest: '2.7.3',
+            latest: dependencies.alpinejs.version || '2.7.3',
         };
     }
 
