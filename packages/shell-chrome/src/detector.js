@@ -6,12 +6,17 @@ window.addEventListener('message', e => {
   }
 })
 
-function detect (win) {
-  setTimeout(() => {
-    win.postMessage({
-      alpineDetected: !!window.Alpine
-    })
-  }, 100)
+// will detect Alpine.js as long as it loads within ~600ms of the script being injected
+function detect(win, remainingAttempts = 3) {
+    setTimeout(() => {
+        const alpineDetected = !!window.Alpine
+        win.postMessage({
+            alpineDetected
+        })
+        if (!alpineDetected && remainingAttempts > 0) {
+            detect(win, remainingAttempts - 1);
+        }
+    }, 200)
 }
 
 // inject the hook

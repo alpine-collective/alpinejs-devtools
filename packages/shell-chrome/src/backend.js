@@ -1,32 +1,21 @@
-/**
-* Loose port of Lodash#set with "." as the delimiter, see https://lodash.com/docs#set
-*
-* @param {object} object - object to update
-* @param {string} path - path to set in the form `a.0.b.c`
-* @param {any} value - value to set to
-*/
-function set(object, path, value) {
-    const [nextProperty, ...rest] = path.split('.');
-    if (rest.length === 0) {
-        object[nextProperty] = value;
-        return object;
-    }
-    set(object[nextProperty], rest.join('.'), value);
-    return object
-}
+import { waitForAlpine, set } from './utils';
 
 window.addEventListener("message", handshake);
 window.__alpineDevtool = {};
+
+function startAlpineBackend() {
+    getAlpineVersion();
+    discoverComponents();
+
+    document.querySelectorAll("[x-data]").forEach((el) => observeNode(el));
+}
 
 function handshake(e) {
     if (e.data.source === "alpine-devtools-proxy" && e.data.payload === "init") {
         window.removeEventListener("message", handshake);
         window.addEventListener("message", handleMessages);
 
-        getAlpineVersion();
-        discoverComponents();
-
-        document.querySelectorAll("[x-data]").forEach((el) => observeNode(el));
+        waitForAlpine(() => startAlpineBackend());
     }
 }
 
@@ -101,7 +90,7 @@ function getComponentName(element) {
     if (element.id) {
         return element.id
     }
-    
+
     const nameAttr = element.getAttribute('name');
     if (nameAttr) {
         return nameAttr
@@ -123,7 +112,7 @@ function getComponentName(element) {
     if (xDataAttr.endsWith(")") && !xDataAttr.startsWith("{")) {
         return xDataAttr.split('(')[0]
     }
-    
+
     const roleAttr = element.getAttribute('role');
     if (roleAttr) {
         return roleAttr;
