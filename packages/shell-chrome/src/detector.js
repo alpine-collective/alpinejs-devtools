@@ -1,5 +1,4 @@
 import { isFirefox } from './env';
-import { waitForAlpine } from './utils';
 
 window.addEventListener('message', e => {
   if (e.source === window && e.data.alpineDetected) {
@@ -7,12 +6,17 @@ window.addEventListener('message', e => {
   }
 })
 
-function detect(win) {
-    waitForAlpine(() => {
+// will detect Alpine.js as long as it loads within ~600ms
+function detect(win, remainingAttempts = 3) {
+    setTimeout(() => {
+        const alpineDetected = !!window.Alpine
         win.postMessage({
-            alpineDetected: !!window.Alpine
+            alpineDetected
         })
-    }, { maxAttempts: 3, interval: 250, delayFirstAttempt: true })
+        if (!alpineDetected && remainingAttempts > 0) {
+            detect(win, remainingAttempts - 1);
+        }
+    }, 200)
 }
 
 // inject the hook

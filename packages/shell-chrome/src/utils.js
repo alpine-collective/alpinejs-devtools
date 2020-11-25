@@ -32,6 +32,7 @@ export function waitForAlpine(cb, {maxAttempts = 3, interval = 500, delayFirstAt
         cb();
         return;
     }
+    if (attempts >= maxAttempts) return
     const timer = setInterval(wait, interval);
     function wait() {
         attempts++;
