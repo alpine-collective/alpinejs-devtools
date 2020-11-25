@@ -6,7 +6,7 @@ window.addEventListener('message', e => {
   }
 })
 
-// will detect Alpine.js as long as it loads within ~600ms
+// will detect Alpine.js as long as it loads within ~600ms of the script being injected
 function detect(win, remainingAttempts = 3) {
     setTimeout(() => {
         const alpineDetected = !!window.Alpine

@@ -2,7 +2,7 @@ export function fetchWithTimeout(resource, options) {
     const { timeout = 3000 } = options;
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeout);
-    return fetch(resource, {...options, signal: controller.signal}).then((res) => {
+    return fetch(resource, { ...options, signal: controller.signal }).then((res) => {
         clearTimeout(timer);
         if (!res.ok) {
             throw new Error('Request not ok');
@@ -22,12 +22,12 @@ export function flattenData(data) {
 }
 
 /**
-* Loose port of Lodash#set with "." as the delimiter, see https://lodash.com/docs#set
-*
-* @param {object} object - object to update
-* @param {string} path - path to set in the form `a.0.b.c`
-* @param {any} value - value to set to
-*/
+ * Loose port of Lodash#set with "." as the delimiter, see https://lodash.com/docs#set
+ *
+ * @param {object} object - object to update
+ * @param {string} path - path to set in the form `a.0.b.c`
+ * @param {any} value - value to set to
+ */
 export function set(object, path, value) {
     const [nextProperty, ...rest] = path.split('.');
     if (rest.length === 0) {
@@ -38,7 +38,9 @@ export function set(object, path, value) {
     return object
 }
 
-export function waitForAlpine(cb, {maxAttempts = 3, interval = 500, delayFirstAttempt = false } = {}) {
+// with default options, will run 3 attempts, 1 at 0s, 1 at 500ms, 1 at 1000ms
+// so should hook into Alpine.js if it loads within 1s of the script triggering
+export function waitForAlpine(cb, { maxAttempts = 3, interval = 500, delayFirstAttempt = false } = {}) {
     let attempts = delayFirstAttempt ? 0 : 1;
     if (!delayFirstAttempt && window.Alpine) {
         console.info(`waitForAlpine, attempts: ${attempts}/${maxAttempts}`);
