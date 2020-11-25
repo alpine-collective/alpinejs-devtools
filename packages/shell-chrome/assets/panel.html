@@ -172,7 +172,11 @@
                             class="mr-1.5 h-2 w-2 transition transition-colors duration-700 ease-in-out" fill="currentColor" viewBox="0 0 8 8">
                                 <circle cx="4" cy="4" r="3" />
                             </svg>
-                            <span x-text="detected"></span>
+                            <a
+                                :class="isLatest ? 'pointer-events-none' : ''"
+                                :href="isLatest ? '#' : 'https://github.com/alpinejs/alpine/releases'"
+                                x-text="detected"
+                            ></a>
                         </div>
                     </div>
                 </div>
