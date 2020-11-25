@@ -24,6 +24,7 @@ if (process.env.ROLLUP_WATCH === 'true') {
 }
 
 const JS_INPUTS = [
+    'packages/shell-chrome/src/backend.js',
     'packages/shell-chrome/src/background.js',
     'packages/shell-chrome/src/devtools-background.js',
     'packages/shell-chrome/src/proxy.js',
