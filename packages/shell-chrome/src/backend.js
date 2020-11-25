@@ -3,15 +3,19 @@ import { waitForAlpine, set } from './utils';
 window.addEventListener("message", handshake);
 window.__alpineDevtool = {};
 
+function startAlpineBackend() {
+    getAlpineVersion();
+    discoverComponents();
+
+    document.querySelectorAll("[x-data]").forEach((el) => observeNode(el));
+}
+
 function handshake(e) {
     if (e.data.source === "alpine-devtools-proxy" && e.data.payload === "init") {
         window.removeEventListener("message", handshake);
         window.addEventListener("message", handleMessages);
 
-        getAlpineVersion();
-        discoverComponents();
-
-        document.querySelectorAll("[x-data]").forEach((el) => observeNode(el));
+        waitForAlpine(() => startAlpineBackend());
     }
 }
 
@@ -86,7 +90,7 @@ function getComponentName(element) {
     if (element.id) {
         return element.id
     }
-    
+
     const nameAttr = element.getAttribute('name');
     if (nameAttr) {
         return nameAttr
@@ -108,7 +112,7 @@ function getComponentName(element) {
     if (xDataAttr.endsWith(")") && !xDataAttr.startsWith("{")) {
         return xDataAttr.split('(')[0]
     }
-    
+
     const roleAttr = element.getAttribute('role');
     if (roleAttr) {
         return roleAttr;
