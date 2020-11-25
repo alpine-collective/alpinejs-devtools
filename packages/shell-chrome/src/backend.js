@@ -5,7 +5,7 @@ window.__alpineDevtool = {}
 
 function startAlpineBackend() {
     getAlpineVersion()
-discoverComponents()
+    discoverComponents()
 
     document.querySelectorAll('[x-data]').forEach((el) => observeNode(el))
 }
