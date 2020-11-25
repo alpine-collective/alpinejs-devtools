@@ -8,6 +8,43 @@ export function flattenData(data) {
     return flattenedData;
 }
 
+/**
+* Loose port of Lodash#set with "." as the delimiter, see https://lodash.com/docs#set
+*
+* @param {object} object - object to update
+* @param {string} path - path to set in the form `a.0.b.c`
+* @param {any} value - value to set to
+*/
+export function set(object, path, value) {
+    const [nextProperty, ...rest] = path.split('.');
+    if (rest.length === 0) {
+        object[nextProperty] = value;
+        return object;
+    }
+    set(object[nextProperty], rest.join('.'), value);
+    return object
+}
+
+export function waitForAlpine(cb, {maxAttempts = 3, interval = 500 } = {}) {
+    let attempts = 1;
+    if (window.Alpine) {
+        console.info(`waitForAlpine, attempts: ${attempts}/${maxAttempts}`);
+        cb();
+        return;
+    }
+    const timer = setInterval(wait, interval);
+    function wait() {
+        attempts++;
+        console.info(`waitForAlpine, attempts: ${attempts}/${maxAttempts}`);
+        if (attempts >= maxAttempts || window.Alpine) {
+            clearInterval(timer);
+        }
+        if (window.Alpine) {
+            cb();
+        }
+    }
+}
+
 function mapDataTypeToInputType(dataType) {
     switch (dataType) {
         case 'boolean':
