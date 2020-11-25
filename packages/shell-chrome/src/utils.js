@@ -1,24 +1,24 @@
 export function fetchWithTimeout(resource, options) {
-    const { timeout = 3000 } = options;
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeout);
+    const { timeout = 3000 } = options
+    const controller = new AbortController()
+    const timer = setTimeout(() => controller.abort(), timeout)
     return fetch(resource, { ...options, signal: controller.signal }).then((res) => {
-        clearTimeout(timer);
+        clearTimeout(timer)
         if (!res.ok) {
-            throw new Error('Request not ok');
+            throw new Error('Request not ok')
         }
-        return res.json();
-    });
+        return res.json()
+    })
 }
 
 export function flattenData(data) {
-    let flattenedData = [];
+    let flattenedData = []
 
     for (var key in data) {
-        flattenSingleAttribute(flattenedData, key, data[key].value, data[key].type);
+        flattenSingleAttribute(flattenedData, key, data[key].value, data[key].type)
     }
 
-    return flattenedData;
+    return flattenedData
 }
 
 /**
@@ -29,34 +29,34 @@ export function flattenData(data) {
  * @param {any} value - value to set to
  */
 export function set(object, path, value) {
-    const [nextProperty, ...rest] = path.split('.');
+    const [nextProperty, ...rest] = path.split('.')
     if (rest.length === 0) {
-        object[nextProperty] = value;
-        return object;
+        object[nextProperty] = value
+        return object
     }
-    set(object[nextProperty], rest.join('.'), value);
+    set(object[nextProperty], rest.join('.'), value)
     return object
 }
 
 // with default options, will run 3 attempts, 1 at 0s, 1 at 500ms, 1 at 1000ms
 // so should hook into Alpine.js if it loads within 1s of the script triggering
 export function waitForAlpine(cb, { maxAttempts = 3, interval = 500, delayFirstAttempt = false } = {}) {
-    let attempts = delayFirstAttempt ? 0 : 1;
+    let attempts = delayFirstAttempt ? 0 : 1
     if (!delayFirstAttempt && window.Alpine) {
-        console.info(`waitForAlpine, attempts: ${attempts}/${maxAttempts}`);
-        cb();
-        return;
+        console.info(`waitForAlpine, attempts: ${attempts}/${maxAttempts}`)
+        cb()
+        return
     }
     if (attempts >= maxAttempts) return
-    const timer = setInterval(wait, interval);
+    const timer = setInterval(wait, interval)
     function wait() {
-        attempts++;
-        console.info(`waitForAlpine, attempts: ${attempts}/${maxAttempts}`);
+        attempts++
+        console.info(`waitForAlpine, attempts: ${attempts}/${maxAttempts}`)
         if (attempts >= maxAttempts || window.Alpine) {
-            clearInterval(timer);
+            clearInterval(timer)
         }
         if (window.Alpine) {
-            cb();
+            cb()
         }
     }
 }
@@ -64,22 +64,22 @@ export function waitForAlpine(cb, { maxAttempts = 3, interval = 500, delayFirstA
 function mapDataTypeToInputType(dataType) {
     switch (dataType) {
         case 'boolean':
-            return 'checkbox';
+            return 'checkbox'
         case 'number':
-            return 'number';
+            return 'number'
         // strings will fall through to "text"
         default:
-            return 'text';
+            return 'text'
     }
 }
 
 export function convertInputDataToType(inputType, value) {
     switch (inputType) {
         case 'number':
-            return parseFloat(value);
+            return parseFloat(value)
         // checkbox and text are already the right type
         default:
-            return value;
+            return value
     }
 }
 
@@ -89,23 +89,15 @@ export function flattenSingleAttribute(
     value,
     type,
     margin = 0,
-    id = "",
-    directParentId = '',
+    id = '',
+    directParentId = ''
 ) {
-    const generatedId = id ? id : attributeName;
+    const generatedId = id ? id : attributeName
 
     flattenedData.push({
         attributeName: attributeName,
-        attributeValue: Array.isArray(value)
-            ? `Array[${value.length}]`
-            : value instanceof Object
-                ? "Object"
-                : value,
-        editAttributeValue: Array.isArray(value)
-            ? "Array"
-            : value instanceof Object
-                ? "Object"
-                : value,
+        attributeValue: Array.isArray(value) ? `Array[${value.length}]` : value instanceof Object ? 'Object' : value,
+        editAttributeValue: Array.isArray(value) ? 'Array' : value instanceof Object ? 'Object' : value,
         depth: margin,
         hasArrow: value instanceof Object,
         readOnly: type === 'function',
@@ -115,12 +107,12 @@ export function flattenSingleAttribute(
         inEditingMode: false,
         isOpened: id.length == 0,
         isArrowDown: false,
-        directParentId: directParentId
-    });
+        directParentId: directParentId,
+    })
 
     if (Array.isArray(value)) {
         value.forEach((val, index) => {
-            const elementId = id ? id : attributeName;
+            const elementId = id ? id : attributeName
             flattenSingleAttribute(
                 flattenedData,
                 index,
@@ -129,11 +121,11 @@ export function flattenSingleAttribute(
                 margin + 10,
                 `${elementId}.${index}`,
                 elementId
-            );
-        });
+            )
+        })
     } else if (value instanceof Object) {
         Object.entries(value).forEach(([objectKey, objectValue]) => {
-            const elementId = id ? id : attributeName;
+            const elementId = id ? id : attributeName
             flattenSingleAttribute(
                 flattenedData,
                 objectKey,
@@ -142,7 +134,7 @@ export function flattenSingleAttribute(
                 margin + 10,
                 `${elementId}.${objectKey}`,
                 elementId
-            );
-        });
+            )
+        })
     }
 }
