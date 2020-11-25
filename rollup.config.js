@@ -12,45 +12,57 @@ if (process.env.ROLLUP_WATCH === 'true') {
         try {
             console.info(`Copying asset "${filename}" to dist/chrome`);
             fs.copyFileSync(path.join('./packages/shell-chrome/assets/', filename), path.join('./dist/chrome', filename));
-        } catch(e) {
+        } catch (e) {
             console.error(e);
         }
     });
 }
 
-export default {
-    input: [
-        'packages/shell-chrome/src/background.js',
-        'packages/shell-chrome/src/devtools-background.js',
-        'packages/shell-chrome/src/backend.js',
-        'packages/shell-chrome/src/panel.js',
-        'packages/shell-chrome/src/proxy.js',
-        'packages/shell-chrome/src/detector.js',
-    ],
-    output: {
-        dir: 'dist/chrome'
-    },
-    plugins: [
-        resolve(),
-        postcss({
-            extract: 'styles.css',
-        }),
-        copy({
-            targets: [
-                {
-                    src: 'packages/shell-chrome/assets/**/*',
-                    dest: 'dist/chrome',
-                },
-                {
-                    src: 'packages/shell-chrome/assets/manifest.json',
-                    dest: 'dist/chrome',
-                    // inject version into manifest
-                    transform(contents) {
-                        return contents.toString().replace('__version__', pkg.version)
+export default [
+    {
+        input: [
+            'packages/shell-chrome/src/background.js',
+            'packages/shell-chrome/src/devtools-background.js',
+            'packages/shell-chrome/src/panel.js',
+            'packages/shell-chrome/src/proxy.js',
+            'packages/shell-chrome/src/detector.js',
+        ],
+        output: {
+            dir: 'dist/chrome'
+        },
+        plugins: [
+            resolve(),
+            postcss({
+                extract: 'styles.css',
+            }),
+            copy({
+                targets: [
+                    {
+                        src: 'packages/shell-chrome/assets/**/*',
+                        dest: 'dist/chrome',
+                    },
+                    {
+                        src: 'packages/shell-chrome/assets/manifest.json',
+                        dest: 'dist/chrome',
+                        // inject version into manifest
+                        transform(contents) {
+                            return contents.toString().replace('__version__', pkg.version)
+                        }
                     }
-                }
-            ]
-        }),
-        filesize(),
-    ],
-}
+                ]
+            }),
+            filesize(),
+        ],
+    },
+    {
+        // separate out otherwise rollup tries to create a common "utils" chunk
+        input: 'packages/shell-chrome/src/backend.js',
+        output: {
+            dir: 'dist/chrome'
+        },
+        plugins: [
+            resolve(),
+            filesize(),
+        ]
+    }
+]
