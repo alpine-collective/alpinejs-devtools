@@ -1,4 +1,5 @@
 import { isFirefox } from './env';
+import { waitForAlpine } from './utils';
 
 window.addEventListener('message', e => {
   if (e.source === window && e.data.alpineDetected) {
@@ -6,12 +7,12 @@ window.addEventListener('message', e => {
   }
 })
 
-function detect (win) {
-  setTimeout(() => {
-    win.postMessage({
-      alpineDetected: !!window.Alpine
-    })
-  }, 100)
+function detect(win) {
+    waitForAlpine(() => {
+        win.postMessage({
+            alpineDetected: !!window.Alpine
+        })
+    }, { maxAttempts: 3, interval: 250, delayFirstAttempt: true })
 }
 
 // inject the hook

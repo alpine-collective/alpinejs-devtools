@@ -25,9 +25,9 @@ export function set(object, path, value) {
     return object
 }
 
-export function waitForAlpine(cb, {maxAttempts = 3, interval = 500 } = {}) {
-    let attempts = 1;
-    if (window.Alpine) {
+export function waitForAlpine(cb, {maxAttempts = 3, interval = 500, delayFirstAttempt = false } = {}) {
+    let attempts = delayFirstAttempt ? 0 : 1;
+    if (!delayFirstAttempt && window.Alpine) {
         console.info(`waitForAlpine, attempts: ${attempts}/${maxAttempts}`);
         cb();
         return;
