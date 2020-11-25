@@ -18,15 +18,31 @@ if (process.env.ROLLUP_WATCH === 'true') {
     });
 }
 
+const JS_INPUTS = [
+    'packages/shell-chrome/src/background.js',
+    'packages/shell-chrome/src/devtools-background.js',
+    'packages/shell-chrome/src/proxy.js',
+    'packages/shell-chrome/src/detector.js',
+]
+
+const MIXED_INPUT = [
+    'packages/shell-chrome/src/panel.js',
+]
+
 export default [
-    {
-        input: [
-            'packages/shell-chrome/src/background.js',
-            'packages/shell-chrome/src/devtools-background.js',
-            'packages/shell-chrome/src/panel.js',
-            'packages/shell-chrome/src/proxy.js',
-            'packages/shell-chrome/src/detector.js',
-        ],
+    // create standalone builds to avoid rollup creating a common "utils" chunk
+    ...JS_INPUTS.map((input) => ({
+        input,
+        output: {
+            dir: 'dist/chrome'
+        },
+        plugins: [
+            resolve(),
+            filesize()
+        ]
+    })),
+    ...MIXED_INPUT.map((input) => ({
+        input,
         output: {
             dir: 'dist/chrome'
         },
@@ -53,16 +69,5 @@ export default [
             }),
             filesize(),
         ],
-    },
-    {
-        // separate out otherwise rollup tries to create a common "utils" chunk
-        input: 'packages/shell-chrome/src/backend.js',
-        output: {
-            dir: 'dist/chrome'
-        },
-        plugins: [
-            resolve(),
-            filesize(),
-        ]
-    }
+    }))
 ]
