@@ -8,7 +8,7 @@ export default class State {
         this.renderedComponentId = null;
         this.version = {
             detected: null,
-            latest: dependencies.alpinejs.version || '2.7.3',
+            latest: dependencies.alpinejs.version,
         };
     }
 
