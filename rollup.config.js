@@ -33,7 +33,10 @@ const JS_INPUTS = [
     'packages/shell-chrome/src/detector.js',
 ]
 
-const MIXED_INPUT = ['packages/shell-chrome/src/component-inspector/panel.js', isWatch && 'dev-wrapper/dev.js']
+const MIXED_INPUT = ['packages/shell-chrome/src/component-inspector/panel.js']
+if (isWatch) {
+    MIXED_INPUT.push('dev-wrapper/dev.js')
+}
 
 export default [
     // create standalone builds to avoid rollup creating a common "utils" chunk
