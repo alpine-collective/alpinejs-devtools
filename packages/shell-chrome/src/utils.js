@@ -138,3 +138,35 @@ export function flattenSingleAttribute(
         })
     }
 }
+
+export function getComponentName(element) {
+    return (
+        element.getAttribute('x-title') ||
+        element.getAttribute('x-id') ||
+        element.id ||
+        element.getAttribute('name') ||
+        findWireID(element.getAttribute('wire:id')) ||
+        element.getAttribute('aria-label') ||
+        element.getAttribute('role') ||
+        convertFunctionName(element.getAttribute('x-data')) ||
+        element.tagName.toLowerCase()
+    )
+}
+
+// TODO: Not sure how to test this
+function findWireID(wireId) {
+    if (wireId && window.livewire) {
+        try {
+            const wire = window.livewire.find(wireId)
+
+            if (wire.__instance) {
+                return 'livewire:' + wire.__instance.fingerprint.name
+            }
+        } catch (e) {}
+    }
+}
+
+function convertFunctionName(functionName) {
+    if (functionName.indexOf('{') === 0) return
+    return functionName.replace(/\(([^\)]+)\)/, '').replace('()', '')
+}
