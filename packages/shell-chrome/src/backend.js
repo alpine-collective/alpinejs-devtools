@@ -144,6 +144,9 @@ function discoverComponents(isThroughMutation = false) {
 
         const data = Object.entries(rootEl.__x.getUnobservedData()).reduce((acc, [key, value]) => {
             const type = typeof value
+            if (value instanceof HTMLElement) {
+                value = 'HTMLElement'
+            }
             acc[key] = {
                 value: type === 'function' ? 'function' : value,
                 type,
