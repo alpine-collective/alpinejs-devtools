@@ -147,8 +147,8 @@ export function getComponentName(element) {
         element.getAttribute('name') ||
         findWireID(element.getAttribute('wire:id')) ||
         element.getAttribute('aria-label') ||
-        element.getAttribute('role') ||
         convertFunctionName(element.getAttribute('x-data')) ||
+        element.getAttribute('role') ||
         element.tagName.toLowerCase()
     )
 }

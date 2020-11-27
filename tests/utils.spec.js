@@ -5,7 +5,7 @@ import { waitFor } from '@testing-library/dom'
 test('getComponentName > will try mutltiple scenarios to determine component name', async () => {
     window.myFn = () => {}
     document.body.innerHTML = `
-        <div x-title="foo" x-id="bar" id="baz" name="qux" aria-label="quux" role="quuz" x-data="myFn()"></div>
+        <div x-title="foo" x-id="bar" id="baz" name="qux" aria-label="quux" x-data="myFn()" role="quuz"></div>
     `
 
     const element = document.querySelector('[x-data]')
@@ -20,9 +20,9 @@ test('getComponentName > will try mutltiple scenarios to determine component nam
     element.removeAttribute('name')
     expect(getComponentName(element)).toBe('quux')
     element.removeAttribute('aria-label')
-    expect(getComponentName(element)).toBe('quuz')
-    element.removeAttribute('role')
     expect(getComponentName(element)).toBe('myFn')
     element.setAttribute('x-data', '{ foo: "bar" }')
+    expect(getComponentName(element)).toBe('quuz')
+    element.removeAttribute('role')
     expect(getComponentName(element)).toBe('div')
 })
