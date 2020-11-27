@@ -32,8 +32,22 @@ function handleMessages(e) {
         if (e.data.payload.action == 'hover') {
             Alpine.discoverComponents((component) => {
                 if (component.__alpineDevtool && component.__alpineDevtool.id == e.data.payload.componentId) {
-                    component.__alpineDevtool.backgroundColor = component.__x.$el.style.backgroundColor
-                    component.__x.$el.style.backgroundColor = 'rgba(104, 182, 255, 0.35)'
+                    let hoverElement = document.createElement('div')
+                    let bounds = component.__x.$el.getBoundingClientRect()
+
+                    Object.assign(hoverElement.style, {
+                        position: 'absolute',
+                        top: bounds.top + 'px',
+                        left: bounds.left + 'px',
+                        width: bounds.width + 'px',
+                        height: bounds.height + 'px',
+                        backgroundColor: 'rgba(104, 182, 255, 0.35)',
+                        borderRadius: '4px',
+                        zIndex: 9999,
+                    })
+
+                    component.__alpineDevtool.hoverElement = hoverElement
+                    document.body.appendChild(component.__alpineDevtool.hoverElement)
                 }
                 setTimeout(() => {
                     window.__alpineDevtool.stopMutationObserver = false
@@ -46,7 +60,7 @@ function handleMessages(e) {
 
             Alpine.discoverComponents((component) => {
                 if (component.__alpineDevtool && component.__alpineDevtool.id === e.data.payload.componentId) {
-                    component.__x.$el.style.backgroundColor = component.__alpineDevtool.backgroundColor
+                    component.__alpineDevtool.hoverElement.remove()
                 }
             })
             setTimeout(() => {
