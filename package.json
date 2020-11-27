@@ -5,12 +5,13 @@
     "description": "DevTools extension for debugging Alpine.js applications. ",
     "homepage": "https://github.com/alpine-collective/alpinejs-devtools",
     "scripts": {
+        "start": "npm run watch",
         "dev": "rollup -c",
         "prod": "NODE_ENV=production rollup -c",
         "watch": "rollup -c -w",
         "test": "jest",
-        "format": "prettier './{packages/**/,}*.{js,html,css}' --write",
-        "check:format": "prettier './{packages/**/,}*.{js,html,css}' -c",
+        "format": "prettier './{packages/**/,dev-wrapper/,}*.{js,html,css}' --write",
+        "check:format": "prettier './{packages/**/,dev-wrapper/,}*.{js,html,css}' -c",
         "prepackage": "npm run prod",
         "package": "cd ./dist/chrome && zip -r ../alpine-devtools-$npm_package_version.zip . && rm -rf ../chrome"
     },
@@ -31,6 +32,7 @@
         "rollup-plugin-copy": "^3.3.0",
         "rollup-plugin-filesize": "^7.0.0",
         "rollup-plugin-postcss": "^3.1.8",
+        "rollup-plugin-serve": "^1.1.0",
         "tailwindcss": "^1.9.6"
     },
     "dependencies": {},

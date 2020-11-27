@@ -1,19 +1,10 @@
-import './style.css'
-import State from './state'
-import 'alpinejs'
-
-// inject util function(s) for panel.html Alpine app
-import { fetchWithTimeout } from './utils'
-
-window.fetchWithTimeout = fetchWithTimeout
+/* Entrypoint for Extension pane, see also panel.html */
+import { init, handleMessage } from './app'
 
 function connect() {
     injectScript(chrome.runtime.getURL('./backend.js'), () => {
-        const alpineState = new State()
-        window.alpineState = alpineState
-        window.__alpineDevtool = {}
+        init()
 
-        // 2. connect to background to setup proxy
         const port = chrome.runtime.connect({
             name: '' + chrome.devtools.inspectedWindow.tabId,
         })
@@ -27,18 +18,7 @@ function connect() {
         port.onMessage.addListener(function (message) {
             // ignore further messages
             if (disconnected) return
-            if (message.type === 'render-components') {
-                // message.components is a serialised JSON string
-                alpineState.renderComponentsFromBackend(JSON.parse(message.components))
-
-                window.__alpineDevtool.port = port
-            }
-
-            if (message.type === 'set-version') {
-                alpineState.setAlpineVersionFromBackend(message.version)
-
-                window.__alpineDevtool.port = port
-            }
+            handleMessage(message, port)
         })
     })
 }
