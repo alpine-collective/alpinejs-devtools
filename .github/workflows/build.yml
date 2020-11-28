@@ -13,7 +13,6 @@ jobs:
 
     env:
       CI: true
-      CYPRESS_INSTALL_BINARY: "0"
 
     steps:
     - uses: actions/checkout@v2
@@ -25,6 +24,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: install
       run: npm ci
+      env:
+        CYPRESS_INSTALL_BINARY: "0"
     - name: build
       run: npm run package
     - name: Archive production artifacts
