@@ -24,6 +24,8 @@ function handleMessages(e) {
         if (e.data.payload === 'shutdown') {
             window.removeEventListener('message', handleMessages)
             window.addEventListener('message', handshake)
+
+            cleanupWindowHoverElement()
             disconnectObserver()
             return
         }
@@ -32,6 +34,8 @@ function handleMessages(e) {
         if (e.data.payload.action == 'hover') {
             Alpine.discoverComponents((component) => {
                 if (component.__alpineDevtool && component.__alpineDevtool.id == e.data.payload.componentId) {
+                    cleanupWindowHoverElement()
+
                     let hoverElement = document.createElement('div')
                     let bounds = component.__x.$el.getBoundingClientRect()
 
@@ -46,8 +50,8 @@ function handleMessages(e) {
                         zIndex: 9999,
                     })
 
-                    component.__alpineDevtool.hoverElement = hoverElement
-                    document.body.appendChild(component.__alpineDevtool.hoverElement)
+                    window.__alpineDevtool.hoverElement = hoverElement
+                    document.body.appendChild(window.__alpineDevtool.hoverElement)
                 }
                 setTimeout(() => {
                     window.__alpineDevtool.stopMutationObserver = false
@@ -60,7 +64,7 @@ function handleMessages(e) {
 
             Alpine.discoverComponents((component) => {
                 if (component.__alpineDevtool && component.__alpineDevtool.id === e.data.payload.componentId) {
-                    component.__alpineDevtool.hoverElement.remove()
+                    cleanupWindowHoverElement()
                 }
             })
             setTimeout(() => {
@@ -226,5 +230,11 @@ function observeNode(node) {
 function disconnectObserver() {
     if (observer) {
         observer.disconnect()
+    }
+}
+
+function cleanupWindowHoverElement() {
+    if (window.__alpineDevtool.hoverElement) {
+        window.__alpineDevtool.hoverElement.remove()
     }
 }
