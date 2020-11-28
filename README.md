@@ -61,7 +61,7 @@ We have 2 levels of tests in the project:
 
 -   unit tests in [./tests](./tests), written and run with [Jest](https://jestjs.io)
     -   The command to run them is `npm test`.
--   _Coming soon_ (see [#81](https://github.com/alpine-collective/alpinejs-devtools/issues/81)) E2E tests that run against the Devtools simulator, in [./cypress](./cypress), using [Cypress](https://cypress.io).
+-   E2E tests that run against the Devtools simulator, in [./cypress](./cypress), using [Cypress](https://cypress.io).
     -   The command to run Cypress tests is `npm run cy:run`
     -   The command to open the Cypress UI is `npm run cy:open`
     -   **Note** in order to run any Cypress tests, you'll need the simulator running (see [Running the Alpine.js Devtools Simulator](#running-the-alpinejs-devtools-simulator)).
