@@ -13,6 +13,7 @@ jobs:
 
     env:
       CI: true
+      CYPRESS_INSTALL_BINARY: "0"
 
     steps:
     - uses: actions/checkout@v2
@@ -37,3 +38,8 @@ jobs:
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
         commit_message: Apply formatting changes
+    - name: Cypress run
+      uses: cypress-io/github-action@v2
+      with:
+        start: npm start
+        command: npm run cy:run
