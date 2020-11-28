@@ -1,4 +1,4 @@
-import { flattenData, convertInputDataToType } from './utils'
+import { flattenData, convertInputDataToType } from '../utils'
 
 export default class State {
     constructor() {
