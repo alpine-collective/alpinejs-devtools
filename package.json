@@ -10,8 +10,8 @@
         "prod": "NODE_ENV=production rollup -c",
         "watch": "rollup -c -w",
         "test": "jest",
-        "format": "prettier './{packages/**/,dev-wrapper/,}*.{js,html,css}' --write",
-        "check:format": "prettier './{packages/**/,dev-wrapper/,}*.{js,html,css}' -c",
+        "format": "prettier './{packages/**/,}*.{js,html,css}' --write",
+        "check:format": "prettier './{packages/**/,}*.{js,html,css}' -c",
         "prepackage": "npm run prod",
         "package": "cd ./dist/chrome && zip -r ../alpine-devtools-$npm_package_version.zip . && rm -rf ../chrome"
     },

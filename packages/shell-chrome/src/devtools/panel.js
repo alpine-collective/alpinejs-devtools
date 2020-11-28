@@ -1,4 +1,4 @@
-/* Entrypoint for Extension pane, see also panel.html */
+/* Entrypoint for Extension panel, integrates with Devtools/extension APIs, see also panel.html, app.js */
 import { init, handleMessage } from './app'
 
 function connect() {

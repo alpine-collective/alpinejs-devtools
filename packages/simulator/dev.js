@@ -5,7 +5,7 @@ let isInitialised = false
 function initProxy(window, targetWindow) {
     window.addEventListener('message', async (event) => {
         if (event.data.source === 'alpine-devtools-backend') {
-            const { init, handleMessage } = await import('../packages/shell-chrome/src/component-inspector/app')
+            const { init, handleMessage } = await import('../shell-chrome/src/devtools/app')
             // message from backend -> app
             if (!isInitialised) {
                 console.log('initialising panel')
@@ -39,7 +39,7 @@ async function main() {
     await injectPanel(document.querySelector('#devtools-container'))
 
     // 1. load user app
-    target.src = './target.html'
+    target.src = './example.html'
     target.onload = () => {
         // 1. inject backend script to "target" iframe
         inject('/backend.js', () => {

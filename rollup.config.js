@@ -33,9 +33,9 @@ const JS_INPUTS = [
     'packages/shell-chrome/src/detector.js',
 ]
 
-const MIXED_INPUT = ['packages/shell-chrome/src/component-inspector/panel.js']
+const MIXED_INPUT = ['packages/shell-chrome/src/devtools/panel.js']
 if (isWatch) {
-    MIXED_INPUT.push('dev-wrapper/dev.js')
+    MIXED_INPUT.push('packages/simulator/dev.js')
 }
 
 export default [
@@ -86,7 +86,7 @@ export default [
             isWatch &&
                 serve({
                     port: process.env.PORT || 8080,
-                    contentBase: ['./dist/chrome', './dev-wrapper', './node_modules/alpinejs/dist'],
+                    contentBase: ['./dist/chrome', './packages/simulator', './node_modules/alpinejs/dist'],
                 }),
         ],
     })),

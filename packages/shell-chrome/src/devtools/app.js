@@ -1,4 +1,5 @@
-import '../style.css'
+/* Extension API-agnostic application setup */
+import './style.css'
 import 'alpinejs'
 import State from './state'
 import { fetchWithTimeout } from '../utils'
