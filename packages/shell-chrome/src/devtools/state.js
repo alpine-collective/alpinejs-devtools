@@ -55,6 +55,7 @@ export default class State {
 
     setAlpineVersionFromBackend(version) {
         this.version.detected = version
+        this.updateXdata()
     }
 
     renderComponentData(component) {

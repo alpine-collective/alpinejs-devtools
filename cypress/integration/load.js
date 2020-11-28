@@ -1,0 +1,20 @@
+const { AlpineVersion } = require('../support/index')
+it('should load devtools', () => {
+    cy.visit('/')
+        .get('#devtools-container .preload')
+        .should('be.visible')
+        .contains('Devtools loading...')
+        .get('#devtools-container .preload')
+        .should('not.be.visible')
+        .get('[data-testid=status-line]')
+        .contains('Alpine.js tools loading')
+        .window()
+        .its('Alpine.version')
+        .should('equal', AlpineVersion)
+
+    cy.get('[data-testid=status-line]')
+        .should('have.attr', 'title', 'Latest Version')
+        .contains(`Alpine.js v${AlpineVersion} detected`)
+
+    cy.get('[data-testid=component-name]').should('have.length', 5)
+})
