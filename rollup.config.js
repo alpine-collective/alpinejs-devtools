@@ -48,6 +48,7 @@ export default [
         plugins: [
             replace({
                 __alpine_version__: dependencies.alpinejs.version,
+                'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
             }),
             resolve(),
             filesize(),
@@ -61,6 +62,7 @@ export default [
         plugins: [
             replace({
                 __alpine_version__: dependencies.alpinejs.version,
+                'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
             }),
             resolve(),
             postcss({
