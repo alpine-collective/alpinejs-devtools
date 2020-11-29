@@ -27,6 +27,7 @@
         "@testing-library/jest-dom": "^5.5.0",
         "alpinejs": "^2.7.3",
         "cypress": "^6.0.0",
+        "cypress-iframe": "^1.0.1",
         "husky": "^4.3.0",
         "jest": "^25.4.0",
         "lint-staged": "^10.5.2",

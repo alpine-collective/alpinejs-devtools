@@ -49,6 +49,7 @@ function handleMessages(e) {
                         borderRadius: '4px',
                         zIndex: 9999,
                     })
+                    hoverElement.dataset.testid = 'hover-element'
 
                     window.__alpineDevtool.hoverElement = hoverElement
                     document.body.appendChild(window.__alpineDevtool.hoverElement)

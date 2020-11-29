@@ -1,6 +1,4 @@
-const { dependencies } = require('../../package-lock.json')
-const AlpineVersion = dependencies.alpinejs.version
+import './commands'
 
-module.exports = {
-    AlpineVersion,
-}
+import { dependencies } from '../../package-lock.json'
+export const AlpineVersion = dependencies.alpinejs.version

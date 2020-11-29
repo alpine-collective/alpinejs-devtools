@@ -20,7 +20,7 @@ function initProxy(window, targetWindow) {
             targetWindow.postMessage(
                 {
                     source: 'alpine-devtools-proxy',
-                    payload: event.data,
+                    payload: (event.data && event.data.payload) || event.data,
                 },
                 '*'
             )
