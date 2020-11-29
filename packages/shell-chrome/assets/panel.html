@@ -168,6 +168,7 @@
                             'bg-green-100 text-green-700': showTools && isLatest,
                             'bg-orange-100 text-orange-700': showTools && !isLatest,
                         }"
+                                data-testid="status-line"
                                 class="flex items-center px-1 py-0.5 rounded text-xs font-medium leading-4 transition transition-colors duration-700 ease-in-out"
                                 :title="isLatest? 'Latest Version' : `Latest Version: ${latest}`"
                             >

@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2020 Ahmed Mohamed Abd El Ftah
+Copyright (c) 2020 Ahmed Mohamed Abd El Ftah, Alpine Collective and Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

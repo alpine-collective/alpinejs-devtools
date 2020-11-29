@@ -24,6 +24,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: install
       run: npm ci
+      env:
+        CYPRESS_INSTALL_BINARY: "0"
     - name: build
       run: npm run package
     - name: Archive production artifacts
@@ -37,3 +39,8 @@ jobs:
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
         commit_message: Apply formatting changes
+    - name: Cypress run
+      uses: cypress-io/github-action@v2
+      with:
+        start: npm start
+        command: npm run cy:run

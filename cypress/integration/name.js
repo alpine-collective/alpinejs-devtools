@@ -1,0 +1,13 @@
+it('should get names of components', () => {
+    cy.visit('/')
+        .get('[data-testid=component-name]')
+        .contains('div')
+        .get('[data-testid=component-name]')
+        .contains('app')
+        .get('[data-testid=component-name]')
+        .contains('myFn')
+        .get('[data-testid=component-name]')
+        .contains('component')
+        .get('[data-testid=component-name]')
+        .contains('combobox')
+})
