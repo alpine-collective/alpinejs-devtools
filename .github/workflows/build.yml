@@ -48,3 +48,4 @@ jobs:
       with:
         start: npm start
         command: npm run cy:run
+        install: false
