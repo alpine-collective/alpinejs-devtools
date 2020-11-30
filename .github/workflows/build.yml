@@ -55,4 +55,8 @@ jobs:
         key: cypress-cache-v1-${{ runner.os }}-${{ hashFiles('**/package.json') }}
     # install Cypress binary
     - run: npx cypress install && npx cypress cache list
-    - run: npm run cy:run
+    - uses: cypress-io/github-action@v2
+      with:
+        start: npm start
+        command: npm run cy:run
+        install: false
