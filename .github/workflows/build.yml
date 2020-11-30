@@ -43,9 +43,16 @@ jobs:
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
         commit_message: Apply formatting changes
-    - name: Cypress run
-      uses: cypress-io/github-action@v2
+    # see https://github.com/bahmutov/cypress-gh-action-split-install
+    - run: npx cypress cache path && npx cypress cache list
+    # restore / cache the binary ourselves on Linux
+    # see https://github.com/actions/cache
+    - name: Cache Cypress
+      id: cache-cypress
+      uses: actions/cache@v1
       with:
-        start: npm start
-        command: npm run cy:run
-        install: false
+        path: ~/.cache/Cypress
+        key: cypress-cache-v1-${{ runner.os }}-${{ hashFiles('**/package.json') }}
+    # install Cypress binary
+    - run: npx cypress install && npx cypress cache list
+    - run: npm run cy:run
