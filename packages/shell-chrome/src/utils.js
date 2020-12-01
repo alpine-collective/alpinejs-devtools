@@ -176,8 +176,9 @@ function findLiveViewName(alpineEl) {
     if (phxEl) {
         // pretty sure we could do the following instead
         // return phxEl.dataset.phxView;
+        if (!window.liveSocket.getViewByEl) return
         const view = window.liveSocket.getViewByEl(phxEl)
-        return view.name && view.name
+        return view && view.name
     }
 }
 
