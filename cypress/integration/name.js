@@ -1,0 +1,10 @@
+it('should get names of components', () => {
+    cy.visit('/')
+        .get('[data-testid=component-name]')
+        .should('be.visible')
+        .should('contain.text', 'div')
+        .should('contain.text', 'app')
+        .should('contain.text', 'myFn')
+        .should('contain.text', 'component')
+        .should('contain.text', 'combobox')
+})

@@ -3,13 +3,15 @@ import replace from '@rollup/plugin-replace'
 import copy from 'rollup-plugin-copy'
 import resolve from '@rollup/plugin-node-resolve'
 import postcss from 'rollup-plugin-postcss'
+import serve from 'rollup-plugin-serve'
 import pkg from './package.json'
 import { dependencies } from './package-lock.json'
 
 import fs from 'fs'
 import path from 'path'
 
-if (process.env.ROLLUP_WATCH === 'true') {
+const isWatch = process.env.ROLLUP_WATCH === 'true'
+if (isWatch) {
     fs.watch('./packages/shell-chrome/assets', { recursive: true }, (_event, filename) => {
         try {
             console.info(`Copying asset "${filename}" to dist/chrome`)
@@ -31,7 +33,10 @@ const JS_INPUTS = [
     'packages/shell-chrome/src/detector.js',
 ]
 
-const MIXED_INPUT = ['packages/shell-chrome/src/panel.js']
+const MIXED_INPUT = ['packages/shell-chrome/src/devtools/panel.js']
+if (isWatch) {
+    MIXED_INPUT.push('packages/simulator/dev.js')
+}
 
 export default [
     // create standalone builds to avoid rollup creating a common "utils" chunk
@@ -43,6 +48,7 @@ export default [
         plugins: [
             replace({
                 __alpine_version__: dependencies.alpinejs.version,
+                'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
             }),
             resolve(),
             filesize(),
@@ -56,6 +62,7 @@ export default [
         plugins: [
             replace({
                 __alpine_version__: dependencies.alpinejs.version,
+                'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
             }),
             resolve(),
             postcss({
@@ -78,6 +85,11 @@ export default [
                 ],
             }),
             filesize(),
+            isWatch &&
+                serve({
+                    port: process.env.PORT || 8080,
+                    contentBase: ['./dist/chrome', './packages/simulator', './node_modules/alpinejs/dist'],
+                }),
         ],
     })),
 ]
