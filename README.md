@@ -22,11 +22,15 @@ Check the following screenshot with it enabled:
 
 ![Allow access to file URLs permission](docs/alpine-devtools-chrome-permission.png)
 
-To help with inspection, component "names" are be computed from the following attributes (if present and in order of precedence): id, name, x-data function name (if a function is used), tag name.
+## Identifying Components
 
-![Naming a component example](docs/alpine-devtools-component-name.png)
+Unlike other frameworks, Alpine doesn't include named components. Therefore by default, Alpine DevTools will attempt to identify component names from the following attributes, in order: `id`, `name`, `aria-label`, `x-data` (the function name), `role`, and finally the `tagName`.
 
-### Development
+> You may also override these with either `x-title` or `x-id`.
+
+## Development
+
+### Chrome
 
 1. Clone this repo
 2. Run `npm install`
@@ -34,7 +38,7 @@ To help with inspection, component "names" are be computed from the following at
 4. Load unpacked extension inside [dist/chrome](./dist/chrome) directory
 5. Open any html file that imports Alpine.js then inspect with Chrome Devtools, you'll have an Alpine.js panel available.
 
-#### Installing the dev extension on Firefox
+### Firefox
 
 1. Follow the [Development](#development) instructions to get a development build.
 2. Go to [about:debugging#/runtime/this-firefox](about:debugging#/runtime/this-firefox) in Firefox
@@ -74,6 +78,6 @@ On push, a GitHub Action will auto-format your changes.
 
 On commit, there's a husky + lint-staged hook that runs and auto-formats your changes (unless you disable pre-commit hooks).
 
-### License
+## License
 
 [MIT](LICENSE.md)

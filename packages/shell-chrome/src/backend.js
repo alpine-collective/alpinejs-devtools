@@ -1,4 +1,4 @@
-import { waitForAlpine, set } from './utils'
+import { getComponentName, set, waitForAlpine } from './utils'
 
 window.addEventListener('message', handshake)
 window.__alpineDevtool = {}
@@ -94,41 +94,6 @@ function handleMessages(e) {
             })
         }
     }
-}
-
-// See https://github.com/Te7a-Houdini/alpinejs-devtools/issues/28#issuecomment-616719252
-function getComponentName(element) {
-    if (element.id) {
-        return element.id
-    }
-
-    const nameAttr = element.getAttribute('name')
-    if (nameAttr) {
-        return nameAttr
-    }
-
-    const wireIdAttr = element.getAttribute('wire:id')
-    if (wireIdAttr && window.livewire) {
-        try {
-            const wire = window.livewire.find(wireIdAttr)
-
-            if (wire.__instance) {
-                return 'livewire:' + wire.__instance.fingerprint.name
-            }
-        } catch (e) {}
-    }
-
-    const xDataAttr = element.getAttribute('x-data').trim()
-    // match `x-data="someFunctionName()"` but not `x-data="{ hello: 'world' }"`
-    if (xDataAttr.endsWith(')') && !xDataAttr.startsWith('{')) {
-        return xDataAttr.split('(')[0]
-    }
-
-    const roleAttr = element.getAttribute('role')
-    if (roleAttr) {
-        return roleAttr
-    }
-    return element.tagName.toLowerCase()
 }
 
 function discoverComponents(isThroughMutation = false) {
