@@ -147,7 +147,7 @@ export function getComponentName(element) {
         element.getAttribute('name') ||
         findWireID(element.getAttribute('wire:id')) ||
         element.getAttribute('aria-label') ||
-        convertFunctionName(element.getAttribute('x-data')) ||
+        extractFunctionName(element.getAttribute('x-data')) ||
         element.getAttribute('role') ||
         element.tagName.toLowerCase()
     )
@@ -166,7 +166,9 @@ function findWireID(wireId) {
     }
 }
 
-function convertFunctionName(functionName) {
-    if (functionName.indexOf('{') === 0) return
-    return functionName.replace(/\(([^\)]+)\)/, '').replace('()', '')
+function extractFunctionName(functionName) {
+    if (functionName.startsWith('{')) return
+    return functionName
+        .replace(/\(([^\)]+)\)/, '') // Handles myFunction(param)
+        .replace('()', '')
 }

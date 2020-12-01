@@ -1,11 +1,9 @@
-import Alpine from 'alpinejs'
-import { getComponentName, convertFunctionName } from '../packages/shell-chrome/src/utils'
-import { waitFor } from '@testing-library/dom'
+import { getComponentName } from '../packages/shell-chrome/src/utils'
 
-test('getComponentName > will try mutltiple scenarios to determine component name', async () => {
+test('getComponentName > can handle multiple scenarios to determine component name', async () => {
     window.myFn = () => {}
     document.body.innerHTML = `
-        <div x-title="foo" x-id="bar" id="baz" name="qux" aria-label="quux" x-data="myFn()" role="quuz"></div>
+        <div x-title="foo" x-id="bar" id="baz" name="qux" aria-label="quux" x-data="myFn(param)" role="quuz"></div>
     `
 
     const element = document.querySelector('[x-data]')
