@@ -150,6 +150,7 @@ export function getComponentName(element) {
         element.id ||
         element.getAttribute('name') ||
         findWireID(element.getAttribute('wire:id')) ||
+        findLiveViewName(element) ||
         element.getAttribute('aria-label') ||
         extractFunctionName(element.getAttribute('x-data')) ||
         element.getAttribute('role') ||
@@ -167,6 +168,17 @@ function findWireID(wireId) {
                 return 'livewire:' + wire.__instance.fingerprint.name
             }
         } catch (e) {}
+    }
+}
+
+function findLiveViewName(alpineEl) {
+    const phxEl = alpineEl.closest('[data-phx-view]')
+    if (phxEl) {
+        // pretty sure we could do the following instead
+        // return phxEl.dataset.phxView;
+        if (!window.liveSocket.getViewByEl) return
+        const view = window.liveSocket.getViewByEl(phxEl)
+        return view && view.name
     }
 }
 
