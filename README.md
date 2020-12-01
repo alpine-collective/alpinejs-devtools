@@ -24,9 +24,9 @@ You can allow it by following these steps:
 
 ## Identifying Components
 
-To help with inspection, component "names" are be computed from the following attributes (if present and in order of precedence): id, name, x-data function name (if a function is used), tag name.
+Unlike other frameworks, Alpine does not include named components. Therefore by default, Alpine.js devtools will attempt to identify component names from the following attributes, in order: `id`, `name`, `aria-label`, `x-data` (the function name), `role`, and finally the `tagName`.
 
-![Naming a component example](docs/alpine-devtools-component-name.png)
+> You may also override these with either `x-title` or `x-id`.
 
 ## Development
 
@@ -78,6 +78,6 @@ On push, a GitHub Action will auto-format your changes.
 
 On commit, there's a husky + lint-staged hook that runs and auto-formats your changes (unless you disable pre-commit hooks).
 
-### License
+## License
 
 [MIT](LICENSE.md)
