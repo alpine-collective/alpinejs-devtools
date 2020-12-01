@@ -37,6 +37,8 @@ jobs:
       with:
         name: alpine-devtools
         path: dist
+    - name: unit tests
+      run: npm t
     - name: check formatting
       run: npm run format
     - name: Commit changes
