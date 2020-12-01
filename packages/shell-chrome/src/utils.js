@@ -142,3 +142,49 @@ export function flattenSingleAttribute(
         })
     }
 }
+
+export function getComponentName(element) {
+    return (
+        element.getAttribute('x-title') ||
+        element.getAttribute('x-id') ||
+        element.id ||
+        element.getAttribute('name') ||
+        findWireID(element.getAttribute('wire:id')) ||
+        findLiveViewName(element) ||
+        element.getAttribute('aria-label') ||
+        extractFunctionName(element.getAttribute('x-data')) ||
+        element.getAttribute('role') ||
+        element.tagName.toLowerCase()
+    )
+}
+
+// TODO: Not sure how to test this
+function findWireID(wireId) {
+    if (wireId && window.livewire) {
+        try {
+            const wire = window.livewire.find(wireId)
+
+            if (wire.__instance) {
+                return 'livewire:' + wire.__instance.fingerprint.name
+            }
+        } catch (e) {}
+    }
+}
+
+function findLiveViewName(alpineEl) {
+    const phxEl = alpineEl.closest('[data-phx-view]')
+    if (phxEl) {
+        // pretty sure we could do the following instead
+        // return phxEl.dataset.phxView;
+        if (!window.liveSocket.getViewByEl) return
+        const view = window.liveSocket.getViewByEl(phxEl)
+        return view && view.name
+    }
+}
+
+function extractFunctionName(functionName) {
+    if (functionName.startsWith('{')) return
+    return functionName
+        .replace(/\(([^\)]+)\)/, '') // Handles myFunction(param)
+        .replace('()', '')
+}
