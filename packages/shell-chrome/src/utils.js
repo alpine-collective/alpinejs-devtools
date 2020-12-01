@@ -43,7 +43,9 @@ export function set(object, path, value) {
 export function waitForAlpine(cb, { maxAttempts = 3, interval = 500, delayFirstAttempt = false } = {}) {
     let attempts = delayFirstAttempt ? 0 : 1
     if (!delayFirstAttempt && window.Alpine) {
-        console.info(`waitForAlpine, attempts: ${attempts}/${maxAttempts}`)
+        if (process.env.NODE_ENV !== 'production') {
+            console.info(`waitForAlpine, attempts: ${attempts}/${maxAttempts}`)
+        }
         cb()
         return
     }
@@ -51,7 +53,9 @@ export function waitForAlpine(cb, { maxAttempts = 3, interval = 500, delayFirstA
     const timer = setInterval(wait, interval)
     function wait() {
         attempts++
-        console.info(`waitForAlpine, attempts: ${attempts}/${maxAttempts}`)
+        if (process.env.NODE_ENV !== 'production') {
+            console.info(`waitForAlpine, attempts: ${attempts}/${maxAttempts}`)
+        }
         if (attempts >= maxAttempts || window.Alpine) {
             clearInterval(timer)
         }

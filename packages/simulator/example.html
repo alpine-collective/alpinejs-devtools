@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Alpine.js Devtools Example</title>
+        <!-- <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script> -->
+        <!-- Rollup server is configured to serve contents of node_modules/alpinejs/dist, see rollup.config.js -->
+        <!-- Uncomment the following script to use that version, eg. when working offline -->
+        <script src="/alpine.js" defer></script>
+    </head>
+
+    <body>
+        <div x-data="{ bool: true, num: 5, str: 'string', arr: ['world', 'bar']}">
+            <div>Bool, type: "<span x-text="typeof bool"></span>", value: "<span x-text="bool"></span>"</div>
+            <div>Num, type: "<span x-text="typeof num"></span>", value: "<span x-text="num"></span>"</div>
+            <div>Str, type: "<span x-text="typeof str"></span>", value: "<span x-text="str"></span>"</div>
+            <div>
+                Arr, type: "<span x-text="typeof arr"></span>", value (stringified): "<span
+                    x-text="JSON.stringify(arr)"
+                ></span
+                >"
+            </div>
+        </div>
+        <div id="app" x-data="{ hello: 'world' }">
+            <span x-text="hello"></span>
+        </div>
+        <div x-data="myFn()">
+            <span x-text="hello"></span>
+        </div>
+        <div name="component" x-data="{ hello: 'world' }">
+            <span x-text="hello"></span>
+        </div>
+        <div role="combobox" x-data="{ hello: 'world' }">
+            <span x-text="hello"></span>
+        </div>
+        <script>
+            function myFn() {
+                return {
+                    hello: 'world',
+                }
+            }
+        </script>
+    </body>
+</html>

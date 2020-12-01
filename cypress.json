@@ -1,0 +1,7 @@
+{
+    "baseUrl": "http://localhost:8080",
+    "video": false,
+    "fixturesFolder": false,
+    "pluginsFile": false,
+    "chromeWebSecurity": false
+}

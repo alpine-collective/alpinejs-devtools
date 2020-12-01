@@ -1,4 +1,4 @@
-import { flattenData, convertInputDataToType } from './utils'
+import { flattenData, convertInputDataToType } from '../utils'
 
 export default class State {
     constructor() {
@@ -55,6 +55,7 @@ export default class State {
 
     setAlpineVersionFromBackend(version) {
         this.version.detected = version
+        this.updateXdata()
     }
 
     renderComponentData(component) {
