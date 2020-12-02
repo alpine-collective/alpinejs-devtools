@@ -310,9 +310,9 @@
                                                 <a
                                                     :style="`margin-left: ${singleData.depth}px; `"
                                                     @click="alpineState.toggleDataAttribute(singleData)"
-                                                    class="block px-1 rounded"
+                                                    class="block px-1 rounded hover:bg-blue-100"
                                                     :class="{
-                                                    'hover:bg-blue-100 cursor-pointer': !singleData.readOnly
+                                                    'cursor-pointer': singleData.hasArrow
                                                 }"
                                                     x-show="singleData.isOpened"
                                                 >

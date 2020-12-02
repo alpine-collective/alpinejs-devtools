@@ -1,4 +1,4 @@
-import { getComponentName, set, waitForAlpine } from './utils'
+import { getComponentName, serializeHTMLElement, set, waitForAlpine } from './utils'
 
 window.addEventListener('message', handshake)
 window.__alpineDevtool = {}
@@ -86,7 +86,8 @@ function handleMessages(e) {
                         data[attributeSequence] = attributeValue
                     }
 
-                    component.__x.$el.setAttribute('x-data', JSON.stringify(data))
+                    component.__x.$data = data
+                    component.__x.updateElements(component)
                 }
                 setTimeout(() => {
                     window.__alpineDevtool.stopMutationObserver = false
@@ -127,13 +128,9 @@ function discoverComponents(isThroughMutation = false) {
         }
 
         const data = Object.entries(rootEl.__x.getUnobservedData()).reduce((acc, [key, value]) => {
-            const type = typeof value
-            if (value instanceof HTMLElement) {
-                value = 'HTMLElement'
-            }
             acc[key] = {
-                value: type === 'function' ? 'function' : value,
-                type,
+                value: value instanceof HTMLElement ? serializeHTMLElement(value) : value,
+                type: value instanceof HTMLElement ? 'HTMLElement' : typeof value,
             }
             return acc
         }, {})
