@@ -302,7 +302,11 @@
 
                                                         <span class="text-black">:</span>
 
-                                                        <div data-testid="data-property-value-container" class="text-black ml-1" x-show="!singleData.inEditingMode">
+                                                        <div
+                                                            data-testid="data-property-value-container"
+                                                            class="text-black ml-1"
+                                                            x-show="!singleData.inEditingMode"
+                                                        >
                                                             <template x-if="singleData.dataType == 'string'">
                                                                 &quot;<span
                                                                     class="text-red-700"
@@ -321,9 +325,7 @@
                                                             <template
                                                                 x-if="['string', 'boolean'].includes(singleData.dataType) === false"
                                                             >
-                                                                <span
-                                                                    x-text="singleData.attributeValue"
-                                                                ></span>
+                                                                <span x-text="singleData.attributeValue"></span>
                                                             </template>
                                                         </div>
                                                     </h5>
