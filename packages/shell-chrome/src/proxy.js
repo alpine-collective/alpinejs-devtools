@@ -20,7 +20,7 @@ function proxy() {
                 source: 'alpine-devtools-proxy',
                 payload: payload,
             },
-            '*'
+            '*',
         )
     }
 

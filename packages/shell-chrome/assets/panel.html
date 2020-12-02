@@ -272,9 +272,9 @@
                                                 <a
                                                     :style="`margin-left: ${singleData.depth}px; `"
                                                     @click="alpineState.toggleDataAttribute(singleData)"
-                                                    class="block px-1 rounded"
+                                                    class="block px-1 rounded hover:bg-blue-100"
                                                     :class="{
-                                                    'hover:bg-blue-100 cursor-pointer': !singleData.readOnly
+                                                    'cursor-pointer': singleData.hasArrow
                                                 }"
                                                     x-show="singleData.isOpened"
                                                 >
@@ -302,12 +302,15 @@
 
                                                         <span class="text-black">:</span>
 
-                                                        <div class="text-black ml-1" x-show="!singleData.inEditingMode">
+                                                        <div
+                                                            data-testid="data-property-value-container"
+                                                            class="text-black ml-1"
+                                                            x-show="!singleData.inEditingMode"
+                                                        >
                                                             <template x-if="singleData.dataType == 'string'">
                                                                 &quot;<span
                                                                     class="text-red-700"
                                                                     x-text="singleData.attributeValue"
-                                                                    data-testid="data-property-value"
                                                                 ></span
                                                                 >&quot;
                                                             </template>
@@ -316,17 +319,13 @@
                                                                 <span
                                                                     class="text-blue-700"
                                                                     x-text="singleData.attributeValue"
-                                                                    data-testid="data-property-value"
                                                                 ></span>
                                                             </template>
 
                                                             <template
                                                                 x-if="['string', 'boolean'].includes(singleData.dataType) === false"
                                                             >
-                                                                <span
-                                                                    x-text="singleData.attributeValue"
-                                                                    data-testid="data-property-value"
-                                                                ></span>
+                                                                <span x-text="singleData.attributeValue"></span>
                                                             </template>
                                                         </div>
                                                     </h5>

@@ -17,7 +17,7 @@ if (isWatch) {
             console.info(`Copying asset "${filename}" to dist/chrome`)
             fs.copyFileSync(
                 path.join('./packages/shell-chrome/assets/', filename),
-                path.join('./dist/chrome', filename)
+                path.join('./dist/chrome', filename),
             )
         } catch (e) {
             console.error(e)

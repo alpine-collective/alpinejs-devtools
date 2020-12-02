@@ -87,6 +87,33 @@ export function convertInputDataToType(inputType, value) {
     }
 }
 
+function getAttributeValue(value, type) {
+    const overrides = {
+        function: 'function',
+        HTMLElement: 'HTMLElement',
+    }
+    if (overrides[type]) return overrides[type]
+    if (Array.isArray(value)) return `Array[${value.length}]`
+    if (value instanceof Object) return 'Object'
+    return value
+}
+
+// Thank you! https://stackoverflow.com/a/54273003/1437789
+export function serializeHTMLElement(element) {
+    let object = {}
+    object.name = element.localName
+    object.attributes = []
+    object.children = []
+    Array.from(element.attributes).forEach((attribute) => {
+        object.attributes.push({ name: attribute.name, value: attribute.value })
+    })
+    Array.from(element.children).forEach((child) => {
+        object.children.push(serializeHTMLElement(child))
+    })
+
+    return object
+}
+
 export function flattenSingleAttribute(
     flattenedData,
     attributeName,
@@ -94,17 +121,18 @@ export function flattenSingleAttribute(
     type,
     margin = 0,
     id = '',
-    directParentId = ''
+    directParentId = '',
+    readOnlyChildren = type === 'HTMLElement',
 ) {
     const generatedId = id ? id : attributeName
 
     flattenedData.push({
         attributeName: attributeName,
-        attributeValue: Array.isArray(value) ? `Array[${value.length}]` : value instanceof Object ? 'Object' : value,
+        attributeValue: getAttributeValue(value, type),
         editAttributeValue: Array.isArray(value) ? 'Array' : value instanceof Object ? 'Object' : value,
         depth: margin,
         hasArrow: value instanceof Object,
-        readOnly: type === 'function',
+        readOnly: readOnlyChildren || ['undefined', 'function', 'HTMLElement'].includes(type),
         dataType: type,
         inputType: mapDataTypeToInputType(type),
         id: generatedId,
@@ -124,7 +152,8 @@ export function flattenSingleAttribute(
                 typeof val,
                 margin + 10,
                 `${elementId}.${index}`,
-                elementId
+                elementId,
+                readOnlyChildren,
             )
         })
     } else if (value instanceof Object) {
@@ -137,7 +166,8 @@ export function flattenSingleAttribute(
                 typeof objectValue,
                 margin + 10,
                 `${elementId}.${objectKey}`,
-                elementId
+                elementId,
+                readOnlyChildren,
             )
         })
     }

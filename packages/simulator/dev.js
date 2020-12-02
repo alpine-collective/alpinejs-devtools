@@ -22,7 +22,7 @@ function initProxy(window, targetWindow) {
                     source: 'alpine-devtools-proxy',
                     payload: (event.data && event.data.payload) || event.data,
                 },
-                '*'
+                '*',
             )
             return
         }

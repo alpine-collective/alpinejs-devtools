@@ -1,4 +1,4 @@
-import { getComponentName, set, waitForAlpine } from './utils'
+import { getComponentName, serializeHTMLElement, set, waitForAlpine } from './utils'
 
 window.addEventListener('message', handshake)
 window.__alpineDevtool = {}
@@ -76,17 +76,8 @@ function handleMessages(e) {
         if (e.data.payload.action == 'editAttribute') {
             Alpine.discoverComponents((component) => {
                 if (component.__alpineDevtool.id == e.data.payload.componentId) {
-                    const data = component.__x.getUnobservedData()
                     const { attributeSequence, attributeValue } = e.data.payload
-
-                    // nested path descriptor, eg. array.0.property needs to update array[0].property
-                    if (attributeSequence.includes('.')) {
-                        set(data, attributeSequence, attributeValue)
-                    } else {
-                        data[attributeSequence] = attributeValue
-                    }
-
-                    component.__x.$el.setAttribute('x-data', JSON.stringify(data))
+                    set(component.__x.$data, attributeSequence, attributeValue)
                 }
                 setTimeout(() => {
                     window.__alpineDevtool.stopMutationObserver = false
@@ -127,10 +118,14 @@ function discoverComponents(isThroughMutation = false) {
         }
 
         const data = Object.entries(rootEl.__x.getUnobservedData()).reduce((acc, [key, value]) => {
-            const type = typeof value
             acc[key] = {
-                value: type === 'function' ? 'function' : value,
-                type,
+                value:
+                    value instanceof HTMLElement
+                        ? serializeHTMLElement(value)
+                        : typeof value === 'function'
+                        ? 'function'
+                        : value,
+                type: value instanceof HTMLElement ? 'HTMLElement' : typeof value,
             }
             return acc
         }, {})
@@ -158,7 +153,7 @@ function discoverComponents(isThroughMutation = false) {
                 isThroughMutation: isThroughMutation,
             },
         },
-        '*'
+        '*',
     )
 }
 
@@ -171,7 +166,7 @@ function getAlpineVersion() {
                 type: 'set-version',
             },
         },
-        '*'
+        '*',
     )
 }
 

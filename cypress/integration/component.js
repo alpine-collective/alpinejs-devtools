@@ -75,3 +75,52 @@ it('should add/remove hover overlay on component mouseenter/leave', () => {
     })
     cy.iframe('#target').find('[data-testid=hover-element]').should('not.exist')
 })
+
+it('should allow display read-only function/HTMLElement attributes', () => {
+    cy.visit('/')
+
+    cy.get('[data-testid=component-container]').first().should('be.visible').click()
+
+    cy.get('[data-testid=data-property-name]')
+        .should('be.visible')
+        .contains('myFunction')
+        .siblings('[data-testid=data-property-value-container]')
+        .should('contain.text', 'function')
+
+    cy.get('[data-testid=data-property-name]')
+        .contains('el')
+        .siblings('[data-testid=data-property-value-container]')
+        .should('contain.text', 'HTMLElement')
+        .as('elValue')
+        .click()
+
+    // check nested attributes
+    cy.get('[data-testid=data-property-name]')
+        .contains('name')
+        .as('elName')
+        .should('be.visible')
+        .siblings('[data-testid=data-property-value-container]')
+        .should('contain.text', 'div')
+    cy.get('[data-testid=data-property-name]')
+        .contains('attributes')
+        .as('elAttributes')
+        .should('be.visible')
+        .siblings('[data-testid=data-property-value-container]')
+        .should('contain.text', 'Array[1]')
+    cy.get('[data-testid=data-property-name]')
+        .contains('children')
+        .as('elChildren')
+        .should('be.visible')
+        .siblings('[data-testid=data-property-value-container]')
+        .should('contain.text', 'Array[5]')
+
+    // check they toggle off
+    cy.get('@elValue').click()
+
+    cy.get('@elName')
+        .should('not.be.visible')
+        .get('@elAttributes')
+        .should('not.be.visible')
+        .get('@elChildren')
+        .should('not.be.visible')
+})

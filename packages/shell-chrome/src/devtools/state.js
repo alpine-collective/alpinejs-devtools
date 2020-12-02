@@ -72,8 +72,6 @@ export default class State {
     }
 
     toggleDataAttribute(attribute) {
-        // don't toggle anything if the attribute is read-only
-        if (attribute.readOnly) return
         if (attribute.hasArrow) {
             let childrenIdLength = attribute.id.split('.').length + 1
 
@@ -163,7 +161,7 @@ export default class State {
         if (this._hasNoDevtools('saveEditing')) return
         clickedAttribute.attributeValue = convertInputDataToType(
             clickedAttribute.inputType,
-            clickedAttribute.editAttributeValue
+            clickedAttribute.editAttributeValue,
         )
         clickedAttribute.inEditingMode = false
 
