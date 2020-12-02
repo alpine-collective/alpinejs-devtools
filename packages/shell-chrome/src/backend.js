@@ -87,6 +87,49 @@ function handleMessages(e) {
     }
 }
 
+function serializeDataProperty(value) {
+    if (value instanceof HTMLElement) {
+        return {
+            value: serializeHTMLElement(value),
+            type: 'HTMLElement',
+            __gen: true,
+        }
+    }
+    const typeOfValue = typeof value
+    if (typeOfValue === 'function') {
+        return {
+            value: 'function',
+            type: 'function',
+            __gen: true,
+        }
+    }
+    if (Array.isArray(value)) {
+        return {
+            value: value.map((item) => serializeDataProperty(item)),
+            type: typeOfValue,
+            __gen: true,
+        }
+    }
+    if (typeOfValue === 'object') {
+        return {
+            value: Object.fromEntries(
+                Object.entries(value).map(([propertyName, propertyValue]) => [
+                    propertyName,
+                    serializeDataProperty(propertyValue),
+                ]),
+            ),
+            type: typeOfValue,
+            __gen: true,
+        }
+    }
+
+    return {
+        value: value,
+        type: typeOfValue,
+        __gen: true,
+    }
+}
+
 function discoverComponents(isThroughMutation = false) {
     var rootEls = document.querySelectorAll('[x-data]')
 
@@ -118,15 +161,7 @@ function discoverComponents(isThroughMutation = false) {
         }
 
         const data = Object.entries(rootEl.__x.getUnobservedData()).reduce((acc, [key, value]) => {
-            acc[key] = {
-                value:
-                    value instanceof HTMLElement
-                        ? serializeHTMLElement(value)
-                        : typeof value === 'function'
-                        ? 'function'
-                        : value,
-                type: value instanceof HTMLElement ? 'HTMLElement' : typeof value,
-            }
+            acc[key] = serializeDataProperty(value)
             return acc
         }, {})
 

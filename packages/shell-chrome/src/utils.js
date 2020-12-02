@@ -104,12 +104,12 @@ export function serializeHTMLElement(element) {
     object.name = element.localName
     object.attributes = []
     object.children = []
-    Array.from(element.attributes).forEach((attribute) => {
-        object.attributes.push({ name: attribute.name, value: attribute.value })
-    })
-    Array.from(element.children).forEach((child) => {
-        object.children.push(serializeHTMLElement(child))
-    })
+    // Array.from(element.attributes).forEach((attribute) => {
+    //     object.attributes.push({ name: attribute.name, value: attribute.value })
+    // })
+    // Array.from(element.children).forEach((child) => {
+    //     object.children.push(serializeHTMLElement(child))
+    // })
 
     return object
 }
@@ -148,17 +148,60 @@ export function flattenSingleAttribute(
             flattenSingleAttribute(
                 flattenedData,
                 index,
-                val,
-                typeof val,
+                val.__gen ? val.value : val,
+                val.__gen ? val.type : typeof val,
                 margin + 10,
                 `${elementId}.${index}`,
                 elementId,
                 readOnlyChildren,
             )
+            if (!val.__gen) {
+                console.warn('going through un-generated array')
+            }
         })
     } else if (value instanceof Object) {
+        if (value.__gen) {
+            flattenedData.push({
+                attributeName: attributeName,
+                attributeValue: getAttributeValue(value.value, value.type),
+                editAttributeValue: Array.isArray(value.value)
+                    ? 'Array'
+                    : value.value instanceof Object
+                    ? 'Object'
+                    : value.value,
+                depth: margin,
+                hasArrow: value.type === 'object',
+                readOnly: readOnlyChildren || ['undefined', 'function', 'HTMLElement'].includes(value.type),
+                dataType: type,
+                inputType: mapDataTypeToInputType(value.type),
+                id: generatedId,
+                inEditingMode: false,
+                isOpened: id.length == 0,
+                isArrowDown: false,
+                directParentId: directParentId,
+            })
+            return
+        }
+        console.log('not generated 1', value)
         Object.entries(value).forEach(([objectKey, objectValue]) => {
             const elementId = id ? id : attributeName
+
+            if (objectValue.__gen) {
+                flattenSingleAttribute(
+                    flattenedData,
+                    objectKey,
+                    objectValue.value,
+                    objectValue.type,
+                    margin + 10,
+                    `${elementId}.${objectKey}`,
+                    elementId,
+                    readOnlyChildren,
+                )
+                return
+            }
+
+            console.log('not generated 2', objectValue)
+
             flattenSingleAttribute(
                 flattenedData,
                 objectKey,
