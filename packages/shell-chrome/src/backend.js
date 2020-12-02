@@ -129,7 +129,12 @@ function discoverComponents(isThroughMutation = false) {
 
         const data = Object.entries(rootEl.__x.getUnobservedData()).reduce((acc, [key, value]) => {
             acc[key] = {
-                value: value instanceof HTMLElement ? serializeHTMLElement(value) : value,
+                value:
+                    value instanceof HTMLElement
+                        ? serializeHTMLElement(value)
+                        : typeof value === 'function'
+                        ? 'function'
+                        : value,
                 type: value instanceof HTMLElement ? 'HTMLElement' : typeof value,
             }
             return acc
