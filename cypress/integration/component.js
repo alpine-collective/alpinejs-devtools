@@ -76,7 +76,7 @@ it('should add/remove hover overlay on component mouseenter/leave', () => {
     cy.iframe('#target').find('[data-testid=hover-element]').should('not.exist')
 })
 
-it.only('should allow display read-only function/HTMLElement attributes', () => {
+it('should allow display read-only function/HTMLElement attributes', () => {
     cy.visit('/')
 
     cy.get('[data-testid=component-container]').first().should('be.visible').click()
