@@ -158,7 +158,7 @@ function discoverComponents(isThroughMutation = false) {
                 isThroughMutation: isThroughMutation,
             },
         },
-        '*'
+        '*',
     )
 }
 
@@ -171,7 +171,7 @@ function getAlpineVersion() {
                 type: 'set-version',
             },
         },
-        '*'
+        '*',
     )
 }
 

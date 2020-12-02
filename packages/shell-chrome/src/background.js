@@ -44,7 +44,7 @@ function installProxy(tabId) {
             } else {
                 console.log('injected proxy to tab ' + tabId)
             }
-        }
+        },
     )
 }
 

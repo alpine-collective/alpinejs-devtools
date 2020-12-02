@@ -161,7 +161,7 @@ export default class State {
         if (this._hasNoDevtools('saveEditing')) return
         clickedAttribute.attributeValue = convertInputDataToType(
             clickedAttribute.inputType,
-            clickedAttribute.editAttributeValue
+            clickedAttribute.editAttributeValue,
         )
         clickedAttribute.inEditingMode = false
 
