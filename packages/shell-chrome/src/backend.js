@@ -76,18 +76,8 @@ function handleMessages(e) {
         if (e.data.payload.action == 'editAttribute') {
             Alpine.discoverComponents((component) => {
                 if (component.__alpineDevtool.id == e.data.payload.componentId) {
-                    const data = component.__x.getUnobservedData()
                     const { attributeSequence, attributeValue } = e.data.payload
-
-                    // nested path descriptor, eg. array.0.property needs to update array[0].property
-                    if (attributeSequence.includes('.')) {
-                        set(data, attributeSequence, attributeValue)
-                    } else {
-                        data[attributeSequence] = attributeValue
-                    }
-
-                    component.__x.$data = data
-                    component.__x.updateElements(component)
+                    set(component.__x.$data, attributeSequence, attributeValue)
                 }
                 setTimeout(() => {
                     window.__alpineDevtool.stopMutationObserver = false
