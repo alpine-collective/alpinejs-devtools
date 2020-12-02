@@ -340,12 +340,11 @@
 
                                                         <span class="text-black">:</span>
 
-                                                        <div class="text-black ml-1" x-show="!singleData.inEditingMode">
+                                                        <div data-testid="data-property-value-container" class="text-black ml-1" x-show="!singleData.inEditingMode">
                                                             <template x-if="singleData.dataType == 'string'">
                                                                 &quot;<span
                                                                     class="text-red-700"
                                                                     x-text="singleData.attributeValue"
-                                                                    data-testid="data-property-value"
                                                                 ></span
                                                                 >&quot;
                                                             </template>
@@ -354,7 +353,6 @@
                                                                 <span
                                                                     class="text-blue-700"
                                                                     x-text="singleData.attributeValue"
-                                                                    data-testid="data-property-value"
                                                                 ></span>
                                                             </template>
 
@@ -363,7 +361,6 @@
                                                             >
                                                                 <span
                                                                     x-text="singleData.attributeValue"
-                                                                    data-testid="data-property-value"
                                                                 ></span>
                                                             </template>
                                                         </div>
