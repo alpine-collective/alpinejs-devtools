@@ -121,7 +121,7 @@ function discoverComponents(isThroughMutation = false) {
             acc[key] = {
                 value:
                     value instanceof HTMLElement
-                        ? serializeHTMLElement(value)
+                        ? serializeHTMLElement(value, { include: ['children', 'attributes'] })
                         : typeof value === 'function'
                         ? 'function'
                         : value,

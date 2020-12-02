@@ -99,17 +99,23 @@ function getAttributeValue(value, type) {
 }
 
 // Thank you! https://stackoverflow.com/a/54273003/1437789
-export function serializeHTMLElement(element) {
-    let object = {}
-    object.name = element.localName
-    object.attributes = []
-    object.children = []
-    Array.from(element.attributes).forEach((attribute) => {
-        object.attributes.push({ name: attribute.name, value: attribute.value })
-    })
-    Array.from(element.children).forEach((child) => {
-        object.children.push(serializeHTMLElement(child))
-    })
+// modified for perf reasons, we don't want to get the full DOM tree of descendents
+export function serializeHTMLElement(element, { include = [] } = {}) {
+    let object = { name: element.localName }
+    if (include.includes('attributes')) {
+        object.attributes = Array.from(element.attributes).map((attribute) => ({
+            name: attribute.name,
+            value: attribute.value,
+        }))
+    }
+    // `include` is used to avoid getting the children of children.
+    // For the top-level iteration, children are included,
+    // in the recursive case they're not
+    if (include.includes('children')) {
+        object.children = Array.from(element.children).map((child) =>
+            serializeHTMLElement(child, { include: ['attributes'] }),
+        )
+    }
 
     return object
 }
