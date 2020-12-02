@@ -125,7 +125,7 @@ export function flattenSingleAttribute(
     readOnlyChildren = type === 'HTMLElement'
 ) {
     const generatedId = id ? id : attributeName
-    console.log(value instanceof Object)
+
     flattenedData.push({
         attributeName: attributeName,
         attributeValue: getAttributeValue(value, type),
