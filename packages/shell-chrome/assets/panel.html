@@ -369,7 +369,7 @@
                                                                 @keydown.enter.stop="alpineState.saveEditing(singleData)"
                                                                 @keydown.escape.stop="alpineState.cancelEditing(singleData)"
                                                                 class="flex text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-2/3 shadow appearance-none border rounded py-1 px-1"
-                                                                type="text"
+                                                                :type="singleData.dataType"
                                                                 x-model="singleData.editAttributeValue"
                                                             />
 
