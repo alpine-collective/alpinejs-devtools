@@ -122,7 +122,7 @@ export function flattenSingleAttribute(
     margin = 0,
     id = '',
     directParentId = '',
-    readOnlyChildren = type === 'HTMLElement'
+    readOnlyChildren = type === 'HTMLElement',
 ) {
     const generatedId = id ? id : attributeName
 
@@ -153,7 +153,7 @@ export function flattenSingleAttribute(
                 margin + 10,
                 `${elementId}.${index}`,
                 elementId,
-                readOnlyChildren
+                readOnlyChildren,
             )
         })
     } else if (value instanceof Object) {
@@ -167,7 +167,7 @@ export function flattenSingleAttribute(
                 margin + 10,
                 `${elementId}.${objectKey}`,
                 elementId,
-                readOnlyChildren
+                readOnlyChildren,
             )
         })
     }
