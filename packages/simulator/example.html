@@ -11,7 +11,16 @@
 
     <body>
         <div
-            x-data="{ el: $el, myFunction() { return true }, bool: true, num: 5, str: 'string', arr: ['world', 'bar'], nested: {array: [ { hello: 'world' }]}}"
+            x-data="{
+                el: $el,
+                els: [$el],
+                nested: { el: $el, nestedFn() {}, array: [ { hello: 'world' }] },
+                myFunction() { return true },
+                bool: true,
+                num: 5,
+                str: 'string',
+                arr: ['world', 'bar']
+            }"
         >
             <div>Bool, type: "<span x-text="typeof bool"></span>", value: "<span x-text="bool"></span>"</div>
             <div>Num, type: "<span x-text="typeof num"></span>", value: "<span x-text="num"></span>"</div>
