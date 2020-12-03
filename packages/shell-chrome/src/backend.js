@@ -1,4 +1,4 @@
-import { getComponentName, serializeHTMLElement, set, waitForAlpine } from './utils'
+import { getComponentName, isSerializable, serializeHTMLElement, set, waitForAlpine } from './utils'
 
 window.addEventListener('message', handshake)
 window.__alpineDevtool = {}
@@ -98,7 +98,7 @@ function serializeDataProperty(value) {
     const typeOfValue = typeof value
     if (typeOfValue === 'function') {
         return {
-            value: 'function',
+            // value field is unused for `function` type
             type: 'function',
             __gen: true,
         }
@@ -123,8 +123,15 @@ function serializeDataProperty(value) {
         }
     }
 
+    if (!isSerializable(value)) {
+        return {
+            // value field is unused for `Unserializable` type
+            type: 'Unserializable',
+            __gen: true,
+        }
+    }
     return {
-        value: value,
+        value,
         type: typeOfValue,
         __gen: true,
     }
