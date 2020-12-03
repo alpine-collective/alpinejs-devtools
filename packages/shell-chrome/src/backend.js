@@ -90,7 +90,7 @@ function handleMessages(e) {
 function serializeDataProperty(value) {
     if (value instanceof HTMLElement) {
         return {
-            value: serializeHTMLElement(value),
+            value: serializeHTMLElement(value, { include: ['children', 'attributes'] }),
             type: 'HTMLElement',
             __gen: true,
         }
