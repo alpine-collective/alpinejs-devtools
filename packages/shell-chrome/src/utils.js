@@ -87,15 +87,36 @@ export function convertInputDataToType(inputType, value) {
     }
 }
 
-function getAttributeValue(value, type) {
-    const overrides = {
-        function: 'function',
-        HTMLElement: 'HTMLElement',
+/**
+ * Check that a value can be stringified.
+ * @param {unknown} value
+ * @return {Boolean}
+ */
+export function isSerializable(value) {
+    try {
+        JSON.stringify(value)
+        return true
+    } catch (_e) {
+        return false
     }
-    if (overrides[type]) return overrides[type]
+}
+
+const TYPE_TO_VALUE_OVERRIDES = {
+    function: 'function',
+    HTMLElement: 'HTMLElement',
+    Unserializable: 'Unserializable Value',
+    undefined: 'undefined',
+}
+
+function getAttributeValue(value, type) {
+    if (TYPE_TO_VALUE_OVERRIDES[type]) return TYPE_TO_VALUE_OVERRIDES[type]
     if (Array.isArray(value)) return `Array[${value.length}]`
     if (value instanceof Object) return 'Object'
     return value
+}
+
+function isReadyOnlyType(type) {
+    return Boolean(TYPE_TO_VALUE_OVERRIDES[type])
 }
 
 /**
@@ -140,7 +161,7 @@ export function flattenSingleAttribute(
         editAttributeValue: Array.isArray(value) ? 'Array' : value instanceof Object ? 'Object' : value,
         depth: margin,
         hasArrow: value instanceof Object,
-        readOnly: readOnlyChildren || ['undefined', 'function', 'HTMLElement'].includes(type),
+        readOnly: readOnlyChildren || isReadyOnlyType(type),
         dataType: type,
         inputType: mapDataTypeToInputType(type),
         id: generatedId,
