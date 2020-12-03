@@ -1,4 +1,4 @@
-import { getComponentName, serializeHTMLElement, set, waitForAlpine } from './utils'
+import { getComponentName, isSerializable, serializeHTMLElement, set, waitForAlpine } from './utils'
 
 window.addEventListener('message', handshake)
 window.__alpineDevtool = {}
@@ -87,6 +87,32 @@ function handleMessages(e) {
     }
 }
 
+function serializeDataProperty(value) {
+    if (value instanceof HTMLElement) {
+        return {
+            value: serializeHTMLElement(value, { include: ['children', 'attributes'] }),
+            type: 'HTMLElement',
+        }
+    }
+    const typeOfValue = typeof value
+    if (typeOfValue === 'function') {
+        return {
+            // value field is unused for `function` type
+            type: 'function',
+        }
+    }
+    if (!isSerializable(value)) {
+        return {
+            // value field is unused for `Unserializable` type
+            type: 'Unserializable',
+        }
+    }
+    return {
+        value,
+        type: typeOfValue,
+    }
+}
+
 function discoverComponents(isThroughMutation = false) {
     var rootEls = document.querySelectorAll('[x-data]')
 
@@ -118,15 +144,8 @@ function discoverComponents(isThroughMutation = false) {
         }
 
         const data = Object.entries(rootEl.__x.getUnobservedData()).reduce((acc, [key, value]) => {
-            acc[key] = {
-                value:
-                    value instanceof HTMLElement
-                        ? serializeHTMLElement(value, { include: ['children', 'attributes'] })
-                        : typeof value === 'function'
-                        ? 'function'
-                        : value,
-                type: value instanceof HTMLElement ? 'HTMLElement' : typeof value,
-            }
+            acc[key] = serializeDataProperty(value)
+
             return acc
         }, {})
 
