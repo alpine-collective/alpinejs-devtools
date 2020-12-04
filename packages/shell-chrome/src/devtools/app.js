@@ -8,9 +8,8 @@ import Split from 'split-grid'
 export function init() {
     window.__alpineDevtool = {}
     window.alpineState = new State()
-    // Inject util function(s) for panel.html Alpine app
+    // inject util and Split function(s) for panel.html Alpine app
     window.fetchWithTimeout = fetchWithTimeout
-    // Inject Split function to enable resizeable split pane layout
     window.Split = Split
 }
 
