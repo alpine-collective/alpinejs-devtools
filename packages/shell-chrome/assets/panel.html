@@ -244,6 +244,7 @@
                     </div>
                 </div>
 
+                
                 <div
                     x-ref="panes"
                     :class="{
@@ -253,12 +254,13 @@
                     }"
                     class="flex-1 h-full grid sm:flex-row overflow-hidden"
                 >
-                    <div id="pane_components" class="flex-1 flex flex-col max-h-full overflow-scroll">
+                    <!-- Components -->
+                    <div id="pane_components" class="relative flex-1 flex flex-col max-h-full overflow-scroll">
                         <div
                             :class="{
                                 'hidden': !showTools,
                             }"
-                            class="p-2"
+                            class="absolute min-w-full min-h-full p-2"
                         >
                             <template x-for="(component, index) in components">
                                 <a
@@ -273,7 +275,7 @@
                                     @click=" alpineState.renderComponentData(component)"
                                     data-testid="component-container"
                                 >
-                                    <h5 class="flex items-center px-2 leading-7 font-mono">
+                                    <h5 class="flex items-center px-2 leading-7 font-mono whitespace-no-wrap">
                                         <span class="opacity-25">&lt;</span>
                                         <span
                                             data-testid="component-name"
@@ -287,6 +289,8 @@
                         </div>
                     </div>
 
+
+                    <!-- Split Pane Gutter -->
                     <div 
                         id="gutter" 
                         :class="{
@@ -331,6 +335,8 @@
                         </div>
                     </div>
 
+
+                    <!-- Active Component/Data -->
                     <div
                         id="pane_active_component"
                         class="flex-1 relative flex flex-col max-h-full overflow-scroll"
@@ -371,7 +377,7 @@
                                                 >
                                                     <h5
                                                         data-testid="data-property"
-                                                        class="flex items-center relative pl-3 leading-6 text-sm"
+                                                        class="flex items-center relative pl-3 leading-6 text-sm whitespace-no-wrap"
                                                     >
                                                         <div class="absolute left-0 h-full flex items-center">
                                                             <span
