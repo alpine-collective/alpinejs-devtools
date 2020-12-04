@@ -37,6 +37,7 @@
         "rollup-plugin-filesize": "^7.0.0",
         "rollup-plugin-postcss": "^3.1.8",
         "rollup-plugin-serve": "^1.1.0",
+        "split-grid": "^1.0.9",
         "tailwindcss": "^1.9.6"
     },
     "dependencies": {},
