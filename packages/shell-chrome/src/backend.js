@@ -7,7 +7,9 @@ function startAlpineBackend() {
     getAlpineVersion()
     discoverComponents()
 
-    document.querySelectorAll('[x-data]').forEach((el) => observeNode(el))
+    // Watch on the body for injected components. This is lightweight
+    // as work is only done if there are components added/removed
+    observeNode(document.querySelector('body'))
 }
 
 function handshake(e) {
@@ -113,10 +115,16 @@ function serializeDataProperty(value) {
     }
 }
 
-function discoverComponents(isThroughMutation = false) {
+let components = []
+
+function discoverComponents() {
     var rootEls = document.querySelectorAll('[x-data]')
 
-    var components = []
+    if (components.length === rootEls.length) {
+        return false
+    }
+
+    components = []
 
     rootEls.forEach((rootEl, index) => {
         Alpine.initializeComponent(rootEl)
@@ -125,8 +133,8 @@ function discoverComponents(isThroughMutation = false) {
             rootEl.__alpineDevtool = {}
         }
 
-        if (!isThroughMutation) {
-            rootEl.__alpineDevtool.id = Math.floor(Math.random() * 100000 + 1)
+        if (!rootEl.__alpineDevtool.id) {
+            rootEl.__alpineDevtool.id = parseInt(Date.now() + Math.floor(Math.random() * 1000000), 10)
         }
 
         var depth = 0
@@ -169,7 +177,6 @@ function discoverComponents(isThroughMutation = false) {
                 // see https://github.com/Te7a-Houdini/alpinejs-devtools/issues/17
                 components: JSON.stringify(components),
                 type: 'render-components',
-                isThroughMutation: isThroughMutation,
             },
         },
         '*',
@@ -200,7 +207,7 @@ function observeNode(node) {
 
     observer = new MutationObserver((mutations) => {
         if (!window.__alpineDevtool.stopMutationObserver) {
-            discoverComponents((isThroughMutation = true))
+            discoverComponents()
         }
     })
 

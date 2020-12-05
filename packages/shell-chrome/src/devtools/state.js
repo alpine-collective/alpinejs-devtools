@@ -12,6 +12,8 @@ export default class State {
     }
 
     renderComponentsFromBackend(components) {
+        this.checkforRemovedComponents(components)
+
         components.forEach((component, index) => {
             component.index = index
             component.isOpened = this.renderedComponentId == component.id
@@ -184,5 +186,23 @@ export default class State {
     cancelEditing(clickedAttribute) {
         clickedAttribute.editAttributeValue = clickedAttribute.attributeValue
         clickedAttribute.inEditingMode = false
+    }
+
+    checkforRemovedComponents(components) {
+        const incomingComponentIds = components.map((c) => c.id)
+        const componentsToRemove = Object.values(this.components).filter((c) => !incomingComponentIds.includes(c.id))
+
+        if (!componentsToRemove.length) {
+            return
+        }
+
+        componentsToRemove
+            .map((c) => c.id)
+            .forEach((c) => {
+                if (this.renderedComponentId === c) {
+                    this.renderedComponentId = null
+                }
+                delete this.components[c]
+            })
     }
 }

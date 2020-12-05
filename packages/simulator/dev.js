@@ -51,7 +51,7 @@ async function main() {
             // 3. proxy messages from backend to `window`
             targetWindow.addEventListener('message', (event) => {
                 if (event.data.source === 'alpine-devtools-backend') {
-                    console.log('backend -> devtools', JSON.stringify(event.data))
+                    console.log('backend -> devtools', event.data)
                     window.postMessage(event.data, '*')
                 }
             })

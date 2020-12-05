@@ -55,6 +55,13 @@
         <div role="combobox" x-data="{ hello: 'world' }">
             <span x-text="hello"></span>
         </div>
+        <button
+            onclick="event.target.insertAdjacentHTML(
+                'afterend',
+                `<button onclick='event.target.remove()' x-data='{foo:true}' x-title='Inserted'>Press to remove</button>`
+            )">
+            Add new component
+        </button>
         <script>
             function myFn() {
                 return {
