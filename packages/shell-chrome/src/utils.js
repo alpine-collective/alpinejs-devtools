@@ -11,6 +11,27 @@ export function fetchWithTimeout(resource, options) {
     })
 }
 
+/**
+ * Semver version check
+ *
+ * @param {string} required
+ * @param {string} actual
+ * @returns {boolean}
+ */
+export function isRequiredVersion(required, actual) {
+    const requiredArray = required.split('.').map((v) => parseInt(v, 10))
+    const currentArray = actual.split('.').map((v) => parseInt(v, 10))
+    for (let i = 0; i < requiredArray.length; i++) {
+        if (!currentArray[i] || currentArray[i] < requiredArray[i]) {
+            return false
+        }
+        if (currentArray[i] > requiredArray[i]) {
+            return true
+        }
+    }
+    return true
+}
+
 export function flattenData(data) {
     let flattenedData = []
 
