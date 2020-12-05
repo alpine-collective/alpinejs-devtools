@@ -1,15 +1,16 @@
 // dev-wrapper for component inspector panel
 import { inject, injectPanel } from './utils'
+import { init, handleMessage } from '../shell-chrome/src/devtools/app'
 
 let isInitialised = false
 function initProxy(window, targetWindow) {
     window.addEventListener('message', async (event) => {
         if (event.data.source === 'alpine-devtools-backend') {
-            const { init, handleMessage } = await import('../shell-chrome/src/devtools/app')
             // message from backend -> app
             if (!isInitialised) {
                 console.log('initialising panel')
                 init()
+                await injectPanel(document.querySelector('#devtools-container'))
                 isInitialised = true
             }
             handleMessage(event.data.payload, window)
@@ -35,8 +36,6 @@ async function main() {
     const targetWindow = target.contentWindow
 
     initProxy(window, targetWindow)
-
-    await injectPanel(document.querySelector('#devtools-container'))
 
     // 1. load user app
     target.src = './example.html'

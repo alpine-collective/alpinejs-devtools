@@ -1,16 +1,11 @@
 /* Extension API-agnostic application setup */
-import './styles.css'
-import 'alpinejs'
 import State from './state'
-import { fetchWithTimeout } from '../utils'
-import Split from 'split-grid'
+import devtools from './devtools'
 
 export function init() {
     window.__alpineDevtool = {}
     window.alpineState = new State()
-    // inject util and Split function(s) for panel.html Alpine app
-    window.fetchWithTimeout = fetchWithTimeout
-    window.Split = Split
+    window.devtools = devtools
 }
 
 export function handleMessage(message, port) {

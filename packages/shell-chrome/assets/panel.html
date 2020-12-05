@@ -15,126 +15,7 @@
     <body class="antialiased">
         <div x-data x-show="false" class="preload">Devtools loading...</div>
 
-        <div
-            id="app"
-            class="h-full"
-            x-cloak
-            x-data="{
-                version: null,
-                latest: null,
-                components : [],
-                showTools: false,
-                showTimeout: 1500,
-                activeTheme: 'dark-header',
-
-                orientation: 'portrait',
-                breakpoint: 640,
-                split: null,
-
-                themes: {
-                    light: {
-                        'text-header': 'text-alpine-400',
-                        'bg-header': 'bg-white',
-                        'bg-logo-dark': 'text-alpine-400',
-                        'bg-logo-light': 'text-silver-600',
-                    },
-
-                    'dark-header': {
-                        'text-header': 'text-white',
-                        'bg-header': 'bg-alpine-400',
-                        'bg-logo-dark': 'text-ice-500',
-                        'bg-logo-light': 'text-silver-500',
-                    },
-                },
-
-                get isLatest() {
-                    if (!this.version || !this.latest) return null;
-                    const requiredArray = this.latest.split('.').map(v => parseInt(v, 10));
-                    const currentArray = this.version.split('.').map(v => parseInt(v, 10));
-                    for (let i = 0; i < requiredArray.length; i++) {
-                        if (!currentArray[i] || currentArray[i] < requiredArray[i]) {
-                            return false;
-                        }
-                        if (currentArray[i] > requiredArray[i]) {
-                            return true;
-                        }
-                    }
-                    return true
-                },
-
-                get detected(){
-                    if (!this.showTools) {
-                        return 'Alpine.js tools loading'
-                    }
-
-                    return this.version ? `Alpine.js v${this.version} detected` : 'Alpine.js <v2.3.1 detected'
-                },
-
-                get openComponent () {
-                    return this.components.filter(component => {
-                        return component.isOpened
-                    })[0] || {}
-                },
-
-                get theme(){
-                    return this.themes[this.activeTheme]
-                },
-
-                updateOrientation () {
-                    this.orientation = window.innerWidth > this.breakpoint? 'landscape' : 'portrait'
-                },
-
-                initSplitPanes () {
-                    if(this.split){
-                        this.split.destroy(true)
-                        this.$refs.panes.style.gridTemplateColumns = null
-                        this.$refs.panes.style.gridTemplateRows = null
-                    }
-
-                    let splitOptions = {
-                            minSize: window.innerWidth > this.breakpoint? 250 : 150,
-                            snapOffset: 0,
-                        },
-                        key = window.innerWidth > this.breakpoint? 'columnGutters' : 'rowGutters'
-
-                    splitOptions[key] = [{
-                        track: 1,
-                        element: this.$refs.handle,
-                    }]
-
-                    this.$nextTick(() => {
-                        this.split = window.Split(splitOptions)
-                    })
-                },
-
-                initLayout () {
-                    this.initSplitPanes()
-                    this.updateOrientation()
-                },
-            }"
-            x-init="() => {
-                initLayout()
-
-                $watch('components', () => {
-                    if (!showTools && components.length > 0) {
-                        fetchWithTimeout('https://registry.npmjs.com/alpinejs', { timeout: showTimeout })
-                            .then((data) => {
-                                latest = data['dist-tags'].latest;
-                                showTools = true;
-                            }).catch(error => {
-                                console.error('Could not load Alpine.js version data from registry.npmjs.com');
-                                // latest will be as defaulted in state.js
-                                showTools = true
-                            })
-                    }
-                })
-
-                $watch('orientation', () => {
-                    initSplitPanes()
-                })
-            }"
-            @resize.window.debounce.100="initLayout"
-        >
+        <div id="app" class="h-full" x-cloak x-data="devtools()" x-init="init()" x-spread="devtoolsRootDirectives()">
             <div class="bg-white flex flex-col relative h-full w-full mx-auto">
                 <div
                     :class="{
@@ -155,17 +36,17 @@
                                 <!-- <rect class="text-gray-100" x="0" y="0" width="460" height="460"></rect> -->
                                 <polygon
                                     :class="{
-                                'text-gray-600': !showTools,
-                                [theme['bg-logo-dark']]: showTools,
-                            }"
+                                        'text-gray-600': !showTools,
+                                        [theme['bg-logo-dark']]: showTools,
+                                    }"
                                     class="transform transition-colors duration-700"
                                     points="50,230 140,140 320,320 140,320"
                                 />
                                 <polygon
                                     :class="{
-                                'text-gray-400': !showTools,
-                                [theme['bg-logo-light']]: showTools,
-                            }"
+                                        'text-gray-400': !showTools,
+                                        [theme['bg-logo-light']]: showTools,
+                                    }"
                                     class="transform transition-colors duration-700"
                                     points="320,140 410,230 320,320 230,230"
                                 />
@@ -271,7 +152,7 @@
                                     :style="`padding-left: ${component.depth * 20}px; `"
                                     @mouseenter="alpineState.hoverOnComponent(component)"
                                     @mouseleave="alpineState.hoverLeftComponent(component)"
-                                    @click=" alpineState.renderComponentData(component)"
+                                    @click="alpineState.renderComponentData(component)"
                                     data-testid="component-container"
                                 >
                                     <h5 class="flex items-center px-2 leading-7 font-mono whitespace-no-wrap">
