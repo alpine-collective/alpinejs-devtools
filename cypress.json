@@ -3,5 +3,8 @@
     "video": false,
     "fixturesFolder": false,
     "pluginsFile": false,
-    "chromeWebSecurity": false
+    "chromeWebSecurity": false,
+    "retries": {
+        "runMode": 2
+    }
 }
