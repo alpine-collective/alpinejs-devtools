@@ -1,6 +1,6 @@
 module.exports = {
     purge: {
-        content: ['./packages/**/*.html'],
+        content: ['./packages/**/*.html', './packages/shell-chrome/src/devtools/devtools.js'],
     },
     theme: {
         fontSize: {
@@ -49,6 +49,16 @@ module.exports = {
             },
             animation: {
                 'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            },
+            cursor: {
+                'row-resize': 'row-resize',
+                'col-resize': 'col-resize',
+            },
+            gridTemplateRows: {
+                panes: '1fr 1px 1fr',
+            },
+            gridTemplateColumns: {
+                panes: '1fr 1px 1fr',
             },
         },
     },
