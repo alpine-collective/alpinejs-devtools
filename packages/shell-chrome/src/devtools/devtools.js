@@ -65,28 +65,25 @@ export default function devtools() {
         },
 
         init() {
-            return () => {
-                this.initLayout()
+            this.initLayout()
+            this.$watch('components', () => {
+                if (!this.showTools && this.components.length > 0) {
+                    fetchWithTimeout('https://registry.npmjs.com/alpinejs', { timeout: this.showTimeout })
+                        .then((data) => {
+                            this.latest = data['dist-tags'].latest
+                            this.showTools = true
+                        })
+                        .catch((_error) => {
+                            console.error('Could not load Alpine.js version data from registry.npmjs.com')
+                            // latest will be as defaulted in state.js
+                            this.showTools = true
+                        })
+                }
+            })
 
-                this.$watch('components', () => {
-                    if (!this.showTools && this.components.length > 0) {
-                        fetchWithTimeout('https://registry.npmjs.com/alpinejs', { timeout: this.showTimeout })
-                            .then((data) => {
-                                this.latest = data['dist-tags'].latest
-                                this.showTools = true
-                            })
-                            .catch((_error) => {
-                                console.error('Could not load Alpine.js version data from registry.npmjs.com')
-                                // latest will be as defaulted in state.js
-                                this.showTools = true
-                            })
-                    }
-                })
-
-                this.$watch('orientation', () => {
-                    this.initSplitPanes()
-                })
-            }
+            this.$watch('orientation', () => {
+                this.initSplitPanes()
+            })
         },
 
         initSplitPanes() {
