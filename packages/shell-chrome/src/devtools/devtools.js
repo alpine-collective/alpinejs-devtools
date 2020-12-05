@@ -52,6 +52,10 @@ export default function devtools() {
             return isRequiredVersion(this.latest, this.version)
         },
 
+        get isLandscape() {
+            return this.orientation === 'landscape'
+        },
+
         get detected() {
             if (!this.showTools) {
                 return 'Alpine.js tools loading'
@@ -102,10 +106,10 @@ export default function devtools() {
             }
 
             const splitOptions = {
-                minSize: this.orientation === 'landscape' ? 250 : 150,
+                minSize: this.isLandscape ? 250 : 150,
                 snapOffset: 0,
             }
-            const key = this.orientation === 'landscape' ? 'columnGutters' : 'rowGutters'
+            const key = this.isLandscape ? 'columnGutters' : 'rowGutters'
 
             splitOptions[key] = [
                 {
