@@ -120,6 +120,7 @@ let components = []
 function discoverComponents() {
     var rootEls = document.querySelectorAll('[x-data]')
 
+    // Exit early if no components have been added or removed
     if (components.length === rootEls.length) {
         return false
     }
