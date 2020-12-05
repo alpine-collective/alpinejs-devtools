@@ -12,7 +12,7 @@ export default class State {
     }
 
     renderComponentsFromBackend(components) {
-        this.checkforRemovedComponents(components)
+        this.checkForRemovedComponents(components)
 
         components.forEach((component, index) => {
             component.index = index
@@ -188,7 +188,7 @@ export default class State {
         clickedAttribute.inEditingMode = false
     }
 
-    checkforRemovedComponents(components) {
+    checkForRemovedComponents(components) {
         const incomingComponentIds = components.map((c) => c.id)
         const componentsToRemove = Object.values(this.components).filter((c) => !incomingComponentIds.includes(c.id))
 
