@@ -19,5 +19,5 @@ it('should load devtools', () => {
         .should('have.attr', 'title', 'Latest Version')
         .contains(`Alpine.js v${AlpineVersion} detected`)
 
-    cy.get('[data-testid=component-name]').should('have.length', 5)
+    cy.get('[data-testid=component-name]').should('have.length', 6)
 })
