@@ -20,6 +20,19 @@ const themes = {
     },
 }
 
+const breakpoint = 640
+
+let width = window.innerWidth
+const isLargerThanBreakpoint = (minWidth) => {
+    const newWidth = window.innerWidth
+    // when hiding the devtools tab, innerWidth goes to 0
+    // resume using last known size
+    width = newWidth === 0 ? width : newWidth
+    return width > minWidth
+}
+
+const getOrientation = () => (isLargerThanBreakpoint(breakpoint) ? 'landscape' : 'portrait')
+
 export default function devtools() {
     return {
         version: null,
@@ -29,8 +42,7 @@ export default function devtools() {
         showTimeout: 1500,
         activeTheme: 'dark-header',
 
-        orientation: 'portrait',
-        breakpoint: 640,
+        orientation: getOrientation(),
         split: null,
 
         themes: themes,
@@ -60,12 +72,8 @@ export default function devtools() {
             return this.themes[this.activeTheme]
         },
 
-        updateOrientation() {
-            this.orientation = window.innerWidth > this.breakpoint ? 'landscape' : 'portrait'
-        },
-
         init() {
-            this.initLayout()
+            this.initSplitPanes()
             this.$watch('components', () => {
                 if (!this.showTools && this.components.length > 0) {
                     fetchWithTimeout('https://registry.npmjs.com/alpinejs', { timeout: this.showTimeout })
@@ -94,10 +102,10 @@ export default function devtools() {
             }
 
             const splitOptions = {
-                minSize: window.innerWidth > this.breakpoint ? 250 : 150,
+                minSize: this.orientation === 'landscape' ? 250 : 150,
                 snapOffset: 0,
             }
-            const key = window.innerWidth > this.breakpoint ? 'columnGutters' : 'rowGutters'
+            const key = this.orientation === 'landscape' ? 'columnGutters' : 'rowGutters'
 
             splitOptions[key] = [
                 {
@@ -111,14 +119,11 @@ export default function devtools() {
             })
         },
 
-        initLayout() {
-            this.initSplitPanes()
-            this.updateOrientation()
-        },
-
         devtoolsRootDirectives() {
             return {
-                ['@resize.window.debounce.100']: this.initLayout,
+                ['@resize.window.debounce.100']() {
+                    this.orientation = getOrientation()
+                },
             }
         },
     }
