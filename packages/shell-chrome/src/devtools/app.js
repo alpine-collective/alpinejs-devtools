@@ -1,6 +1,4 @@
 /* Extension API-agnostic application setup */
-import './styles.css'
-import 'alpinejs'
 import State from './state'
 import devtools from './devtools'
 
