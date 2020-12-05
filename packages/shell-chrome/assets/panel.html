@@ -15,14 +15,7 @@
     <body class="antialiased">
         <div x-data x-show="false" class="preload">Devtools loading...</div>
 
-        <div
-            id="app"
-            class="h-full"
-            x-cloak
-            x-data="devtools()"
-            x-init="init()"
-            x-spread="devtoolsRootDirectives()"
-        >
+        <div id="app" class="h-full" x-cloak x-data="devtools()" x-init="init()" x-spread="devtoolsRootDirectives()">
             <div class="bg-white flex flex-col relative h-full w-full mx-auto">
                 <div
                     :class="{
