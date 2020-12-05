@@ -10,6 +10,7 @@ function initProxy(window, targetWindow) {
             if (!isInitialised) {
                 console.log('initialising panel')
                 init()
+                await injectPanel(document.querySelector('#devtools-container'))
                 isInitialised = true
             }
             handleMessage(event.data.payload, window)
@@ -35,8 +36,6 @@ async function main() {
     const targetWindow = target.contentWindow
 
     initProxy(window, targetWindow)
-
-    await injectPanel(document.querySelector('#devtools-container'))
 
     // 1. load user app
     target.src = './example.html'
