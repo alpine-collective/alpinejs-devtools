@@ -4,6 +4,9 @@ window.addEventListener('message', handshake)
 window.__alpineDevtool = {}
 
 function startAlpineBackend() {
+    if (window.AlpineProductionMode) {
+        return
+    }
     getAlpineVersion()
     discoverComponents()
 
@@ -114,7 +117,7 @@ function serializeDataProperty(value) {
 }
 
 function discoverComponents(isThroughMutation = false) {
-    var rootEls = document.querySelectorAll('[x-data]')
+    var rootEls = document.querySelectorAll('[x-data]:not([x-devtools-ignore])')
 
     var components = []
 

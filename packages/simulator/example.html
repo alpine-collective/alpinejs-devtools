@@ -46,6 +46,7 @@
         <div id="app" x-data="{ hello: 'world' }">
             <span x-text="hello"></span>
         </div>
+        <div x-title="Should be hidden from devtools" x-devtools-ignore x-data></div>
         <div x-data="myFn()">
             <span x-text="hello"></span>
         </div>
@@ -56,6 +57,7 @@
             <span x-text="hello"></span>
         </div>
         <script>
+            window.AlpineProductionMode = true
             function myFn() {
                 return {
                     hello: 'world',
