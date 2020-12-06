@@ -156,12 +156,10 @@ it('should allow editing of booleans, numbers and strings', () => {
         .contains('num')
         .siblings('[data-testid=data-property-value-container]')
         .should('contain.text', '5')
-
     // edit icon visibility is toggled using CSS, force-click
     cy.get('[data-testid=edit-icon-num]').click({ force: true })
-
-    // editing toggles alpineState, this causes issues with visibility/re-rendering
-    // force all interaction
+    // editing toggles window.alpineState, causes issues with visibility/re-rendering
+    // force all interactions
     cy.get('[data-testid=input-num]')
         .clear({ force: true })
         .type('20', { force: true })
@@ -170,18 +168,16 @@ it('should allow editing of booleans, numbers and strings', () => {
 
     cy.iframe('#target').contains('Num, type: "number", value: "20"')
 
-    // numbers
+    // strings
     cy.get('[data-testid=data-property-name]')
         .should('be.visible')
         .contains('str')
         .siblings('[data-testid=data-property-value-container]')
         .should('contain.text', 'string')
-
     // edit icon visibility is toggled using CSS, force-click
     cy.get('[data-testid=edit-icon-str]').click({ force: true })
-
-    // editing toggles alpineState, this causes issues with visibility/re-rendering
-    // force all interaction
+    // editing toggles window.alpineState, causes issues with visibility/re-rendering
+    // force all interactions
     cy.get('[data-testid=input-str]')
         .clear({ force: true })
         .type('devtools', { force: true })
