@@ -123,7 +123,7 @@
                             </svg>
                         </a>
                         <button
-                            id="settingsPanelOpenButton"
+                            data-testid="settings-panel-open-button"
                             class="hover:opacity-75 focus:outline-none"
                             x-show="settingsPanelEnabled"
                             @click="settingsPanelOpen = true"
@@ -413,7 +413,7 @@
                     </div>
                 </div>
                 <div
-                    id="settingsPanel"
+                    data-testid="settings-panel"
                     x-show="settingsPanelEnabled && settingsPanelOpen"
                     class="inset-0 absolute flex flex-col items-center justify-center z-max"
                 >
@@ -428,7 +428,7 @@
                             @click.stop
                         >
                             <button
-                                id="settingsPanelCloseButton"
+                                data-testid="settings-panel-close-button"
                                 class="absolute top-0 right-0 focus:outline-none block"
                                 @click="settingsPanelOpen = false"
                             >
