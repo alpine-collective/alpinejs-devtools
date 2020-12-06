@@ -35,8 +35,8 @@ export default function devtools() {
 
         themes: themes,
 
-        enableInfoPanel: process.env.NODE_ENV !== 'production',
-        showInfoPanel: false,
+        settingsPanelEnabled: process.env.NODE_ENV !== 'production',
+        settingsPanelOpen: false,
 
         get isLatest() {
             if (!this.version || !this.latest) return null
