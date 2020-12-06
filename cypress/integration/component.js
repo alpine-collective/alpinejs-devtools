@@ -10,8 +10,6 @@ it('should get names of components', () => {
 })
 
 it('should add/remove hover overlay on component mouseenter/leave', () => {
-    cy.visit('/')
-
     // check overlay works for first component
     cy.get('[data-testid=component-container]').first().should('be.visible').trigger('mouseenter')
 
@@ -86,12 +84,11 @@ it('should add/remove hover overlay on component mouseenter/leave', () => {
     })
     cy.iframe('#target').find('[data-testid=hover-element]').should('not.exist')
 })
+it('should support selecting a component', () => {
+    cy.visit('/').get('[data-testid=component-container]').first().should('be.visible').click()
+})
 
-it('should allow display read-only function/HTMLElement attributes', () => {
-    cy.visit('/')
-
-    cy.get('[data-testid=component-container]').first().should('be.visible').click()
-
+it('should display read-only function/HTMLElement attributes', () => {
     cy.get('[data-testid=data-property-name]')
         .should('be.visible')
         .contains('myFunction')
@@ -134,4 +131,62 @@ it('should allow display read-only function/HTMLElement attributes', () => {
         .should('not.be.visible')
         .get('@elChildren')
         .should('not.be.visible')
+})
+
+it('should allow editing of booleans, numbers and strings', () => {
+    // booleans
+    cy.get('[data-testid=data-property-name]')
+        .should('be.visible')
+        .contains('bool')
+        .siblings('[data-testid=data-property-value-container]')
+        .should('contain.text', 'true')
+    // checkbox is visibility is toggled using CSS click the hidden element
+    cy.get('[type=checkbox]').click({ force: true })
+    // check the edit worked
+    cy.get('[data-testid=data-property-name]')
+        .should('be.visible')
+        .contains('bool')
+        .siblings('[data-testid=data-property-value-container]')
+        .should('contain.text', 'false')
+    cy.iframe('#target').contains('Bool, type: "boolean", value: "false"')
+
+    // numbers
+    cy.get('[data-testid=data-property-name]')
+        .should('be.visible')
+        .contains('num')
+        .siblings('[data-testid=data-property-value-container]')
+        .should('contain.text', '5')
+
+    // edit icon visibility is toggled using CSS, force-click
+    cy.get('[data-testid=edit-icon-num]').click({ force: true })
+
+    // editing toggles alpineState, this causes issues with visibility/re-rendering
+    // force all interaction
+    cy.get('[data-testid=input-num]')
+        .clear({ force: true })
+        .type('20', { force: true })
+        .siblings('[data-testid=save-icon]')
+        .click({ force: true })
+
+    cy.iframe('#target').contains('Num, type: "number", value: "20"')
+
+    // numbers
+    cy.get('[data-testid=data-property-name]')
+        .should('be.visible')
+        .contains('str')
+        .siblings('[data-testid=data-property-value-container]')
+        .should('contain.text', 'string')
+
+    // edit icon visibility is toggled using CSS, force-click
+    cy.get('[data-testid=edit-icon-str]').click({ force: true })
+
+    // editing toggles alpineState, this causes issues with visibility/re-rendering
+    // force all interaction
+    cy.get('[data-testid=input-str]')
+        .clear({ force: true })
+        .type('devtools', { force: true })
+        .siblings('[data-testid=save-icon]')
+        .click({ force: true })
+
+    cy.iframe('#target').contains('Str, type: "string", value: "devtools"')
 })
