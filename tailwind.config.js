@@ -60,6 +60,9 @@ module.exports = {
             gridTemplateColumns: {
                 panes: '1fr 1px 1fr',
             },
+            zIndex: {
+                max: '2147483647',
+            },
         },
     },
     variants: {
