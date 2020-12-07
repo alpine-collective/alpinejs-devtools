@@ -1,4 +1,4 @@
-import { getComponentName, isSerializable, serializeHTMLElement, set, waitForAlpine } from './utils'
+import { createComponentId, getComponentName, isSerializable, serializeHTMLElement, set, waitForAlpine } from './utils'
 
 window.addEventListener('message', handshake)
 window.__alpineDevtool = {}
@@ -136,7 +136,7 @@ function discoverComponents() {
         }
 
         if (!rootEl.__alpineDevtool.id) {
-            rootEl.__alpineDevtool.id = parseInt(Date.now() + Math.floor(Math.random() * 1000000), 10)
+            rootEl.__alpineDevtool.id = rootEl.__alpineDevtool.id = createComponentId()
         }
 
         var depth = 0

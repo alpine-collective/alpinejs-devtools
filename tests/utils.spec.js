@@ -1,4 +1,4 @@
-import { getComponentName } from '../packages/shell-chrome/src/utils'
+import { createComponentId, getComponentName } from '../packages/shell-chrome/src/utils'
 
 test('getComponentName > can handle multiple scenarios to determine component name', async () => {
     window.myFn = () => {}
@@ -23,4 +23,11 @@ test('getComponentName > can handle multiple scenarios to determine component na
     expect(getComponentName(element)).toBe('quuz')
     element.removeAttribute('role')
     expect(getComponentName(element)).toBe('div')
+})
+
+test('createComponentId will return a 13 digit number', async () => {
+    const id = createComponentId()
+
+    expect(typeof id).toBe('number')
+    expect(id.toString()).toHaveLength(13)
 })
