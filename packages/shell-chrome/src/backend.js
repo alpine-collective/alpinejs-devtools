@@ -121,7 +121,8 @@ function discoverComponents() {
     var rootEls = document.querySelectorAll('[x-data]')
 
     // Exit early if no components have been added or removed
-    if (components.length === rootEls.length) {
+    const allComponentsInitialized = Object.values(rootEls).every((e) => typeof e.__alpineDevtool !== 'undefined')
+    if (components.length === rootEls.length && allComponentsInitialized) {
         return false
     }
 
