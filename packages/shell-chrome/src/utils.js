@@ -53,10 +53,9 @@ export function set(object, path, value) {
     const [nextProperty, ...rest] = path.split('.')
     if (rest.length === 0) {
         object[nextProperty] = value
-        return object
+        return
     }
     set(object[nextProperty], rest.join('.'), value)
-    return object
 }
 
 // with default options, will run 3 attempts, 1 at 0s, 1 at 500ms, 1 at 1000ms

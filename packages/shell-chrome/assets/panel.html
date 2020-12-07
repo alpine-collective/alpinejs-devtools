@@ -306,7 +306,7 @@
                                                             class="text-black ml-1"
                                                             x-show="!singleData.inEditingMode"
                                                         >
-                                                            <template x-if="singleData.dataType == 'string'">
+                                                            <template x-if="singleData.dataType === 'string'">
                                                                 &quot;<span
                                                                     class="text-red-700"
                                                                     x-text="singleData.attributeValue"
@@ -314,7 +314,7 @@
                                                                 >&quot;
                                                             </template>
 
-                                                            <template x-if="singleData.dataType == 'boolean'">
+                                                            <template x-if="singleData.dataType === 'boolean'">
                                                                 <span
                                                                     class="text-blue-700"
                                                                     x-text="singleData.attributeValue"
@@ -340,7 +340,7 @@
                                                         fill="currentColor"
                                                         x-show="!singleData.inEditingMode
                                                         && singleData.dataType !== 'boolean'"
-                                                        data-testid="edit-icon"
+                                                        :data-testid="`edit-icon-${singleData.attributeName}`"
                                                         @click="alpineState.editAttribute(singleData)"
                                                         viewBox="0 0 20 20"
                                                         class="w-4 h-4 cursor-pointer opacity-0 group-hover:opacity-100 hover:opacity-75"
@@ -350,7 +350,7 @@
                                                         ></path>
                                                     </svg>
 
-                                                    <template x-if="singleData.dataType == 'boolean'">
+                                                    <template x-if="singleData.dataType === 'boolean'">
                                                         <input
                                                             type="checkbox"
                                                             x-model="singleData.editAttributeValue"
@@ -368,7 +368,8 @@
                                                                 @keydown.enter.stop="alpineState.saveEditing(singleData)"
                                                                 @keydown.escape.stop="alpineState.cancelEditing(singleData)"
                                                                 class="flex text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-2/3 shadow appearance-none border rounded py-1 px-1"
-                                                                :type="singleData.dataType"
+                                                                :type="singleData.inputType"
+                                                                :data-testid="`input-${singleData.attributeName}`"
                                                                 x-model="singleData.editAttributeValue"
                                                             />
 
