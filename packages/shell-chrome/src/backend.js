@@ -136,7 +136,7 @@ function discoverComponents() {
         }
 
         if (!rootEl.__alpineDevtool.id) {
-            rootEl.__alpineDevtool.id = rootEl.__alpineDevtool.id = createComponentId()
+            rootEl.__alpineDevtool.id = createComponentId()
         }
 
         var depth = 0
