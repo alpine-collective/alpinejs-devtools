@@ -75,6 +75,17 @@ export default [
                         dest: 'dist/chrome',
                     },
                     {
+                        src: 'packages/shell-chrome/assets/panel.html',
+                        dest: 'dist/chrome',
+                        transform(contents) {
+                            // strip interpolated data-testids
+                            if (process.env.NODE_ENV === 'production') {
+                                return contents.toString().replace(/:data-testid="[^"]*"/g, '')
+                            }
+                            return contents.toString()
+                        },
+                    },
+                    {
                         src: 'packages/shell-chrome/assets/manifest.json',
                         dest: 'dist/chrome',
                         // inject version into manifest
