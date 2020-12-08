@@ -172,7 +172,7 @@
                                     @click="alpineState.renderComponentData(component)"
                                     data-testid="component-container"
                                 >
-                                    <h5 class="flex items-center px-2 leading-7 font-mono whitespace-no-wrap">
+                                    <h5 class="flex items-center px-2 leading-7 font-mono whitespace-nowrap">
                                         <span class="opacity-25">&lt;</span>
                                         <span
                                             data-testid="component-name"
@@ -279,7 +279,7 @@
                                                 >
                                                     <h5
                                                         data-testid="data-property"
-                                                        class="flex items-center relative pl-3 leading-6 text-sm whitespace-no-wrap"
+                                                        class="flex items-center relative pl-3 leading-6 text-sm whitespace-nowrap"
                                                     >
                                                         <div class="absolute left-0 h-full flex items-center">
                                                             <span
@@ -314,11 +314,21 @@
                                                                 >&quot;
                                                             </template>
 
-                                                            <template x-if="singleData.dataType === 'boolean'">
-                                                                <span
-                                                                    class="text-blue-700"
-                                                                    x-text="singleData.attributeValue"
-                                                                ></span>
+                                                            <template x-if="singleData.dataType == 'boolean'">
+                                                                <div class="flex items-center">
+                                                                    <span
+                                                                        class="block pr-1 text-blue-700 cursor-pointer"
+                                                                        x-text="singleData.attributeValue"
+                                                                        @click="singleData.editAttributeValue = !singleData.editAttributeValue, $nextTick(() => alpineState.saveEditing(singleData))"
+                                                                    ></span>
+
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        x-model="singleData.editAttributeValue"
+                                                                        @change.stop="$nextTick(() => alpineState.saveEditing(singleData))"
+                                                                        class="focus:ring-transparent h-4 w-4 text-blue-700 border-gray-300 cursor-pointer rounded transition duration-150 ease-in-out opacity-0 group-hover:opacity-100"
+                                                                    />
+                                                                </div>
                                                             </template>
 
                                                             <template
@@ -350,15 +360,6 @@
                                                         ></path>
                                                     </svg>
 
-                                                    <template x-if="singleData.dataType === 'boolean'">
-                                                        <input
-                                                            type="checkbox"
-                                                            x-model="singleData.editAttributeValue"
-                                                            @change.stop="$nextTick(() => alpineState.saveEditing(singleData))"
-                                                            class="form-checkbox h-4 w-4 text-blue-700 transition duration-150 ease-in-out opacity-0 group-hover:opacity-100"
-                                                        />
-                                                    </template>
-
                                                     <template x-if="singleData.dataType !== 'boolean'">
                                                         <div
                                                             x-show="singleData.inEditingMode"
@@ -367,7 +368,7 @@
                                                             <input
                                                                 @keydown.enter.stop="alpineState.saveEditing(singleData)"
                                                                 @keydown.escape.stop="alpineState.cancelEditing(singleData)"
-                                                                class="flex text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-2/3 shadow appearance-none border rounded py-1 px-1"
+                                                                class="flex text-gray-700 leading-tight focus:outline-none focus:ring w-2/3 shadow appearance-none border rounded py-1 px-1"
                                                                 :type="singleData.inputType"
                                                                 :data-testid="`input-${singleData.attributeName}`"
                                                                 x-model="singleData.editAttributeValue"
