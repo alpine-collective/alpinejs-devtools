@@ -267,7 +267,3 @@ function extractFunctionName(functionName) {
         .replace(/\(([^\)]+)\)/, '') // Handles myFunction(param)
         .replace('()', '')
 }
-
-export function createComponentId() {
-    return parseInt(Date.now() + Math.floor(Math.random() * 1000000), 10)
-}

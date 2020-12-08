@@ -1,4 +1,4 @@
-import { createComponentId, getComponentName, isSerializable, serializeHTMLElement, set, waitForAlpine } from './utils'
+import { getComponentName, isSerializable, serializeHTMLElement, set, waitForAlpine } from './utils'
 
 window.addEventListener('message', handshake)
 window.__alpineDevtool = {}
@@ -116,6 +116,7 @@ function serializeDataProperty(value) {
 }
 
 let components = []
+let uuid = 0
 
 function discoverComponents() {
     var rootEls = document.querySelectorAll('[x-data]')
@@ -136,7 +137,7 @@ function discoverComponents() {
         }
 
         if (!rootEl.__alpineDevtool.id) {
-            rootEl.__alpineDevtool.id = createComponentId()
+            rootEl.__alpineDevtool.id = ++uuid
         }
 
         var depth = 0

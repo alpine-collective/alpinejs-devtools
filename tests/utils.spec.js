@@ -24,10 +24,3 @@ test('getComponentName > can handle multiple scenarios to determine component na
     element.removeAttribute('role')
     expect(getComponentName(element)).toBe('div')
 })
-
-test('createComponentId will return a 13 digit number', async () => {
-    const id = createComponentId()
-
-    expect(typeof id).toBe('number')
-    expect(id.toString()).toHaveLength(13)
-})
