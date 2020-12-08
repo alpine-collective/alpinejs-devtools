@@ -47,6 +47,9 @@ export default function devtools() {
 
         themes: themes,
 
+        settingsPanelEnabled: process.env.NODE_ENV !== 'production',
+        settingsPanelOpen: false,
+
         get isLatest() {
             if (!this.version || !this.latest) return null
             return isRequiredVersion(this.latest, this.version)
