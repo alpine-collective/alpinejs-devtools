@@ -14,12 +14,17 @@ import * as edge from 'edge.js'
 edge.registerViews(path.join(__dirname, './packages/shell-chrome/views'))
 const renderPanel = () => {
     let panel = edge.render('master')
+    let dir = path.join(__dirname, './dist/chrome')
 
     if (process.env.NODE_ENV === 'production') {
         panel = panel.replace(/:data-testid="[^"]*"/g, '')
     }
 
-    fs.writeFileSync(path.join(__dirname, './dist/chrome/panel.html'), panel)
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true })
+    }
+
+    fs.writeFileSync(path.join(dir, './panel.html'), panel)
 }
 renderPanel()
 
