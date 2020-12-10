@@ -11,7 +11,7 @@ import fs from 'fs'
 import path from 'path'
 
 import * as edge from 'edge.js'
-edge.registerViews('./packages/shell-chrome/views')
+edge.registerViews(path.join(__dirname, './packages/shell-chrome/views'))
 const renderPanel = () => {
     let panel = edge.render('master')
 
@@ -19,7 +19,7 @@ const renderPanel = () => {
         panel = panel.replace(/:data-testid="[^"]*"/g, '')
     }
 
-    fs.writeFileSync('./dist/chrome/panel.html', panel)
+    fs.writeFileSync(path.join(__dirname, './dist/chrome/panel.html'), panel)
 }
 renderPanel()
 
