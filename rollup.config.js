@@ -17,7 +17,7 @@ const renderTemplate = () => {
     let template = edge.render('master')
 
     if (process.env.NODE_ENV === 'production') {
-        return template.replace(/:data-testid="[^"]*"/g, '')
+        template = template.replace(/:data-testid="[^"]*"/g, '')
     }
 
     write.sync('./dist/chrome/panel.html', template)
