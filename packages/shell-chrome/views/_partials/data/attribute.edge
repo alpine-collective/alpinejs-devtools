@@ -8,10 +8,7 @@
         }"
         x-show="singleData.isOpened"
     >
-        <h5
-            data-testid="data-property"
-            class="flex items-center relative pl-3 leading-6 text-sm whitespace-nowrap"
-        >
+        <h5 data-testid="data-property" class="flex items-center relative pl-3 leading-6 text-sm whitespace-nowrap">
             <div class="absolute left-0 h-full flex items-center">
                 <span
                     x-show="singleData.hasArrow"
@@ -24,25 +21,13 @@
                 ></span>
             </div>
 
-            <span
-                style="color: #881391"
-                x-text="singleData.attributeName"
-                data-testid="data-property-name"
-            ></span>
+            <span style="color: #881391" x-text="singleData.attributeName" data-testid="data-property-name"></span>
 
             <span class="text-black">:</span>
 
-            <div
-                data-testid="data-property-value-container"
-                class="text-black ml-1"
-                x-show="!singleData.inEditingMode"
-            >
+            <div data-testid="data-property-value-container" class="text-black ml-1" x-show="!singleData.inEditingMode">
                 <template x-if="singleData.dataType === 'string'">
-                    &quot;<span
-                        class="text-red-700"
-                        x-text="singleData.attributeValue"
-                    ></span
-                    >&quot;
+                    &quot;<span class="text-red-700" x-text="singleData.attributeValue"></span>&quot;
                 </template>
 
                 <template x-if="singleData.dataType == 'boolean'">
@@ -62,9 +47,7 @@
                     </div>
                 </template>
 
-                <template
-                    x-if="['string', 'boolean'].includes(singleData.dataType) === false"
-                >
+                <template x-if="['string', 'boolean'].includes(singleData.dataType) === false">
                     <span x-text="singleData.attributeValue"></span>
                 </template>
             </div>
@@ -92,10 +75,7 @@
         </svg>
 
         <template x-if="singleData.dataType !== 'boolean'">
-            <div
-                x-show="singleData.inEditingMode"
-                class="flex flex-row items-center"
-            >
+            <div x-show="singleData.inEditingMode" class="flex flex-row items-center">
                 <input
                     @keydown.enter.stop="alpineState.saveEditing(singleData)"
                     @keydown.escape.stop="alpineState.cancelEditing(singleData)"

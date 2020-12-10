@@ -9,20 +9,19 @@ import { dependencies } from './package-lock.json'
 
 import fs from 'fs'
 import path from 'path'
-import write from 'write'
 
 import * as edge from 'edge.js'
-edge.registerViews(path.join(__dirname, './packages/shell-chrome/views'))
-const renderTemplate = () => {
-    let template = edge.render('master')
+edge.registerViews('./packages/shell-chrome/views')
+const renderPanel = () => {
+    let panel = edge.render('master')
 
     if (process.env.NODE_ENV === 'production') {
-        template = template.replace(/:data-testid="[^"]*"/g, '')
+        panel = panel.replace(/:data-testid="[^"]*"/g, '')
     }
 
-    write.sync('./dist/chrome/panel.html', template)
+    fs.writeFileSync('./dist/chrome/panel.html', panel)
 }
-renderTemplate()
+renderPanel()
 
 const isWatch = process.env.ROLLUP_WATCH === 'true'
 if (isWatch) {
@@ -42,7 +41,7 @@ if (isWatch) {
         try {
             console.info(`View "${filename}" updated. Rendering template to dist/chrome`)
 
-            renderTemplate()
+            renderPanel()
         } catch (e) {
             console.error(e)
         }
