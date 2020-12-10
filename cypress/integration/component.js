@@ -9,6 +9,42 @@ it('should get names of components', () => {
         .should('contain.text', 'combobox')
 })
 
+it('should handle adding and removing new components', () => {
+    cy.reload()
+    cy.visit('/')
+    cy.get('[data-testid=component-name]')
+        .should('have.length.above', 0)
+        .then((components) => {
+            const length = components.length
+            cy.iframe('#target').find('[data-testid=add-component-button]').click()
+            cy.get('[data-testid=component-name]').should('have.length', length + 1)
+        })
+        .then((components) => {
+            cy.iframe('#target').find('[data-testid=delete-component-button]').click()
+            cy.get('[data-testid=component-name]').should('have.length', components.length - 1)
+        })
+})
+
+it("should handle replacing a component and keep it's listed position", () => {
+    cy.reload()
+    cy.visit('/')
+    let currentIndex = -1
+    cy.get('[data-testid=component-name]')
+        .should('have.length.above', 0)
+        .then((components) => {
+            currentIndex = components.index(components.filter((_, element) => element.textContent === 'Replaceable'))
+            cy.iframe('#target').find('[data-testid=replace-component-button]').click()
+            cy.get('[data-testid=component-name]')
+        })
+        .then((components) => {
+            setTimeout(() => {
+                let newIndex = components.index(components.filter((_, element) => element.textContent === 'Span'))
+                // The two positions should be the same
+                expect(currentIndex).to.equal(newIndex)
+            }, 0)
+        })
+})
+
 it('should add/remove hover overlay on component mouseenter/leave', () => {
     // check overlay works for first component
     cy.get('[data-testid=component-container]').first().should('be.visible').trigger('mouseenter')
