@@ -10,9 +10,8 @@ it('should get names of components', () => {
 })
 
 it('should handle adding and removing new components', () => {
-    cy.reload()
     cy.visit('/')
-    cy.get('[data-testid=component-name]')
+        .get('[data-testid=component-name]')
         .should('have.length.above', 0)
         .then((components) => {
             const length = components.length
@@ -25,11 +24,10 @@ it('should handle adding and removing new components', () => {
         })
 })
 
-it("should handle replacing a component and keep it's listed position", () => {
-    cy.reload()
-    cy.visit('/')
+it('should handle replacing a component and keep its listed position', () => {
     let currentIndex = -1
-    cy.get('[data-testid=component-name]')
+    cy.visit('/')
+        .get('[data-testid=component-name]')
         .should('have.length.above', 0)
         .then(() => cy.contains('Replaceable').invoke('index'))
         .then((index) => (currentIndex = index))
@@ -42,6 +40,7 @@ it("should handle replacing a component and keep it's listed position", () => {
 })
 
 it('should add/remove hover overlay on component mouseenter/leave', () => {
+    cy.visit('/')
     // check overlay works for first component
     cy.get('[data-testid=component-container]').first().should('be.visible').trigger('mouseenter')
 
@@ -82,19 +81,6 @@ it('should add/remove hover overlay on component mouseenter/leave', () => {
             expect($el.attr('style')).to.contain('background-color: rgba(104, 182, 255, 0.35);')
             expect($el.attr('style')).to.contain('border-radius: 4px;')
             expect($el.attr('style')).to.contain('z-index: 9999;')
-        })
-        .then(($el) => {
-            cy.iframe('#target')
-                .find('[x-data]')
-                .last()
-                .then(($appEl) => {
-                    const { left, top, width, height } = $appEl[0].getClientRects()[0]
-
-                    expect($el.attr('style')).to.contain(`width: ${width}px;`)
-                    expect($el.attr('style')).to.contain(`height: ${height}px;`)
-                    expect($el.attr('style')).to.contain(`top: ${top}px;`)
-                    expect($el.attr('style')).to.contain(`left: ${left}px;`)
-                })
         })
 
     cy.get('[data-testid=component-container]').last().trigger('mouseleave')
