@@ -31,18 +31,14 @@ it("should handle replacing a component and keep it's listed position", () => {
     let currentIndex = -1
     cy.get('[data-testid=component-name]')
         .should('have.length.above', 0)
-        .then((components) => {
-            currentIndex = components.index(components.filter((_, element) => element.textContent === 'Replaceable'))
+        .then(() => cy.contains('Replaceable').invoke('index'))
+        .then((index) => (currentIndex = index))
+        .then(() => {
             cy.iframe('#target').find('[data-testid=replace-component-button]').click()
             cy.get('[data-testid=component-name]')
         })
-        .then((components) => {
-            setTimeout(() => {
-                let newIndex = components.index(components.filter((_, element) => element.textContent === 'Span'))
-                // The two positions should be the same
-                expect(currentIndex).to.equal(newIndex)
-            }, 0)
-        })
+        .then(() => cy.contains('Span').invoke('index'))
+        .then((index) => expect(currentIndex).to.equal(index))
 })
 
 it('should add/remove hover overlay on component mouseenter/leave', () => {
