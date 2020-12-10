@@ -1,0 +1,52 @@
+<div
+    data-testid="settings-panel"
+    x-show="settingsPanelEnabled && settingsPanelOpen"
+    class="inset-0 absolute flex flex-col items-center justify-center z-max"
+>
+    <div class="absolute opacity-75 bg-white inset-0"></div>
+    <div
+        class="p-8 flex-1 flex items-center justify-center w-full relative z-50"
+        @click="settingsPanelOpen = false"
+    >
+        <div
+            x-show.transition.in.opacity="settingsPanelOpen"
+            class="bg-white w-full h-full p-8 shadow-lg relative"
+            @click.stop
+        >
+            <button
+                data-testid="settings-panel-close-button"
+                class="absolute top-0 right-0 focus:outline-none block"
+                @click="settingsPanelOpen = false"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    class="text-black absolute top-1 right-1 w-5 h-5"
+                    fill="currentColor"
+                >
+                    <path
+                        fill-rule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clip-rule="evenodd"
+                    />
+                </svg>
+            </button>
+            <div class="flex space-x-12">
+                <div>
+                    <h2 class="text-xl font-light">Settings</h2>
+                    <nav class="flex flex-col items-start text-ms mt-3 text-cool-gray-500 space-y-1">
+                        <button>Preferences</button>
+                        <button>Workspace</button>
+                        <button>Experiments</button>
+                    </nav>
+                </div>
+                <div class="flex-grow">
+                    <div class="w-full border-b border-cool-gray-200 mb-6 pb-2">
+                        <h3 class="text-2xl font-light">Preferences</h3>
+                    </div>
+                    <div>Content</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

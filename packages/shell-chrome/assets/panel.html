@@ -19,9 +19,9 @@
             <div class="bg-white flex flex-col relative h-full w-full mx-auto">
                 <div
                     :class="{
-                        'bg-gray-100': !showTools,
-                        [theme['bg-header']]: showTools,
-                    }"
+        'bg-gray-100': !showTools,
+        [theme['bg-header']]: showTools,
+    }"
                     class="flex py-2 pl-3 pr-4 text-base leading-9 tracking-tight font-bold text-white border-b border-gray-300 transition duration-700 transition-colors ease-in-out sm:leading-10"
                 >
                     <div class="flex-1">
@@ -33,20 +33,19 @@
                                 fill="currentColor"
                                 stroke="none"
                             >
-                                <!-- <rect class="text-gray-100" x="0" y="0" width="460" height="460"></rect> -->
                                 <polygon
                                     :class="{
-                                        'text-gray-600': !showTools,
-                                        [theme['bg-logo-dark']]: showTools,
-                                    }"
+                        'text-gray-600': !showTools,
+                        [theme['bg-logo-dark']]: showTools,
+                    }"
                                     class="transform transition-colors duration-700"
                                     points="50,230 140,140 320,320 140,320"
                                 />
                                 <polygon
                                     :class="{
-                                        'text-gray-400': !showTools,
-                                        [theme['bg-logo-light']]: showTools,
-                                    }"
+                        'text-gray-400': !showTools,
+                        [theme['bg-logo-light']]: showTools,
+                    }"
                                     class="transform transition-colors duration-700"
                                     points="320,140 410,230 320,320 230,230"
                                 />
@@ -54,21 +53,21 @@
 
                             <div
                                 :class="{
-                                    'animate-pulse-fast': !showTools,
-                                    'bg-gray-300 bg-opacity-50 text-gray-600': !showTools,
-                                    'bg-green-100 text-green-700': showTools && isLatest,
-                                    'bg-orange-100 text-orange-700': showTools && !isLatest,
-                                }"
+                    'animate-pulse-fast': !showTools,
+                    'bg-gray-300 bg-opacity-50 text-gray-600': !showTools,
+                    'bg-green-100 text-green-700': showTools && isLatest,
+                    'bg-orange-100 text-orange-700': showTools && !isLatest,
+                }"
                                 data-testid="status-line"
                                 class="flex items-center px-1 py-0.5 rounded text-xs font-medium leading-4 transition transition-colors duration-700 ease-in-out"
                                 :title="isLatest? 'Latest Version' : `Latest Version: ${latest}`"
                             >
                                 <svg
                                     :class="{
-                                        'text-gray-400': !showTools ,
-                                        'text-green-500': showTools && isLatest,
-                                        'text-orange-500': showTools && !isLatest,
-                                    }"
+                        'text-gray-400': !showTools ,
+                        'text-green-500': showTools && isLatest,
+                        'text-orange-500': showTools && !isLatest,
+                    }"
                                     class="mr-1.5 h-2 w-2 transition transition-colors duration-700 ease-in-out"
                                     fill="currentColor"
                                     viewBox="0 0 8 8"
@@ -86,9 +85,9 @@
 
                     <div
                         :class="{
-                            'text-gray-400': !showTools,
-                            [theme['text-header']]: showTools,
-                        }"
+            'text-gray-400': !showTools,
+            [theme['text-header']]: showTools,
+        }"
                         class="flex items-center space-x-2 transition transition-colors duration-700"
                     >
                         <a
@@ -162,9 +161,9 @@
                             <template x-for="(component, index) in components">
                                 <a
                                     :class="{
-                                        'text-white bg-alpine-300' : component.isOpened,
-                                        'text-gray-600 hover:bg-blue-100' : !component.isOpened,
-                                    }"
+        'text-white bg-alpine-300' : component.isOpened,
+        'text-gray-600 hover:bg-blue-100' : !component.isOpened,
+    }"
                                     class="block cursor-pointer rounded"
                                     :style="`padding-left: ${component.depth * 20}px; `"
                                     @mouseenter="alpineState.hoverOnComponent(component)"
@@ -186,35 +185,35 @@
                         </div>
                     </div>
 
-                    <!-- Split Pane Gutter -->
+                    <!-- Split Pane Drag Handle -->
                     <div
                         x-ref="handle"
                         :class="{
-                            '-mx-1 px-1 cursor-col-resize': orientation === 'landscape',
-                            '-my-1 py-1 cursor-row-resize': orientation === 'portrait'
-                        }"
+        '-mx-1 px-1 cursor-col-resize': orientation === 'landscape',
+        '-my-1 py-1 cursor-row-resize': orientation === 'portrait'
+    }"
                         class="relative group flex items-center justify-center z-50"
                     >
                         <span
                             :class="{
-                                'w-px h-full': orientation === 'landscape',
-                                'w-full h-px': orientation === 'portrait'
-                            }"
+            'w-px h-full': orientation === 'landscape',
+            'w-full h-px': orientation === 'portrait'
+        }"
                             class="absolute bg-gray-300"
                         ></span>
 
                         <div
                             :class="{
-                                'w-3 h-8': orientation === 'landscape',
-                                'w-8 h-3': orientation === 'portrait'
-                            }"
+            'w-3 h-8': orientation === 'landscape',
+            'w-8 h-3': orientation === 'portrait'
+        }"
                             class="flex items-center justify-center text-gray-400 border border-gray-300 bg-gray-200 rounded z-50 group-hover:text-blue-400 group-hover:border-blue-300 group-hover:bg-blue-200"
                         >
                             <span>
                                 <svg
                                     :class="{
-                                        'hidden': orientation === 'landscape'
-                                    }"
+                    'hidden': orientation === 'landscape'
+                }"
                                     class="w-3 h-3"
                                     fill="currentColor"
                                     viewBox="0 0 20 20"
@@ -226,8 +225,8 @@
                                 </svg>
                                 <svg
                                     :class="{
-                                        'hidden': orientation === 'portrait'
-                                    }"
+                    'hidden': orientation === 'portrait'
+                }"
                                     class="w-3 h-3"
                                     fill="currentColor"
                                     viewBox="0 0 20 20"
@@ -273,8 +272,8 @@
                                                     @click="alpineState.toggleDataAttribute(singleData)"
                                                     class="block px-1 rounded hover:bg-blue-100"
                                                     :class="{
-                                                        'cursor-pointer': singleData.hasArrow
-                                                    }"
+            'cursor-pointer': singleData.hasArrow
+        }"
                                                     x-show="singleData.isOpened"
                                                 >
                                                     <h5
@@ -287,9 +286,9 @@
                                                                 class="arrow"
                                                                 :data-testid="singleData.isArrowDown ? 'arrow-down' : 'arrow-right'"
                                                                 :class="{
-                                                                    'right': !singleData.isArrowDown,
-                                                                    'down': singleData.isArrowDown
-                                                                }"
+                        'right': !singleData.isArrowDown,
+                        'down': singleData.isArrowDown
+                    }"
                                                             ></span>
                                                         </div>
 
@@ -343,13 +342,13 @@
                                                 <div
                                                     class="flex flex-col"
                                                     x-show="!singleData.hasArrow
-                                                    && !singleData.readOnly
-                                                    && singleData.isOpened"
+        && !singleData.readOnly
+        && singleData.isOpened"
                                                 >
                                                     <svg
                                                         fill="currentColor"
                                                         x-show="!singleData.inEditingMode
-                                                        && singleData.dataType !== 'boolean'"
+            && singleData.dataType !== 'boolean'"
                                                         :data-testid="`edit-icon-${singleData.attributeName}`"
                                                         @click="alpineState.editAttribute(singleData)"
                                                         viewBox="0 0 20 20"
@@ -414,6 +413,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div
                     data-testid="settings-panel"
                     x-show="settingsPanelEnabled && settingsPanelOpen"
