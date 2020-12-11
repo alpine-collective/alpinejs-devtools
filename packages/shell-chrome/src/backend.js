@@ -1,7 +1,12 @@
 import { getComponentName, isSerializable, serializeHTMLElement, set, waitForAlpine } from './utils'
 
+window.__alpineDevtool = {
+    components: [],
+    uuid: 0,
+    stopMutationObserver: false,
+    hoverElement: null,
+}
 window.addEventListener('message', handshake)
-window.__alpineDevtool = {}
 
 function startAlpineBackend() {
     getAlpineVersion()
@@ -115,19 +120,15 @@ function serializeDataProperty(value) {
     }
 }
 
-let components = []
-let uuid = 0
-
 function discoverComponents() {
     var rootEls = document.querySelectorAll('[x-data]')
-
     // Exit early if no components have been added or removed
     const allComponentsInitialized = Object.values(rootEls).every((e) => e.__alpineDevtool)
-    if (components.length === rootEls.length && allComponentsInitialized) {
+    if (window.__alpineDevtool.length === rootEls.length && allComponentsInitialized) {
         return false
     }
 
-    components = []
+    window.__alpineDevtool.components = []
 
     rootEls.forEach((rootEl, index) => {
         Alpine.initializeComponent(rootEl)
@@ -137,7 +138,7 @@ function discoverComponents() {
         }
 
         if (!rootEl.__alpineDevtool.id) {
-            rootEl.__alpineDevtool.id = ++uuid
+            rootEl.__alpineDevtool.id = ++window.__alpineDevtool.uuid
         }
 
         var depth = 0
@@ -160,7 +161,7 @@ function discoverComponents() {
             return acc
         }, {})
 
-        components.push({
+        window.__alpineDevtool.components.push({
             name: getComponentName(rootEl),
             depth: depth,
             data: data,
@@ -178,7 +179,7 @@ function discoverComponents() {
                 // we need to get rid of them
                 // this avoids `DataCloneError: The object could not be cloned.`
                 // see https://github.com/Te7a-Houdini/alpinejs-devtools/issues/17
-                components: JSON.stringify(components),
+                components: JSON.stringify(window.__alpineDevtool.components),
                 type: 'render-components',
             },
         },
