@@ -1,3 +1,7 @@
+![Chrome Web Store](https://img.shields.io/chrome-web-store/v/fopaemeedckajflibkpifppcankfmbhk)
+![Chrome Web Store](https://img.shields.io/chrome-web-store/users/fopaemeedckajflibkpifppcankfmbhk)
+![Mozilla Add-on](https://img.shields.io/amo/v/alpinejs-devtools)
+
 # Alpine.js devtools
 
 ![Screenshot of Alpine.js devtools](docs/alpine-devtools-screenshot.png)
@@ -36,7 +40,7 @@ Unlike other frameworks, Alpine does not include named components. Therefore by 
 2. Run `npm install`
 3. Run `npm run build:dev` (or `npm run build` to test a production build)
 4. Load unpacked extension inside [dist/chrome](./dist/chrome) directory
-5. Open any HTML file that imports Alpine.js then inspect with Chrome DevTools. You should now have an Alpine.js panel available.
+5. Open any HTML file that imports Alpine.js then inspect with Chrome DevTools. You should now have an Alpine.js panel available
 
 ### Firefox
 
