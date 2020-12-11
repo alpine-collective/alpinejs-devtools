@@ -1,3 +1,7 @@
+![Chrome Web Store](https://img.shields.io/chrome-web-store/v/fopaemeedckajflibkpifppcankfmbhk)
+![Chrome Web Store](https://img.shields.io/chrome-web-store/users/fopaemeedckajflibkpifppcankfmbhk)
+![Mozilla Add-on](https://img.shields.io/amo/v/alpinejs-devtools)
+
 # Alpine.js devtools
 
 ![Screenshot of Alpine.js devtools](docs/alpine-devtools-screenshot.png)
