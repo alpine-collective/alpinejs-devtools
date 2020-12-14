@@ -9,6 +9,22 @@ it('should get names of components', () => {
         .should('contain.text', 'combobox')
 })
 
+it('should create globals for each component', () => {
+    let win
+    cy.frameLoaded('#target').then(() => {
+        win = cy.$$('#target').get(0).contentWindow
+    })
+
+    cy.iframe('#target')
+        .find('[x-data]')
+        .then((components) => {
+            components.each((i, component) => {
+                expect(win[`$x${i}`].$el).to.equal(component)
+                expect(win[`$x${i}`]).to.equal(component.__x)
+            })
+        })
+})
+
 it('should handle adding and removing new components', () => {
     cy.visit('/')
         .get('[data-testid=component-name]')
