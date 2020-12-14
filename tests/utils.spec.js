@@ -1,4 +1,4 @@
-import { getComponentName } from '../packages/shell-chrome/src/utils'
+import { createComponentId, getComponentName } from '../packages/shell-chrome/src/utils'
 
 test('getComponentName > can handle multiple scenarios to determine component name', async () => {
     window.myFn = () => {}
