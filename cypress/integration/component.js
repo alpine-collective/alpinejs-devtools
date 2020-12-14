@@ -9,7 +9,7 @@ it('should get names of components', () => {
         .should('contain.text', 'combobox')
 })
 
-it('should create globals for each component', () => {
+it('should create globals + add annotation for each component', () => {
     let win
     cy.frameLoaded('#target').then(() => {
         win = cy.$$('#target').get(0).contentWindow
@@ -22,6 +22,16 @@ it('should create globals for each component', () => {
                 expect(win[`$x${i}`].$el).to.equal(component)
                 expect(win[`$x${i}`]).to.equal(component.__x)
             })
+            return components.length
+        })
+        .then((componentCount) => {
+            cy.get('[data-testid="console-global"]')
+                .should('contain.text', '= $x0')
+                .should('contain.text', '= $x1')
+                .should('contain.text', '= $x2')
+                .should('contain.text', '= $x3')
+                .should('contain.text', '= $x4')
+                .should('contain.text', `= $x${componentCount - 1}`)
         })
 })
 
