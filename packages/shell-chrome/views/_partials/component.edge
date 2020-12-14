@@ -15,7 +15,11 @@
         <span class="opacity-25">&lt;</span>
         <span data-testid="component-name" x-text="component.name" class="text-base"></span>
         <span class="opacity-25">&gt;</span>
-        <div data-testid="console-global" class="text-white pl-2 text-xs" :title="`Available as $x${component.id} in the console`">
+        <div
+            data-testid="console-global"
+            class="text-white pl-2 text-xs"
+            :title="`Available as $x${component.id} in the console`"
+        >
             = <span x-text="`$x${component.id}`"></span>
         </div>
     </h5>
