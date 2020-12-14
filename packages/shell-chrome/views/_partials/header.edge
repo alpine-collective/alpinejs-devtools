@@ -33,35 +33,35 @@
             </svg>
 
             @verbatim
-                <div
-                    :class="{
+            <div
+                :class="{
                         'animate-pulse-fast': !showTools,
                         'bg-gray-300 bg-opacity-50 text-gray-600': !showTools,
                         'bg-green-100 text-green-700': showTools && isLatest,
                         'bg-orange-100 text-orange-700': showTools && !isLatest,
                     }"
-                    data-testid="status-line"
-                    class="flex items-center px-1 py-0.5 rounded text-xs font-medium leading-4 transition transition-colors duration-700 ease-in-out"
-                    :title="isLatest? 'Latest Version' : `Latest Version: ${latest}`"
-                >
-                    <svg
-                        :class="{
+                data-testid="status-line"
+                class="flex items-center px-1 py-0.5 rounded text-xs font-medium leading-4 transition transition-colors duration-700 ease-in-out"
+                :title="isLatest? 'Latest Version' : `Latest Version: ${latest}`"
+            >
+                <svg
+                    :class="{
                             'text-gray-400': !showTools ,
                             'text-green-500': showTools && isLatest,
                             'text-orange-500': showTools && !isLatest,
                         }"
-                        class="mr-1.5 h-2 w-2 transition transition-colors duration-700 ease-in-out"
-                        fill="currentColor"
-                        viewBox="0 0 8 8"
-                    >
-                        <circle cx="4" cy="4" r="3" />
-                    </svg>
-                    <a
-                        :class="isLatest ? 'pointer-events-none' : ''"
-                        :href="isLatest ? '#' : 'https://github.com/alpinejs/alpine/releases'"
-                        x-text="detected"
-                    ></a>
-                </div>
+                    class="mr-1.5 h-2 w-2 transition transition-colors duration-700 ease-in-out"
+                    fill="currentColor"
+                    viewBox="0 0 8 8"
+                >
+                    <circle cx="4" cy="4" r="3" />
+                </svg>
+                <a
+                    :class="isLatest ? 'pointer-events-none' : ''"
+                    :href="isLatest ? '#' : 'https://github.com/alpinejs/alpine/releases'"
+                    x-text="detected"
+                ></a>
+            </div>
             @endverbatim
         </div>
     </div>

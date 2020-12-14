@@ -1,20 +1,20 @@
 @verbatim
-    <a
-        :class="{
+<a
+    :class="{
             'text-white bg-alpine-300' : component.isOpened,
             'text-gray-600 hover:bg-blue-100' : !component.isOpened,
         }"
-        class="block cursor-pointer rounded"
-        :style="`padding-left: ${component.depth * 20}px; `"
-        @mouseenter="alpineState.hoverOnComponent(component)"
-        @mouseleave="alpineState.hoverLeftComponent(component)"
-        @click="alpineState.renderComponentData(component)"
-        data-testid="component-container"
-    >
-        <h5 class="flex items-center px-2 leading-7 font-mono whitespace-nowrap">
-            <span class="opacity-25">&lt;</span>
-            <span data-testid="component-name" x-text="component.name" class="text-base"></span>
-            <span class="opacity-25">&gt;</span>
-        </h5>
-    </a>
+    class="block cursor-pointer rounded"
+    :style="`padding-left: ${component.depth * 20}px; `"
+    @mouseenter="alpineState.hoverOnComponent(component)"
+    @mouseleave="alpineState.hoverLeftComponent(component)"
+    @click="alpineState.renderComponentData(component)"
+    data-testid="component-container"
+>
+    <h5 class="flex items-center px-2 leading-7 font-mono whitespace-nowrap">
+        <span class="opacity-25">&lt;</span>
+        <span data-testid="component-name" x-text="component.name" class="text-base"></span>
+        <span class="opacity-25">&gt;</span>
+    </h5>
+</a>
 @endverbatim
