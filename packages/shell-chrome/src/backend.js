@@ -1,13 +1,20 @@
 import { getComponentName, isSerializable, serializeHTMLElement, set, waitForAlpine } from './utils'
 
+window.__alpineDevtool = {
+    components: [],
+    uuid: 0,
+    stopMutationObserver: false,
+    hoverElement: null,
+}
 window.addEventListener('message', handshake)
-window.__alpineDevtool = {}
 
 function startAlpineBackend() {
     getAlpineVersion()
     discoverComponents()
 
-    document.querySelectorAll('[x-data]').forEach((el) => observeNode(el))
+    // Watch on the body for injected components. This is lightweight
+    // as work is only done if there are components added/removed
+    observeNode(document.querySelector('body'))
 }
 
 function handshake(e) {
@@ -113,10 +120,15 @@ function serializeDataProperty(value) {
     }
 }
 
-function discoverComponents(isThroughMutation = false) {
+function discoverComponents() {
     var rootEls = document.querySelectorAll('[x-data]')
+    // Exit early if no components have been added or removed
+    const allComponentsInitialized = Object.values(rootEls).every((e) => e.__alpineDevtool)
+    if (window.__alpineDevtool.length === rootEls.length && allComponentsInitialized) {
+        return false
+    }
 
-    var components = []
+    window.__alpineDevtool.components = []
 
     rootEls.forEach((rootEl, index) => {
         Alpine.initializeComponent(rootEl)
@@ -125,8 +137,8 @@ function discoverComponents(isThroughMutation = false) {
             rootEl.__alpineDevtool = {}
         }
 
-        if (!isThroughMutation) {
-            rootEl.__alpineDevtool.id = Math.floor(Math.random() * 100000 + 1)
+        if (!rootEl.__alpineDevtool.id) {
+            rootEl.__alpineDevtool.id = ++window.__alpineDevtool.uuid
         }
 
         var depth = 0
@@ -149,7 +161,7 @@ function discoverComponents(isThroughMutation = false) {
             return acc
         }, {})
 
-        components.push({
+        window.__alpineDevtool.components.push({
             name: getComponentName(rootEl),
             depth: depth,
             data: data,
@@ -167,9 +179,8 @@ function discoverComponents(isThroughMutation = false) {
                 // we need to get rid of them
                 // this avoids `DataCloneError: The object could not be cloned.`
                 // see https://github.com/Te7a-Houdini/alpinejs-devtools/issues/17
-                components: JSON.stringify(components),
+                components: JSON.stringify(window.__alpineDevtool.components),
                 type: 'render-components',
-                isThroughMutation: isThroughMutation,
             },
         },
         '*',
@@ -200,7 +211,7 @@ function observeNode(node) {
 
     observer = new MutationObserver((mutations) => {
         if (!window.__alpineDevtool.stopMutationObserver) {
-            discoverComponents((isThroughMutation = true))
+            discoverComponents()
         }
     })
 

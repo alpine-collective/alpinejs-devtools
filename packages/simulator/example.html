@@ -55,6 +55,36 @@
         <div role="combobox" x-data="{ hello: 'world' }">
             <span x-text="hello"></span>
         </div>
+        <button
+            data-testid="replace-component-button"
+            onclick="event.target.parentNode.replaceChild(window.span, event.target)"
+            x-data
+            x-title="Replaceable"
+        >
+            Press to replace self with a new component
+        </button>
+        <br />
+        <button
+            x-data
+            x-title="Inserts others"
+            data-testid="add-component-button"
+            onclick="event.target.insertAdjacentHTML(
+                'afterend',
+                `
+                <button data-testid='delete-component-button' onclick='event.target.remove()' x-data x-title='Inserted'>Press to remove self</button>
+                `
+            )"
+        >
+            Add new component
+        </button>
+        <br />
+        <script>
+            // For testing inserting. Will insert anywhere.
+            window.span = document.createElement('span')
+            window.span.setAttribute('x-data', '')
+            window.span.setAttribute('x-title', 'Span')
+            window.span.setAttribute('x-text', `"I'm an Alpine component"`)
+        </script>
         <script>
             function myFn() {
                 return {
