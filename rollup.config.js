@@ -10,6 +10,9 @@ import { dependencies } from './package-lock.json'
 import fs from 'fs'
 import path from 'path'
 
+import { renderPanel } from './lib/edge/render'
+renderPanel()
+
 const isWatch = process.env.ROLLUP_WATCH === 'true'
 if (isWatch) {
     fs.watch('./packages/shell-chrome/assets', { recursive: true }, (_event, filename) => {
@@ -19,6 +22,16 @@ if (isWatch) {
                 path.join('./packages/shell-chrome/assets/', filename),
                 path.join('./dist/chrome', filename),
             )
+        } catch (e) {
+            console.error(e)
+        }
+    })
+
+    fs.watch('./packages/shell-chrome/views', { recursive: true }, (_event, filename) => {
+        try {
+            console.info(`View "${filename}" updated. Rendering panel to dist/chrome`)
+
+            renderPanel()
         } catch (e) {
             console.error(e)
         }
@@ -73,17 +86,6 @@ export default [
                     {
                         src: 'packages/shell-chrome/assets/**/*',
                         dest: 'dist/chrome',
-                    },
-                    {
-                        src: 'packages/shell-chrome/assets/panel.html',
-                        dest: 'dist/chrome',
-                        transform(contents) {
-                            // strip interpolated data-testids
-                            if (process.env.NODE_ENV === 'production') {
-                                return contents.toString().replace(/:data-testid="[^"]*"/g, '')
-                            }
-                            return contents.toString()
-                        },
                     },
                     {
                         src: 'packages/shell-chrome/assets/manifest.json',

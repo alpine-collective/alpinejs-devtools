@@ -1,6 +1,6 @@
 module.exports = {
     purge: {
-        content: ['./packages/**/*.html', './packages/shell-chrome/src/devtools/devtools.js'],
+        content: ['./packages/**/*.{html,edge}', './packages/shell-chrome/src/devtools/devtools.js'],
     },
     theme: {
         fontSize: {
