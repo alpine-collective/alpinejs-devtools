@@ -5,6 +5,7 @@ window.__alpineDevtool = {
     uuid: 0,
     stopMutationObserver: false,
     hoverElement: null,
+    observer: null,
 }
 window.addEventListener('message', handshake)
 
@@ -40,7 +41,7 @@ function handleMessages(e) {
 
         if (e.data.payload.action == 'hover') {
             Alpine.discoverComponents((component) => {
-                if (component.__alpineDevtool && component.__alpineDevtool.id == e.data.payload.componentId) {
+                if (component.__alpineDevtool && component.__alpineDevtool.id === e.data.payload.componentId) {
                     cleanupWindowHoverElement()
 
                     let hoverElement = document.createElement('div')
@@ -67,7 +68,7 @@ function handleMessages(e) {
             })
         }
 
-        if (e.data.payload.action == 'hoverLeft') {
+        if (e.data.payload.action === 'hoverLeft') {
             window.__alpineDevtool.stopMutationObserver = true
 
             Alpine.discoverComponents((component) => {
@@ -80,9 +81,9 @@ function handleMessages(e) {
             }, 10)
         }
 
-        if (e.data.payload.action == 'editAttribute') {
+        if (e.data.payload.action === 'editAttribute') {
             Alpine.discoverComponents((component) => {
-                if (component.__alpineDevtool.id == e.data.payload.componentId) {
+                if (component.__alpineDevtool.id === e.data.payload.componentId) {
                     const { attributeSequence, attributeValue } = e.data.payload
                     set(component.__x.$data, attributeSequence, attributeValue)
                 }
@@ -121,10 +122,10 @@ function serializeDataProperty(value) {
 }
 
 function discoverComponents() {
-    var rootEls = document.querySelectorAll('[x-data]')
+    const rootEls = document.querySelectorAll('[x-data]')
     // Exit early if no components have been added or removed
     const allComponentsInitialized = Object.values(rootEls).every((e) => e.__alpineDevtool)
-    if (window.__alpineDevtool.length === rootEls.length && allComponentsInitialized) {
+    if (window.__alpineDevtool.components.length === rootEls.length && allComponentsInitialized) {
         return false
     }
 
@@ -138,7 +139,8 @@ function discoverComponents() {
         }
 
         if (!rootEl.__alpineDevtool.id) {
-            rootEl.__alpineDevtool.id = ++window.__alpineDevtool.uuid
+            rootEl.__alpineDevtool.id = window.__alpineDevtool.uuid++
+            window[`$x${rootEl.__alpineDevtool.id}`] = rootEl.__x
         }
 
         var depth = 0
@@ -200,8 +202,6 @@ function getAlpineVersion() {
     )
 }
 
-observer = null
-
 function observeNode(node) {
     const observerOptions = {
         childList: true,
@@ -209,23 +209,25 @@ function observeNode(node) {
         subtree: true,
     }
 
-    observer = new MutationObserver((mutations) => {
+    window.__alpineDevtool.observer = new MutationObserver((mutations) => {
         if (!window.__alpineDevtool.stopMutationObserver) {
             discoverComponents()
         }
     })
 
-    observer.observe(node, observerOptions)
+    window.__alpineDevtool.observer.observe(node, observerOptions)
 }
 
 function disconnectObserver() {
-    if (observer) {
-        observer.disconnect()
+    if (window.__alpineDevtool.observer) {
+        window.__alpineDevtool.observer.disconnect()
+        window.__alpineDevtool.observer = null
     }
 }
 
 function cleanupWindowHoverElement() {
     if (window.__alpineDevtool.hoverElement) {
         window.__alpineDevtool.hoverElement.remove()
+        window.__alpineDevtool.hoverElement = null
     }
 }
