@@ -78,6 +78,7 @@
             Add new component
         </button>
         <br />
+        <button x-data @click="$dispatch('custom-event')">Dispatch browser event using <code>$dispatch</code></button>
         <script>
             // For testing inserting. Will insert anywhere.
             window.span = document.createElement('span')

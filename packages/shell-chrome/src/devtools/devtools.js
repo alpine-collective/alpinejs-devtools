@@ -38,6 +38,8 @@ export default function devtools() {
         version: null,
         latest: null,
         components: [],
+        events: [],
+        tab: 'components',
         showTools: false,
         showTimeout: 1500,
         activeTheme: 'dark-header',

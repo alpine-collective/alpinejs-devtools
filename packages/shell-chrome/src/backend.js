@@ -11,6 +11,7 @@ window.addEventListener('message', handshake)
 
 function startAlpineBackend() {
     getAlpineVersion()
+    patchEventDispatcher()
     discoverComponents()
 
     // Watch on the body for injected components. This is lightweight
@@ -187,6 +188,27 @@ function discoverComponents() {
         },
         '*',
     )
+}
+
+const _dispatchEvent = EventTarget.prototype.dispatchEvent
+
+function patchEventDispatcher() {
+    EventTarget.prototype.dispatchEvent = function (...args) {
+        ;[eventObject] = args
+
+        window.postMessage(
+            {
+                source: 'alpine-devtools-backend',
+                payload: {
+                    event: eventObject,
+                    type: 'render-event',
+                },
+            },
+            '*',
+        )
+
+        return _dispatchEvent.apply(this, args)
+    }
 }
 
 function getAlpineVersion() {

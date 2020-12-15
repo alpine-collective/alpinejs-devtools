@@ -21,4 +21,10 @@ export function handleMessage(message, port) {
 
         window.__alpineDevtool.port = port
     }
+
+    if (message.type === 'render-event') {
+        window.alpineState.renderEventFromBackend(message.event)
+
+        window.__alpineDevtool.port = port
+    }
 }

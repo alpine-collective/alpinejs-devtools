@@ -68,6 +68,33 @@
 
     <div
         :class="{
+        'text-gray-400': !showTools,
+        [theme['text-header']]: showTools,
+    }"
+        class="flex items-center space-x-4 transition transition-colors duration-700 mr-16"
+    >
+        <button
+            class="text-gray-300 px-4 rounded"
+            :class="{
+            'bg-gray-600': tab === 'components' && showTools
+        }"
+            x-on:click="tab = 'components'"
+        >
+            Components
+        </button>
+        <button
+            class="text-gray-300 px-4 rounded"
+            :class="{
+            'bg-gray-600': tab === 'events' && showTools
+        }"
+            x-on:click="tab = 'events'"
+        >
+            Events
+        </button>
+    </div>
+
+    <div
+        :class="{
             'text-gray-400': !showTools,
             [theme['text-header']]: showTools,
         }"

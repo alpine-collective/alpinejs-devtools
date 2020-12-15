@@ -3,8 +3,10 @@ import { flattenData, convertInputDataToType } from '../utils'
 export default class State {
     constructor() {
         this.components = {}
+        this.events = {}
         this.allDataAttributes = {}
         this.renderedComponentId = null
+        this.renderedEventId = null
         this.version = {
             detected: null,
             latest: '__alpine_version__',
@@ -51,6 +53,18 @@ export default class State {
 
             this.components[component.id] = component
         })
+
+        this.updateXdata()
+    }
+
+    renderEventFromBackend(event) {
+        if (!event.id) {
+            event.id = this.events.length
+        }
+
+        event.isOpened = this.renderedEventId === event.id
+
+        this.events.push(event)
 
         this.updateXdata()
     }
@@ -125,6 +139,10 @@ export default class State {
         appData.latest = this.version.latest
 
         appData.components = Object.values(this.components).sort(function (a, b) {
+            return a.index - b.index
+        })
+
+        appData.events = Object.values(this.events).sort(function (a, b) {
             return a.index - b.index
         })
     }
