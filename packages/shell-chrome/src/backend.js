@@ -140,7 +140,7 @@ function discoverComponents() {
 
         if (!rootEl.__alpineDevtool.id) {
             rootEl.__alpineDevtool.id = window.__alpineDevtool.uuid++
-            window[`$x${rootEl.__alpineDevtool.id}`] = rootEl.__x
+            window[`$x${rootEl.__alpineDevtool.id - 1}`] = rootEl.__x
         }
 
         var depth = 0
