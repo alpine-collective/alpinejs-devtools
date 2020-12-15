@@ -1,3 +1,5 @@
+const colors = require('tailwindcss/colors')
+
 module.exports = {
     purge: {
         content: ['./packages/**/*.{html,edge}', './packages/shell-chrome/src/devtools/devtools.js'],
@@ -17,6 +19,8 @@ module.exports = {
         },
         extend: {
             colors: {
+                orange: colors.orange,
+                'cool-gray': colors.coolGray,
                 alpine: {
                     100: '#7C87A2',
                     200: '#616D89',
