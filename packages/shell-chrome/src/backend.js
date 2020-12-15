@@ -2,7 +2,7 @@ import { getComponentName, isSerializable, serializeHTMLElement, set, waitForAlp
 
 window.__alpineDevtool = {
     components: [],
-    uuid: 0,
+    uuid: 1,
     stopMutationObserver: false,
     hoverElement: null,
     observer: null,
