@@ -1,4 +1,4 @@
-import { createComponentId, getComponentName } from '../packages/shell-chrome/src/utils'
+import { isRequiredVersion, getComponentName } from '../packages/shell-chrome/src/utils'
 
 test('getComponentName > can handle multiple scenarios to determine component name', async () => {
     window.myFn = () => {}
@@ -23,4 +23,23 @@ test('getComponentName > can handle multiple scenarios to determine component na
     expect(getComponentName(element)).toBe('quuz')
     element.removeAttribute('role')
     expect(getComponentName(element)).toBe('div')
+})
+
+describe('isRequiredVersion', () => {
+    test('works for major', () => {
+        expect(isRequiredVersion('1.11.0', '2.1.1')).toBe(true)
+        expect(isRequiredVersion('2.11.0', '0.1.1')).toBe(false)
+    })
+    test('works for minor', () => {
+        expect(isRequiredVersion('1.1.1', '1.11.0')).toBe(true)
+        expect(isRequiredVersion('1.11.0', '1.1.1')).toBe(false)
+    })
+    test('works for patch', () => {
+        expect(isRequiredVersion('0.11.0', '0.11.1')).toBe(true)
+        expect(isRequiredVersion('0.1.1', '0.1.0')).toBe(false)
+    })
+    test('works for equal', () => {
+        expect(isRequiredVersion('2.8.0', '2.8.0')).toBe(true)
+        expect(isRequiredVersion('1.1.0', '1.1.0')).toBe(true)
+    })
 })

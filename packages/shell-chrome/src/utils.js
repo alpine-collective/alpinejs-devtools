@@ -19,10 +19,11 @@ export function fetchWithTimeout(resource, options) {
  * @returns {boolean}
  */
 export function isRequiredVersion(required, actual) {
+    if (required === actual) return true
     const requiredArray = required.split('.').map((v) => parseInt(v, 10))
     const currentArray = actual.split('.').map((v) => parseInt(v, 10))
     for (let i = 0; i < requiredArray.length; i++) {
-        if (!currentArray[i] || currentArray[i] < requiredArray[i]) {
+        if (currentArray[i] < requiredArray[i]) {
             return false
         }
         if (currentArray[i] > requiredArray[i]) {
