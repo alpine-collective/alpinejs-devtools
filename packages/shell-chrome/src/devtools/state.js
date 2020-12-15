@@ -68,7 +68,7 @@ export default class State {
     }
 
     closeOpenedComponent() {
-        if (this.renderedComponentId) {
+        if (this.renderedComponentId || this.renderedComponentId === 0) {
             this.components[this.renderedComponentId].isOpened = false
         }
     }
