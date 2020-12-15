@@ -18,9 +18,9 @@
         <div
             data-testid="console-global"
             class="text-white pl-2 text-xs"
-            :title="`Available as $x${component.id} in the console`"
+            :title="`Available as $x${component.id - 1} in the console`"
         >
-            = <span x-text="`$x${component.id}`"></span>
+            = <span x-text="`$x${component.id - 1}`"></span>
         </div>
     </h5>
 </a>
