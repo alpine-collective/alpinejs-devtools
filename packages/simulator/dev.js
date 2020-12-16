@@ -38,7 +38,8 @@ async function main() {
     initProxy(window, targetWindow)
 
     // 1. load user app
-    target.src = './example.html'
+    const targetPath = new URL(window.location.href).searchParams.get('target')
+    target.src = targetPath || './example.html'
     target.onload = () => {
         // 1. inject backend script to "target" iframe
         inject('/backend.js', () => {
