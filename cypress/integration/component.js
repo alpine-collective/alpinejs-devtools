@@ -129,8 +129,17 @@ it('should add/remove hover overlay on component mouseenter/leave', () => {
     })
     cy.iframe('#target').find('[data-testid=hover-element]').should('not.exist')
 })
-it('should support selecting a component', () => {
-    cy.visit('/').get('[data-testid=component-container]').first().should('be.visible').click()
+it('should support selecting/unselecting a component', () => {
+    cy.visit('/')
+        .get('[data-testid=component-container]')
+        .last()
+        .should('be.visible')
+        .click()
+        .should('have.class', 'text-white bg-alpine-300')
+
+    cy.get('[data-testid=component-container]').first().click().should('have.class', 'text-white bg-alpine-300')
+
+    cy.get('[data-testid=component-container]').last().should('not.have.class', 'text-white bg-alpine-300')
 })
 
 it('should display read-only function/HTMLElement attributes', () => {
