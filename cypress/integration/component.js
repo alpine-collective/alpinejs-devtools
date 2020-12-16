@@ -135,85 +135,61 @@ it('should add/remove hover overlay on component mouseenter/leave', () => {
 })
 it('should support selecting/unselecting a component', () => {
     cy.visit('/')
-        .get('[data-testid=component-container]')
-        .last()
-        .should('be.visible')
-        .click()
-        .should('have.class', 'text-white bg-alpine-300')
 
-    cy.get('[data-testid=component-container]').first().click().should('have.class', 'text-white bg-alpine-300')
+    cy.get('[data-testid=component-container]').last().should('be.visible')
+    cy.get('[data-testid=component-container]').last().click().should('have.class', 'text-white bg-alpine-300')
 
+    cy.get('[data-testid=component-container]').first().click()
+
+    cy.get('[data-testid=component-container]').first().should('have.class', 'text-white bg-alpine-300')
     cy.get('[data-testid=component-container]').last().should('not.have.class', 'text-white bg-alpine-300')
 })
 
 it('should display read-only function/HTMLElement attributes', () => {
-    cy.get('[data-testid=data-property-name]')
-        .should('be.visible')
-        .contains('myFunction')
-        .siblings('[data-testid=data-property-value-container]')
-        .should('contain.text', 'function')
+    cy.get('[data-testid=data-property-name-myFunction]').should('be.visible').contains('myFunction')
 
-    cy.get('[data-testid=data-property-name]')
-        .contains('el')
-        .siblings('[data-testid=data-property-value-container]')
-        .should('contain.text', 'HTMLElement')
-        .as('elValue')
-        .click()
+    cy.get('[data-testid=data-property-value-myFunction]').should('contain.text', 'function')
+
+    cy.get('[data-testid=data-property-name-el]').contains('el')
+
+    cy.get('[data-testid=data-property-value-el]').should('contain.text', 'HTMLElement').as('elValue').click()
 
     // check nested attributes
-    cy.get('[data-testid=data-property-name]')
-        .contains('name')
-        .as('elName')
-        .should('be.visible')
-        .siblings('[data-testid=data-property-value-container]')
-        .should('contain.text', 'div')
-    cy.get('[data-testid=data-property-name]')
-        .contains('attributes')
-        .as('elAttributes')
-        .should('be.visible')
-        .siblings('[data-testid=data-property-value-container]')
-        .should('contain.text', 'Array[1]')
-    cy.get('[data-testid=data-property-name]')
-        .contains('children')
-        .as('elChildren')
-        .should('be.visible')
-        .siblings('[data-testid=data-property-value-container]')
-        .should('contain.text', 'Array[5]')
+    cy.get('[data-testid=data-property-name-name]').contains('name').should('be.visible')
+    cy.get('[data-testid=data-property-value-name]').should('contain.text', 'div')
+
+    cy.get('[data-testid=data-property-name-attributes]').contains('attributes').should('be.visible')
+    cy.get('[data-testid=data-property-value-attributes]').should('contain.text', 'Array[1]')
+
+    cy.get('[data-testid=data-property-name-children]').contains('children').should('be.visible')
+    cy.get('[data-testid=data-property-value-children]').should('contain.text', 'Array[5]')
 
     // check they toggle off
-    cy.get('@elValue').click()
+    cy.get('[data-testid=data-property-value-el]').click()
 
-    cy.get('@elName')
-        .should('not.be.visible')
-        .get('@elAttributes')
-        .should('not.be.visible')
-        .get('@elChildren')
-        .should('not.be.visible')
+    cy.get('[data-testid=data-property-value-name]').should('not.be.visible')
+
+    cy.get('[data-testid=data-property-name-attributes]').should('not.be.visible')
+    cy.get('[data-testid=data-property-name-children]').should('not.be.visible')
 })
 
 it('should allow editing of booleans, numbers and strings', () => {
     // booleans
-    cy.get('[data-testid=data-property-name]')
-        .should('be.visible')
-        .contains('bool')
-        .siblings('[data-testid=data-property-value-container]')
-        .should('contain.text', 'true')
+    cy.get('[data-testid=data-property-name-bool]').should('be.visible').contains('bool')
+    cy.get('[data-testid=data-property-value-bool]').should('contain.text', 'true')
     // checkbox is visibility is toggled using CSS click the hidden element
-    cy.get('[type=checkbox]').click({ force: true })
+    cy.get('[data-testid=data-property-value-bool] [type=checkbox]').click({ force: true })
     // check the edit worked
-    cy.get('[data-testid=data-property-name]')
-        .should('be.visible')
-        .contains('bool')
-        .siblings('[data-testid=data-property-value-container]')
-        .should('contain.text', 'false')
+    cy.get('[data-testid=data-property-name-bool]').should('be.visible').contains('bool')
+
+    cy.get('[data-testid=data-property-value-bool]').should('contain.text', 'false')
+
     cy.iframe('#target').contains('Bool, type: "boolean", value: "false"')
 
     // numbers
-    cy.get('[data-testid=data-property-name]')
-        .should('be.visible')
-        .contains('num')
-        .siblings('[data-testid=data-property-value-container]')
-        .should('contain.text', '5')
+    cy.get('[data-testid=data-property-name-num]').should('be.visible').contains('num')
+
+    cy.get('[data-testid=data-property-value-num]').should('contain.text', '5')
     // edit icon visibility is toggled using CSS, force-click
     cy.get('[data-testid=edit-icon-num]').click({ force: true })
     // editing toggles window.alpineState, causes issues with visibility/re-rendering
@@ -227,11 +203,8 @@ it('should allow editing of booleans, numbers and strings', () => {
     cy.iframe('#target').contains('Num, type: "number", value: "20"')
 
     // strings
-    cy.get('[data-testid=data-property-name]')
-        .should('be.visible')
-        .contains('str')
-        .siblings('[data-testid=data-property-value-container]')
-        .should('contain.text', 'string')
+    cy.get('[data-testid=data-property-name-str]').should('be.visible').contains('str')
+    cy.get('[data-testid=data-property-value-str]').should('contain.text', 'string')
     // edit icon visibility is toggled using CSS, force-click
     cy.get('[data-testid=edit-icon-str]').click({ force: true })
     // editing toggles window.alpineState, causes issues with visibility/re-rendering
