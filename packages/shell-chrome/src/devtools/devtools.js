@@ -82,7 +82,7 @@ export default function devtools() {
         init() {
             this.initSplitPanes()
             this.$watch('components', () => {
-                if (!this.showTools && this.components.length > 0) {
+                if (!this.showTools) {
                     fetchWithTimeout('https://registry.npmjs.com/alpinejs', { timeout: this.showTimeout })
                         .then((data) => {
                             this.latest = data['dist-tags'].latest
