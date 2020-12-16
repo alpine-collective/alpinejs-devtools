@@ -2,7 +2,7 @@ import { getComponentName, isSerializable, serializeHTMLElement, set, waitForAlp
 
 window.__alpineDevtool = {
     components: [],
-    uuid: 0,
+    uuid: 1,
     stopMutationObserver: false,
     hoverElement: null,
     observer: null,
@@ -140,7 +140,7 @@ function discoverComponents() {
 
         if (!rootEl.__alpineDevtool.id) {
             rootEl.__alpineDevtool.id = window.__alpineDevtool.uuid++
-            window[`$x${rootEl.__alpineDevtool.id}`] = rootEl.__x
+            window[`$x${rootEl.__alpineDevtool.id - 1}`] = rootEl.__x
         }
 
         var depth = 0
