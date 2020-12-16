@@ -22,11 +22,19 @@
                 ></span>
             </div>
 
-            <span style="color: #881391" x-text="singleData.attributeName" data-testid="data-property-name"></span>
+            <span
+                style="color: #881391"
+                x-text="singleData.attributeName"
+                :data-testid="`data-property-name-${singleData.attributeName}`"
+            ></span>
 
             <span class="text-black">:</span>
 
-            <div data-testid="data-property-value-container" class="text-black ml-1" x-show="!singleData.inEditingMode">
+            <div
+                :data-testid="`data-property-value-${singleData.attributeName}`"
+                class="text-black ml-1"
+                x-show="!singleData.inEditingMode"
+            >
                 <template x-if="singleData.dataType === 'string'">
                     &quot;<span class="text-red-700" x-text="singleData.attributeValue"></span>&quot;
                 </template>
