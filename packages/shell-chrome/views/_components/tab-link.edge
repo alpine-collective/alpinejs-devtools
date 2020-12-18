@@ -1,0 +1,13 @@
+<a
+    href="#"
+    title="{{ label }}"
+    :class="{
+    'text-white border-ice-500 cursor-default': activeTab === '{{ tab }}',
+    'border-transparent hover:text-white hover:border-ice-700': activeTab !== '{{ tab }}'
+}"
+    class="px-4 border-b-3 xs:pl-2 xs:pr-2.5"
+    @click="activeTab = '{{ tab }}'"
+>
+    @!yield($slot.main)
+    <span class="hidden xs:inline-block">{{ label || upperFirst(tab) }}</span>
+</a>
