@@ -12,7 +12,7 @@
         "test": "jest",
         "cy:run": "cypress run",
         "cy:open": "cypress open",
-        "format": "prettier './{packages/**/,cypress/**/*,}*.{js,html,edge,css}' --write",
+        "format": "prettier './{packages/**/,cypress/**/*,}*.{js,html,css}' --write",
         "check:format": "prettier './{packages/**/,cypress/**/*,}*.{js,html,css}' -c",
         "prepackage": "npm run build",
         "package": "cd ./dist/chrome && zip -r ../alpine-devtools-$npm_package_version.zip . && rm -rf ../chrome"
