@@ -33,7 +33,7 @@
 
                     pages: [
                         {
-                            name: 'Prefrences',
+                            name: 'Preferences',
                             enabled: true,
                         },
                         {
@@ -41,7 +41,7 @@
                             enabled: window.devtools().experimentalPanelEnabled,
                         }
                     ],
-                    active: 'Prefrences'
+                    active: 'Preferences'
                 }"
                 class="flex space-x-4"
             >
@@ -59,7 +59,7 @@
                     </nav>
                 </div>
                 <div class="flex-grow">
-                    @each(page in ['Prefrences', 'Experimental'], include = 'settings/pages/' + page.toLowerCase())
+                    @each(page in ['Preferences', 'Experimental'], include = 'settings/pages/' + page.toLowerCase())
                     @endeach
                 </div>
             </div>
