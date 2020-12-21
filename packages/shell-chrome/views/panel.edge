@@ -23,21 +23,19 @@
                     @include('_partials.tabs.components')
                 </div>
 
-                <template x-if="tabsEnabled">
+                @if(tabsEnabled)
                     <div x-show="activeTab === 'events'" class="flex-1">
                         <div class="flex h-full items-center justify-center text-gray-400 uppercase bg-gray-50">
                             Events Tab
                         </div>
                     </div>
-                </template>
 
-                <template x-if="tabsEnabled">
                     <div x-show="activeTab === 'warnings'" class="flex-1">
                         <div class="flex h-full items-center justify-center text-gray-400 uppercase bg-gray-50">
                             Warnings Tab
                         </div>
                     </div>
-                </template>
+                @endif
 
                 @include('_partials.footer')
 
