@@ -47,7 +47,7 @@ export default function devtools() {
 
         themes: themes,
 
-        settingsPanelEnabled: process.env.NODE_ENV !== 'production',
+        experimentalPanelEnabled: process.env.NODE_ENV !== 'production',
         settingsPanelOpen: false,
 
         get isLatest() {
