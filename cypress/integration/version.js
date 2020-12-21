@@ -26,7 +26,7 @@ it('should display link + message for undefined outdated Alpine version (pre 2.3
         .get('[data-testid=version-line]')
         .should('have.attr', 'title', `Latest Version: ${AlpineVersion}`)
         .should('contain', '<v2.3.1')
-        .get('a')
+        .get('[data-testid=version-line] a')
         .should('have.attr', 'href', 'https://github.com/alpinejs/alpine/releases')
 })
 
@@ -42,7 +42,7 @@ it('should display link + message for outdated version', () => {
         .get('[data-testid=version-line]')
         .should('have.attr', 'title', `Latest Version: ${AlpineVersion}`)
         .should('contain', 'v2.6.0')
-        .get('a')
+        .get('[data-testid=version-line] a')
         .should('have.attr', 'href', 'https://github.com/alpinejs/alpine/releases')
 })
 
@@ -58,7 +58,7 @@ it('should display message for up to date version of Alpine.version', () => {
         .get('[data-testid=version-line]')
         .should('have.attr', 'title', `Latest Version`)
         .should('contain', `v${AlpineVersion}`)
-        .get('a')
+        .get('[data-testid=version-line] a')
         .should('have.attr', 'href', '#')
 })
 
@@ -74,7 +74,7 @@ it('should display message for future Alpine versions', () => {
         .get('[data-testid=version-line]')
         .should('have.attr', 'title', `Latest Version`)
         .should('contain', 'v4.0.0')
-        .get('a')
+        .get('[data-testid=version-line] a')
         .should('have.attr', 'href', '#')
 })
 
@@ -102,6 +102,6 @@ it('should display message with latest Alpine version from npm registry', () => 
         .get('[data-testid=version-line]')
         .should('have.attr', 'title', `Latest Version: 5.0.0`)
         .should('contain', 'v4.0.0')
-        .get('a')
+        .get('[data-testid=version-line] a')
         .should('have.attr', 'href', 'https://github.com/alpinejs/alpine/releases')
 })
