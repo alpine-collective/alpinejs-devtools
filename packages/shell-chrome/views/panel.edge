@@ -19,7 +19,9 @@
             <div class="bg-white flex flex-col relative h-full w-full mx-auto">
                 @include('_partials.header')
 
-                <div x-show="activeTab === 'components'" class="flex-1">@include('_partials.tabs.components')</div>
+                <div x-show="activeTab === 'components'" class="flex-1">
+                    @include('_partials.tabs.components')
+                </div>
 
                 <template x-if="tabsEnabled">
                     <div x-show="activeTab === 'events'" class="flex-1">
@@ -37,7 +39,9 @@
                     </div>
                 </template>
 
-                @include('_partials.footer') @include('_partials.settings')
+                @include('_partials.footer')
+
+                @include('_partials.settings')
             </div>
         </div>
         <script src="./panel.js"></script>
