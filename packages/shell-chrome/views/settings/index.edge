@@ -3,11 +3,11 @@
     x-show="settingsPanelOpen"
     class="inset-0 absolute flex flex-col items-center justify-center z-max"
 >
-    <div class="absolute opacity-75 bg-white inset-0"></div>
+    <div class="absolute bg-alpine-400 opacity-30 inset-0"></div>
     <div class="p-6 flex-1 flex items-center justify-center w-full relative z-50" @click="settingsPanelOpen = false">
         <div
             x-show.transition.in.opacity="settingsPanelOpen"
-            class="bg-white w-full h-full p-4 shadow-lg relative"
+            class="bg-white w-full h-full p-4 shadow-lg border border-silver-400 relative"
             @click.stop
         >
             <button
