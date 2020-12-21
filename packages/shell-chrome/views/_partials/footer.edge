@@ -1,7 +1,5 @@
 <div
-    :class="{
-    'hidden': !showTools,
-}"
+    x-show="showTools"
     class="flex font-bold text-gray-400 border-t border-gray-300 bg-white"
 >
     <div class="flex-1">
@@ -10,10 +8,6 @@
 
             @verbatim
             <div
-                :class="{
-                        'hidden': !showTools,
-                        'bg-gray-300 bg-opacity-50 text-gray-600': !showTools,
-                    }"
                 data-testid="version-line"
                 class="flex items-center transition transition-colors duration-700 ease-in-out"
                 :title="'Latest Version' + (isLatest? '' : `: ${latest}`)"
@@ -43,12 +37,7 @@
         </div>
     </div>
 
-    <div
-        :class="{
-        'hidden sm:block': !showTools,
-    }"
-        class="flex items-center ml-3 px-2.5 space-x-1 border-l border-gray-300 transition transition-colors duration-700"
-    >
+    <div class="flex items-center ml-3 px-2.5 space-x-1 border-l border-gray-300 transition transition-colors duration-700">
         <a href="https://github.com/alpinejs/alpine" target="_blank" title="Alpine.js Docs" class="hover:opacity-75">
             <svg
                 xmlns="http://www.w3.org/2000/svg"
