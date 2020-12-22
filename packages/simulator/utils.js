@@ -15,7 +15,7 @@ export async function injectPanel(containerNode) {
     // this contains all sorts of CSS tags etc
     containerNode.innerHTML = rawPanelHtml
     // keep only the Alpine components in the panel
-    const panelAppHtml = Array.from(containerNode.querySelectorAll('#devtools-container > [x-data]'))
+    const panelAppHtml = Array.from(containerNode.querySelectorAll('[data-testid="panel-root"]'))
         .map((el) => el.outerHTML)
         .join('\n')
 

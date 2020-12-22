@@ -12,10 +12,18 @@
         </style>
     </head>
 
-    <body id="devtools-container" class="antialiased">
-        <div x-data x-show="false" class="preload">Devtools loading...</div>
+    <body class="antialiased">
+        <div data-testid="panel-root" x-data x-show="false" class="preload">Devtools loading...</div>
 
-        <div id="app" class="h-full" x-cloak x-data="devtools()" x-init="init()" x-spread="devtoolsRootDirectives()">
+        <div
+            id="app"
+            data-testid="panel-root"
+            class="h-full"
+            x-cloak
+            x-data="devtools()"
+            x-init="init()"
+            x-spread="devtoolsRootDirectives()"
+        >
             <div class="bg-white flex flex-col relative h-full w-full mx-auto">
                 @include('_partials.header')
 
