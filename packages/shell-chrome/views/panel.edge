@@ -23,7 +23,7 @@
                     @include('_partials.tabs.components')
                 </div>
 
-                @if(tabsEnabled)
+                @if(devOnly)
                     <div x-show="activeTab === 'events'" class="flex-1">
                         <div class="flex h-full items-center justify-center text-gray-400 uppercase bg-gray-50">
                             Events Tab
