@@ -30,7 +30,6 @@
             </button>
             <div
                 x-data="{
-
                     pages: [
                         {
                             name: 'Preferences',
@@ -38,9 +37,9 @@
                         },
                         {
                             name: 'Experimental',
-                            enabled: window.devtools().experimentalPanelEnabled,
+                            enabled: {{ devOnly }},
                         }
-                    ],
+                    ].filter(p => p.enabled),
                     active: 'Preferences'
                 }"
                 class="flex space-x-4"
