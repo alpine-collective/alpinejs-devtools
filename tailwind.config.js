@@ -67,6 +67,12 @@ module.exports = {
             zIndex: {
                 max: '2147483647',
             },
+            borderWidth: {
+                3: '3px',
+            },
+            screens: {
+                xs: '560px',
+            },
         },
     },
     variants: {
