@@ -1,4 +1,4 @@
-import { getComponentName, isSerializable, serializeHTMLElement, set, waitForAlpine } from './utils'
+import { getComponentName, isSerializable, serializeHTMLElement, set, waitForAlpine, isRequiredVersion } from './utils'
 
 function serializeDataProperty(value) {
     if (value instanceof HTMLElement) {
@@ -33,18 +33,27 @@ function init() {
             this.uuid = 1
             this.hoverElement = null
             this.observer = null
+            this.errorElements = []
+            this.errorSourceId = 1
+
             this._stopMutationObserver = false
         }
 
         runWithMutationPaused(cb) {
+            const alpineObserverPausedValue = window.Alpine.pauseMutationObserver
+            window.Alpine.pauseMutationObserver = true
             this._stopMutationObserver = true
             cb()
             setTimeout(() => {
+                if (window.Alpine.pauseMutationObserver) {
+                    window.Alpine.pauseMutationObserver = alpineObserverPausedValue
+                }
                 this._stopMutationObserver = false
             }, 10)
         }
 
         start() {
+            this.instrumentAlpineLogging()
             this.getAlpineVersion()
             this.discoverComponents()
 
@@ -56,6 +65,42 @@ function init() {
         shutdown() {
             this.cleanupHoverElement()
             this.disconnectObserver()
+
+            window.console.warn = this._realLogWarn
+        }
+        instrumentAlpineLogging() {
+            if (!isRequiredVersion('2.8.0', window.Alpine.version) || !window.Alpine.version) {
+                return
+            }
+            this._realLogWarn = console.warn
+
+            const instrumentedWarn = (...args) => {
+                const argsString = args.join(' ')
+                if (argsString.includes('Alpine Error:')) {
+                    const [errorMessage] = argsString.match(/(?<=Alpine Error: ").*(?=")/)
+                    const [expression] = argsString.match(/(?<=Expression: ").*(?=")/)
+                    const element = args.find((el) => el instanceof HTMLElement)
+                    if (!element.__alpineErrorSourceId) {
+                        element.__alpineErrorSourceId = this.errorSourceId++
+                    }
+                    this.errorElements.push(element)
+
+                    const alpineError = {
+                        type: 'eval',
+                        message: errorMessage,
+                        expression,
+                        source: serializeHTMLElement(element),
+                        errorId: element.__alpineErrorSourceId,
+                    }
+                    this._postMessage({
+                        error: alpineError,
+                        type: 'render-error',
+                    })
+                }
+                this._realLogWarn(...args)
+            }
+
+            window.console.warn = instrumentedWarn
         }
 
         discoverComponents() {
@@ -69,6 +114,11 @@ function init() {
             this.components = []
 
             rootEls.forEach((rootEl, index) => {
+                if (!rootEl.__x) {
+                    // this component probably crashed during init
+                    return
+                }
+
                 Alpine.initializeComponent(rootEl)
 
                 if (!rootEl.__alpineDevtool) {
@@ -109,18 +159,29 @@ function init() {
                 })
             })
 
+            this._postMessage({
+                // stringify to unfurl proxies
+                // there's no way to detect proxies but
+                // we need to get rid of them
+                // this avoids `DataCloneError: The object could not be cloned.`
+                // see https://github.com/Te7a-Houdini/alpinejs-devtools/issues/17
+                components: JSON.stringify(this.components),
+                type: 'render-components',
+            })
+        }
+
+        getAlpineVersion() {
+            this._postMessage({
+                version: window.Alpine.version,
+                type: 'set-version',
+            })
+        }
+
+        _postMessage(payload) {
             window.postMessage(
                 {
                     source: 'alpine-devtools-backend',
-                    payload: {
-                        // stringify to unfurl proxies
-                        // there's no way to detect proxies but
-                        // we need to get rid of them
-                        // this avoids `DataCloneError: The object could not be cloned.`
-                        // see https://github.com/Te7a-Houdini/alpinejs-devtools/issues/17
-                        components: JSON.stringify(this.components),
-                        type: 'render-components',
-                    },
+                    payload,
                 },
                 '*',
             )
@@ -215,6 +276,21 @@ function init() {
                 window.addEventListener('message', handshake)
                 devtoolsBackend.shutdown()
                 return
+            }
+
+            if (e.data.payload.action === 'show-error-source') {
+                devtoolsBackend.runWithMutationPaused(() => {
+                    const errorSource = devtoolsBackend.errorElements.find((el) => {
+                        return el.__alpineErrorSourceId === e.data.payload.errorId
+                    })
+
+                    devtoolsBackend.addHoverElement(errorSource)
+                })
+            }
+            if (e.data.payload.action === 'hide-error-source') {
+                devtoolsBackend.runWithMutationPaused(() => {
+                    devtoolsBackend.cleanupHoverElement()
+                })
             }
 
             if (e.data.payload.action === 'hover') {

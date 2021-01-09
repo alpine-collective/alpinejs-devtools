@@ -224,6 +224,9 @@ it('should display message with number of components watched', () => {
         .get('[data-testid=component-name]')
         .should('have.length.above', 0)
         .then((components) => {
-            cy.get('[data-testid=footer-line]').should('contain', `Watching ${components.length} components`)
+            cy.get('[data-testid=footer-line]').then(($el) => {
+                expect($el.text()).to.contain('Watching')
+                expect($el.text()).to.contain(`${components.length} component(s)`)
+            })
         })
 })

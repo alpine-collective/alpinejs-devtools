@@ -5,6 +5,7 @@
         'text-white border-ice-500 cursor-default': activeTab === '{{ tab }}',
         'border-transparent hover:text-white hover:border-ice-700': activeTab !== '{{ tab }}',
     }"
+    data-testid="tab-link-{{ tab }}"
     class="px-4 border-b-3 xs:pl-2 xs:pr-3"
     @click.prevent="activeTab = '{{ tab }}'"
 >

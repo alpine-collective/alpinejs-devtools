@@ -6,9 +6,9 @@
         <div class="flex items-center text-xs leading-9 font-medium font-mono">
             <div class="flex-1 pl-3" data-testid="footer-line">
                 Watching
-                <a href="#" @click.prevent="activeTab = 'components'"><span x-text="components.length"></span> component(s)</a>
+                <a href="#" data-testid="footer-components-link" @click.prevent="activeTab = 'components'"><span x-text="components.length"></span> component(s)</a>{{ devOnly ? ', ' : '' }}
                 @if(devOnly)
-                , <a href="#" @click.prevent="activeTab = 'warnings'"><span x-text="errors.length"></span> warning(s)</a>
+                <a href="#" data-testid="footer-warnings-link" @click.prevent="activeTab = 'warnings'"><span x-text="errors.length"></span> warning(s)</a>
                 @endif
             </div>
 

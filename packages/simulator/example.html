@@ -92,5 +92,13 @@
                 }
             }
         </script>
+        <button data-testid="inject-broken" onclick="injectBroken(event.target)">Inject broken component</button>
+
+        <script>
+            function injectBroken(target) {
+                target.insertAdjacentHTML('afterend', `<div x-data="{ foo: 'aaa' ">Broken x-data</div>`)
+            }
+        </script>
+        <button data-testid="broken-click" x-data x-on:click="foo.bar.baz">Broken x-on:click</button>
     </body>
 </html>
