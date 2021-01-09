@@ -41,6 +41,7 @@ export default function devtools() {
         showTools: false,
         showTimeout: 1500,
         activeTheme: 'dark-header',
+        loadingText: 'Alpine.js tools loading',
 
         orientation: getOrientation(),
         split: null,
@@ -48,6 +49,9 @@ export default function devtools() {
         themes: themes,
 
         settingsPanelOpen: false,
+
+        tabsEnabled: process.env.NODE_ENV !== 'production',
+        activeTab: 'components',
 
         get isLatest() {
             if (!this.version || !this.latest) return null
@@ -59,11 +63,11 @@ export default function devtools() {
         },
 
         get detected() {
-            if (!this.showTools) {
-                return 'Alpine.js tools loading'
-            }
+            return this.version ? `v${this.version}` : '<v2.3.1'
+        },
 
-            return this.version ? `Alpine.js v${this.version} detected` : 'Alpine.js <v2.3.1 detected'
+        get footerText() {
+            return `Watching ${this.components.length} components`
         },
 
         get openComponent() {
@@ -80,6 +84,7 @@ export default function devtools() {
 
         init() {
             this.initSplitPanes()
+
             this.$watch('components', () => {
                 if (!this.showTools) {
                     fetchWithTimeout('https://registry.npmjs.com/alpinejs', { timeout: this.showTimeout })
@@ -113,14 +118,14 @@ export default function devtools() {
             }
             const key = this.isLandscape ? 'columnGutters' : 'rowGutters'
 
-            splitOptions[key] = [
-                {
-                    track: 1,
-                    element: this.$refs.handle,
-                },
-            ]
-
             this.$nextTick(() => {
+                splitOptions[key] = [
+                    {
+                        track: 1,
+                        element: this.$refs.handle,
+                    },
+                ]
+
                 this.split = Split(splitOptions)
             })
         },

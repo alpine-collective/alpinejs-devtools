@@ -133,6 +133,7 @@ it('should add/remove hover overlay on component mouseenter/leave', () => {
     })
     cy.iframe('#target').find('[data-testid=hover-element]').should('not.exist')
 })
+
 it('should support selecting/unselecting a component', () => {
     cy.visit('/')
 
@@ -216,4 +217,13 @@ it('should allow editing of booleans, numbers and strings', () => {
         .click({ force: true })
 
     cy.iframe('#target').contains('Str, type: "string", value: "devtools"')
+})
+
+it('should display message with number of components watched', () => {
+    cy.visit('/')
+        .get('[data-testid=component-name]')
+        .should('have.length.above', 0)
+        .then((components) => {
+            cy.get('[data-testid=footer-line]').should('contain', `Watching ${components.length} components`)
+        })
 })

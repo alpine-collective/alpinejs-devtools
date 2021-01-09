@@ -27,77 +27,25 @@
             <div class="bg-white flex flex-col relative h-full w-full mx-auto">
                 @include('_partials.header')
 
-                <div
-                    x-ref="panes"
-                    :class="{
-                        'opacity-75': !showTools,
-                        'grid-cols-panes': orientation === 'landscape',
-                        'grid-rows-panes': orientation === 'portrait',
-                    }"
-                    class="flex-1 h-full grid sm:flex-row overflow-hidden"
-                >
-                    <!-- Components -->
-                    <div class="relative flex-1 flex flex-col max-h-full overflow-scroll">
-                        <template x-if="showTools && components.length === 0">
-                            <div
-                                data-testid="no-components-message"
-                                class="flex flex-1 h-full w-full items-center justify-center p-4 text-gray-400 text-sm"
-                            >
-                                No components found
-                            </div>
-                        </template>
-                        <div
-                            :class="{
-                                'hidden': !showTools,
-                            }"
-                            class="absolute min-w-full min-h-full p-2"
-                        >
-                            <template x-for="(component, index) in components">
-                                @include('_partials.component')
-                            </template>
-                        </div>
-                    </div>
-
-                    <!-- Split Pane Drag Handle -->
-                    @include('_partials.handle')
-
-                    <!-- Active Component/Data -->
-                    <div class="flex-1 relative flex flex-col max-h-full overflow-scroll">
-                        <template x-if="openComponent.name">
-                            <div
-                                class="sticky top-0 left-0 z-20 w-full flex items-center px-3 py-2 text-base font-mono text-gray-600 bg-gray-100"
-                            >
-                                <span class="opacity-25">&lt;</span>
-                                <span x-text="openComponent.name"></span>
-                                <span class="opacity-25">&gt;</span>
-                            </div>
-                        </template>
-
-                        <template x-if="!openComponent.name">
-                            <div
-                                data-testid="select-component-message"
-                                x-text="showTools && components.length > 0 ? 'Select a component to view' : ''"
-                                class="flex h-full w-full items-center justify-center p-4 text-gray-400 text-sm bg-gray-50"
-                            ></div>
-                        </template>
-
-                        <div class="flex-1 px-3 py-2">
-                            <template x-for="(singleComponent, componentIndex) in components">
-                                <div x-show="singleComponent.isOpened" class="font-mono">
-                                    <div class="leading-6 text-gray-300">x-data: {</div>
-
-                                    <div>
-                                        <template x-for="(singleData, index) in singleComponent.flattenedData">
-                                            @include('_partials.data.attribute')
-                                        </template>
-                                    </div>
-
-                                    <div class="leading-7 text-gray-300">}</div>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
+                <div x-show="activeTab === 'components'" class="flex-1 overflow-hidden">
+                    @include('_partials.tabs.components')
                 </div>
+
+                @if(devOnly)
+                    <div x-show="activeTab === 'events'" class="flex-1">
+                        <div class="flex h-full items-center justify-center text-gray-400 uppercase bg-gray-50">
+                            Events Tab
+                        </div>
+                    </div>
+
+                    <div x-show="activeTab === 'warnings'" class="flex-1">
+                        <div class="flex h-full items-center justify-center text-gray-400 uppercase bg-gray-50">
+                            Warnings Tab
+                        </div>
+                    </div>
+                @endif
+
+                @include('_partials.footer')
 
                 @include('settings.index')
             </div>

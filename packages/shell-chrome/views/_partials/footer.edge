@@ -1,0 +1,102 @@
+<div
+    x-show="showTools"
+    class="flex font-bold text-gray-400 border-t border-gray-300 bg-white"
+>
+    <div class="flex-1">
+        <div class="flex items-center text-xs leading-9 font-medium font-mono">
+            <div 
+                class="flex-1 pl-3" 
+                x-text="footerText"
+                data-testid="footer-line"
+            ></div>
+
+            @verbatim
+            <div
+                data-testid="version-line"
+                class="flex items-center transition transition-colors duration-700 ease-in-out"
+                :title="'Latest Version' + (isLatest? '' : `: ${latest}`)"
+            >
+                <svg
+                    :class="{
+                            'text-green-500': showTools && isLatest,
+                            'text-orange-500': showTools && !isLatest,
+                        }"
+                    class="mr-1.5 h-2 w-2 transition transition-colors duration-700 ease-in-out"
+                    fill="currentColor"
+                    viewBox="0 0 8 8"
+                >
+                    <circle cx="4" cy="4" r="3" />
+                </svg>
+                <a
+                    :class="isLatest ? 'pointer-events-none' : ''"
+                    class="inline-flex items-center xs:space-x-1"
+                    :href="isLatest ? '#' : 'https://github.com/alpinejs/alpine/releases'"
+                >
+                    <span class="hidden xs:block">Alpine.js</span>
+                    <span x-text="detected"></span>
+                    <span class="hidden xs:block">detected</span>
+                </a>
+            </div>
+            @endverbatim
+        </div>
+    </div>
+
+    <div class="flex items-center ml-3 px-2.5 space-x-1 border-l border-gray-300 transition transition-colors duration-700">
+        <a href="https://github.com/alpinejs/alpine" target="_blank" title="Alpine.js Docs" class="hover:opacity-75">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                class="w-5 h-5"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+            </svg>
+        </a>
+        <a
+            href="https://github.com/alpine-collective/alpinejs-devtools"
+            target="_blank"
+            title="Alpine Collective GitHub"
+            class="hover:opacity-75"
+        >
+            <svg class="fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 24 24">
+                <path
+                    d="M10 0a10 10 0 0 0-3.16 19.49c.5.1.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.1.39-1.99 1.03-2.69a3.6 3.6 0 0 1 .1-2.64s.84-.27 2.75 1.02a9.58 9.58 0 0 1 5 0c1.91-1.3 2.75-1.02 2.75-1.02.55 1.37.2 2.4.1 2.64.64.7 1.03 1.6 1.03 2.69 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85l-.01 2.75c0 .26.18.58.69.48A10 10 0 0 0 10 0"
+                ></path>
+            </svg>
+        </a>
+        <button
+            data-testid="settings-panel-open-button"
+            class="hover:opacity-75 focus:outline-none"
+            x-show="settingsPanelEnabled"
+            @click="settingsPanelOpen = true"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                class="w-5 h-5"
+            >
+                <title>Settings</title>
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                />
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+            </svg>
+        </button>
+    </div>
+</div>
