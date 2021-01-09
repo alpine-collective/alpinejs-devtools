@@ -67,10 +67,6 @@ export default function devtools() {
             return this.version ? `v${this.version}` : '<v2.3.1'
         },
 
-        get footerText() {
-            return `Watching ${this.components.length} components`
-        },
-
         get openComponent() {
             return (
                 this.components.filter((component) => {

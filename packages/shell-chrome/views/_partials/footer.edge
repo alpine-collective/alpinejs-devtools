@@ -4,11 +4,13 @@
 >
     <div class="flex-1">
         <div class="flex items-center text-xs leading-9 font-medium font-mono">
-            <div 
-                class="flex-1 pl-3" 
-                x-text="footerText"
-                data-testid="footer-line"
-            ></div>
+            <div class="flex-1 pl-3" data-testid="footer-line">
+                Watching
+                <a href="#" @click.prevent="activeTab = 'components'"><span x-text="components.length"></span> component(s)</a>
+                @if(devOnly)
+                , <a href="#" @click.prevent="activeTab = 'warnings'"><span x-text="errors.length"></span> warning(s)</a>
+                @endif
+            </div>
 
             @verbatim
             <div

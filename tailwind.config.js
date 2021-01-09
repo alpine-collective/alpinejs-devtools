@@ -21,6 +21,7 @@ module.exports = {
             colors: {
                 orange: colors.orange,
                 'cool-gray': colors.coolGray,
+                purple: '#881391',
                 alpine: {
                     100: '#7C87A2',
                     200: '#616D89',
