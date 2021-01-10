@@ -12,6 +12,8 @@
                         type="text"
                         autocomplete="off"
                         name="hide-component"
+                        :value="settings.ignoreSelector"
+                        @input.debounce.500="updateSetting('ignoreSelector', $event.target.value)"
                         class="p-0.5 px-2 shadow-sm focus:ring-ice-500 focus:border-transparent block w-full sm:text-xs border-gray-300 rounded-md placeholder-cool-gray-400"
                         placeholder="[x-devtools-ignore]"
                         aria-describedby="hide-component-description"

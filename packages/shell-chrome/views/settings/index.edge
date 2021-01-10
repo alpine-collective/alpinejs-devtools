@@ -40,9 +40,17 @@
                             enabled: {{ devOnly }},
                         }
                     ].filter(p => p.enabled),
-                    active: 'Preferences'
+                    active: 'Preferences',
+                    settings: {},
+                    updateSetting(name, value) {
+                        // $dispatch()
+                    },
+                    init() {
+                        this.settings = window.devtools().settings
+                    }
                 }"
                 class="flex space-x-4"
+                x-init="init()"
             >
                 <div>
                     <h2 class="text-lg font-light">Settings</h2>

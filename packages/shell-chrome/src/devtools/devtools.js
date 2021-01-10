@@ -48,7 +48,11 @@ export default function devtools() {
 
         themes: themes,
 
-        settingsPanelOpen: false,
+        settingsPanelOpen: true,
+        // TODO: maybe pass these in from the backend?
+        settings: {
+            ignoreSelector: '',
+        },
 
         tabsEnabled: process.env.NODE_ENV !== 'production',
         activeTab: 'components',
