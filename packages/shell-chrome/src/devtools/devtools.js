@@ -48,7 +48,7 @@ export default function devtools() {
 
         themes: themes,
 
-        settingsPanelOpen: true,
+        settingsPanelOpen: false,
         // TODO: maybe pass these in from the backend?
         settings: {
             ignoreSelector: '',
