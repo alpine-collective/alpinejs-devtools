@@ -1,6 +1,6 @@
 {
     "name": "alpinejs-devtools",
-    "version": "0.1.1",
+    "version": "0.2.0",
     "private": true,
     "description": "DevTools extension for debugging Alpine.js applications.",
     "homepage": "https://github.com/alpine-collective/alpinejs-devtools",
