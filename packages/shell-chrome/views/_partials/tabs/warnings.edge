@@ -5,7 +5,7 @@
     class="grid h-full w-full overflow-hidden"
     data-testid="warnings-tab-content"
 >
-    <div class="flex-1 flex flex-col max-h-full overflow-scroll text-gray-600 bg-gray-100" data-testid="warnings-scroll-container">
+    <div x-ref="warnings" class="flex-1 flex flex-col max-h-full overflow-scroll text-gray-600" data-testid="warnings-scroll-container">
         <template x-if="showTools && errors.length === 0">
             <div
                 data-testid="no-warnings-message"
@@ -19,26 +19,51 @@
             <div>
                 <template x-for="(error, index) in errors" :key="error.errorId">
                     <div
-                        class="flex flex-col justify-center leading-7 font-mono whitespace-nowrap cursor-pointer"
+                        class="flex flex-col justify-center leading-6 text-gray-800 font-mono whitespace-nowrap cursor-pointer"
                         :x-ref="index === errors.length - 1 ? 'last_error' : ''"
                         @mouseenter="alpineState.showErrorSource(error.errorId)"
                         @mouseleave="alpineState.hideErrorSource(error.errorId)"
                     >
                         @verbatim
                         <template x-if="error.type === 'eval'">
-                            <div class="border-gray-300 border-b py-2 px-4" :data-testid="`eval-error-${error.source.name}`">
-                                <div class="flex">
-                                    <span class="text-base mr-2">Error evaluating</span>
-                                    <span class="text-base text-purple mr-2">
-                                        "<span x-text="error.expression"></span>"
-                                    </span>
-                                    <span class="mr-2">at</span>
-                                    <span class="opacity-25">&lt;</span>
-                                    <span data-testid="error-source" x-text="error.source.name" class="text-base"></span>
-                                    <span class="opacity-25">&gt;</span>
+                            <div 
+                            :class="{
+                                'border-b': !isWarningsOverflowing || (isWarningsOverflowing && index !== errors.length - 1)
+                            }"
+                            class="flex items-start border-gray-300 p-2 pr-3 bg-red-50 bg-opacity-50 hover:bg-yellow-50" :data-testid="`eval-error-${error.source.name}`">
+                                <div class="flex justify-center w-5 text-center mr-2">
+                                    <div class="inline-flex items-center justify-center w-3.5 h-3.5 mt-1 rounded-full text-white font-bold bg-red-500">
+                                        <svg class="inline-block w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <line x1="16" y1="8" x2="8" y2="16"></line><line x1="8" y1="8" x2="16" y2="16"></line>
+                                        </svg>
+                                    </div>
                                 </div>
-                                <div class="flex text-red-700">
-                                    "<span x-text="error.message"></span>"
+
+                                <div class="w-full">
+                                    <div class="flex text-sm space-x-2">
+                                        <div class="sm:flex-1">
+                                            Error evaluating "<span class="text-purple" x-text="error.expression"></span>"
+                                        </div>
+
+                                        <div 
+                                            class="flex"
+                                            @click="activeTab = 'componenets', alpineState.renderComponentData(component)"
+                                        >
+                                            <span class="sm:hidden">at&nbsp;</span>
+                                            <span class="opacity-25">&lt;</span>
+                                            <span data-testid="error-source" x-text="error.source.name" class=""></span>
+                                            <span class="opacity-25">&gt;</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex text-sm">
+                                        <div class="mr-2">
+                                            <svg class="inline-block w-3.5 h-3.5 -mt-0.5 -ml-0.5 text-gray-900 text-opacity-25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M10.293 15.707a1 1 0 010-1.414L14.586 10l-4.293-4.293a1 1 0 111.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                                <path fill-rule="evenodd" d="M4.293 15.707a1 1 0 010-1.414L8.586 10 4.293 5.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                        <span class="text-red-700" x-text="error.message"></span>
+                                    </div>
                                 </div>
                             </div>
                         </template>

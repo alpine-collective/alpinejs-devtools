@@ -2,7 +2,7 @@ it('should display message with number of warnings', () => {
     cy.visit('/').get('[data-testid=component-name]').should('have.length.above', 0)
 
     cy.get('[data-testid=footer-line]').should(($el) => {
-        expect($el.text()).to.contain('0 warning(s)')
+        expect($el.text()).to.contain('0 warnings')
     })
 })
 it('should display "No Warnings" found', () => {
@@ -13,7 +13,7 @@ it('should catch component initialisation errors', () => {
     cy.iframe('#target').find('[data-testid=inject-broken]').click()
 
     cy.get('[data-testid=footer-line]').should(($el) => {
-        expect($el.text()).to.contain('1 warning(s)')
+        expect($el.text()).to.contain('1 warning')
     })
 
     cy.get('[data-testid=warnings-tab-content]').should('be.visible').should('not.contain.text', 'No warnings found')
@@ -24,7 +24,7 @@ it('should catch component initialisation errors', () => {
             const text = $el.text().replace(/\n/g, '')
             expect(text).to.contain(`Error evaluating`)
             expect(text).to.contain(`"{ foo: 'aaa' "`)
-            expect(text).to.contain(`"SyntaxError: Unexpected token ')'"`)
+            expect(text).to.contain(`SyntaxError: Unexpected token ')'`)
         })
 })
 it('should catch x-on errors', () => {
@@ -33,7 +33,7 @@ it('should catch x-on errors', () => {
     cy.get('[data-testid=eval-error-button]').should('have.length', 1)
 
     cy.get('[data-testid=footer-line]').should(($el) => {
-        expect($el.text()).to.contain('2 warning(s)')
+        expect($el.text()).to.contain('2 warnings')
     })
 
     cy.get('[data-testid=warnings-tab-content]').should('be.visible').should('not.contain.text', 'No warnings found')
@@ -42,7 +42,7 @@ it('should catch x-on errors', () => {
         const text = $el.text().replace(/\n/g, '')
         expect(text).to.contain(`Error evaluating`)
         expect(text).to.contain(`"foo.bar.baz"`)
-        expect(text).to.contain(`"ReferenceError: foo is not defined"`)
+        expect(text).to.contain(`ReferenceError: foo is not defined`)
     })
 })
 it('should scroll to newest error when warnings tab is open', () => {
@@ -53,7 +53,7 @@ it('should scroll to newest error when warnings tab is open', () => {
     cy.get('[data-testid=eval-error-button').should('have.length', 4)
 
     cy.get('[data-testid=footer-line]').should(($el) => {
-        expect($el.text()).to.contain('5 warning(s)')
+        expect($el.text()).to.contain('5 warnings')
     })
 
     cy.get('[data-testid=warnings-scroll-container]').should(($el) => {

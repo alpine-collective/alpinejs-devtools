@@ -76,6 +76,10 @@ export default function devtools() {
             )
         },
 
+        get isWarningsOverflowing() {
+            return this.$refs.warnings.scrollHeight > this.$refs.warnings.clientHeight
+        },
+
         get theme() {
             return this.themes[this.activeTheme]
         },

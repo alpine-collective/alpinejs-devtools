@@ -6,10 +6,29 @@
         <div class="flex items-center text-xs leading-9 font-medium font-mono">
             <div class="flex-1 pl-3" data-testid="footer-line">
                 Watching
-                <a href="#" data-testid="footer-components-link" @click.prevent="activeTab = 'components'"><span x-text="components.length"></span> component(s)</a>{{ devOnly ? ', ' : '' }}
-                @if(devOnly)
-                <a href="#" data-testid="footer-warnings-link" @click.prevent="activeTab = 'warnings'"><span x-text="errors.length"></span> warning(s)</a>
-                @endif
+                <div class="inline-flex">
+                    <a href="#" data-testid="footer-components-link" @click.prevent="activeTab = 'components'">
+                        @verbatim
+                        <span x-text="`${components.length} ${components.length > 1 || components.length == 0? 'components' : 'component'}`"></span>
+                        @endverbatim
+                    </a>
+                    
+                    @if(devOnly)
+                        ,&nbsp;
+                        <a 
+                            href="#" 
+                            data-testid="footer-warnings-link" 
+                            @click.prevent="activeTab = 'warnings'" 
+                            :class="{
+                                'text-red-400': errors.length > 0
+                            }"
+                        >
+                            @verbatim
+                            <span x-text="`${errors.length} ${errors.length > 1 || errors.length == 0? 'warnings' : 'warning'}`"></span>
+                            @endverbatim
+                        </a>
+                    @endif
+                </div>
             </div>
 
             @verbatim
