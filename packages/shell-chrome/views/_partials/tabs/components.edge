@@ -1,7 +1,7 @@
 <div
     x-ref="panes"
     :class="{
-        'opacity-75': !showTools,
+        'opacity-75': !ready,
         'grid-cols-panes': orientation === 'landscape',
         'grid-rows-panes': orientation === 'portrait',
     }"
@@ -9,7 +9,7 @@
 >
     <!-- Components -->
     <div class="relative flex-1 flex flex-col max-h-full overflow-scroll">
-        <template x-if="showTools && components.length === 0">
+        <template x-if="ready && components.length === 0">
             <div
                 data-testid="no-components-message"
                 class="flex flex-1 h-full w-full items-center justify-center p-4 text-gray-400 text-sm"
@@ -19,7 +19,7 @@
         </template>
         <div
             :class="{
-                'hidden': !showTools,
+                'hidden': !ready,
             }"
             class="absolute min-w-full min-h-full p-2"
         >
@@ -47,14 +47,14 @@
         <template x-if="!openComponent.name">
             <div
                 data-testid="select-component-message"
-                x-text="showTools && components.length > 0 ? 'Select a component to view' : ''"
+                x-text="ready && components.length > 0 ? 'Select a component to view' : ''"
                 class="flex h-full w-full items-center justify-center p-4 text-gray-400 text-sm bg-gray-50"
             ></div>
         </template>
 
         <div
             :class="{
-            'hidden': !showTools || !openComponent.name,
+            'hidden': !ready || !openComponent.name,
         }"
             class="flex-1 px-3 py-2"
         >

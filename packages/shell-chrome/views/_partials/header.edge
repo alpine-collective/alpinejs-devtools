@@ -1,7 +1,7 @@
 <div
     :class="{
-        'bg-gray-100': !showTools,
-        [theme['bg-header']]: showTools,
+        'bg-gray-100': !ready,
+        [theme['bg-header']]: ready,
     }"
     class="{{ devOnly ? '' : 'py-2' }} flex items-center h-15 pl-3 pr-1 xs:pr-3 text-base tracking-tight font-bold text-white border-b border-gray-300 transition duration-700 transition-colors ease-in-out"
 >
@@ -16,16 +16,16 @@
             >
                 <polygon
                     :class="{
-                        'text-gray-600': !showTools,
-                        [theme['bg-logo-dark']]: showTools,
+                        'text-gray-600': !ready,
+                        [theme['bg-logo-dark']]: ready,
                     }"
                     class="transform transition-colors duration-700"
                     points="50,230 140,140 320,320 140,320"
                 />
                 <polygon
                     :class="{
-                        'text-gray-400': !showTools,
-                        [theme['bg-logo-light']]: showTools,
+                        'text-gray-400': !ready,
+                        [theme['bg-logo-light']]: ready,
                     }"
                     class="transform transition-colors duration-700"
                     points="320,140 410,230 320,320 230,230"
@@ -36,7 +36,7 @@
             <div
                 data-testid="status-line"
                 :class="{
-                    'hidden': showTools,
+                    'hidden': ready,
                 }"
                 class="flex items-center px-1 py-0.5 rounded text-xs text-gray-600 font-medium leading-4 bg-gray-300 bg-opacity-50 animate-pulse-fast transition transition-colors duration-700 ease-in-out"
                 :title="isLatest? 'Latest Version' : `Latest Version: ${latest}`"
@@ -57,7 +57,7 @@
     @if(devOnly)
         <div
             :class="{
-            'opacity-0': !showTools,
+            'opacity-0': !ready,
         }"
             class="flex items-center text-sm text-ice-500 xs:space-x-3 pb-px transition"
             style="line-height: 3.25rem"

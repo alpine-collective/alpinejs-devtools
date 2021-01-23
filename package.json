@@ -39,7 +39,6 @@
         "split-grid": "^1.0.9",
         "tailwindcss": "^2.0.1"
     },
-    "dependencies": {},
     "husky": {
         "hooks": {
             "pre-commit": "lint-staged"

@@ -41,18 +41,29 @@
                         }
                     ].filter(p => p.enabled),
                     active: 'Preferences',
-                    settings: {},
+                    settings: {
+                        error: 'Something went wrong...'
+                    },
                     updateSetting(name, value) {
                         // $dispatch()
                     },
-                    init() {
-                        this.settings = window.devtools().settings
+                    waitForSettings() {
+                        const checker = setInterval(() => {
+                            if (this.settings.loaded) {
+                                clearInterval(checker)
+                                return
+                            }
+                            try {
+                                this.settings = document.getElementById('app').__x.$data.settings
+                            } catch(error) {}
+                        }, 2500)
                     }
                 }"
                 class="flex space-x-4"
-                x-init="init()"
+                x-init="waitForSettings()"
             >
-                <div>
+                <div x-show="settings.error" x-text="'Error: ' + settings.error"></div>
+                <div x-show="!settings.error">
                     <h2 class="text-lg font-light">Settings</h2>
                     <nav class="flex flex-col items-start text-sm mt-3 text-cool-gray-500 space-y-1">
                         <template x-for="page in pages" :key="page.name">
@@ -65,7 +76,7 @@
                         </template>
                     </nav>
                 </div>
-                <div class="flex-grow">
+                <div x-show="!settings.error" class="flex-grow">
                     @each(page in ['Preferences', 'Experimental'], include = 'settings/pages/' + page.toLowerCase())
                     @endeach
                 </div>

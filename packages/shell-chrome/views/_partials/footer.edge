@@ -1,5 +1,5 @@
 <div
-    x-show="showTools"
+    x-show="ready"
     class="flex font-bold text-gray-400 border-t border-gray-300 bg-white"
 >
     <div class="flex-1">
@@ -18,8 +18,8 @@
             >
                 <svg
                     :class="{
-                            'text-green-500': showTools && isLatest,
-                            'text-orange-500': showTools && !isLatest,
+                            'text-green-500': ready && isLatest,
+                            'text-orange-500': ready && !isLatest,
                         }"
                     class="mr-1.5 h-2 w-2 transition transition-colors duration-700 ease-in-out"
                     fill="currentColor"

@@ -38,7 +38,6 @@ export default function devtools() {
         version: null,
         latest: null,
         components: [],
-        showTools: false,
         showTimeout: 1500,
         activeTheme: 'dark-header',
         loadingText: 'Alpine.js tools loading',
@@ -49,13 +48,16 @@ export default function devtools() {
         themes: themes,
 
         settingsPanelOpen: false,
-        // TODO: maybe pass these in from the backend?
         settings: {
             ignoreSelector: '',
         },
 
         tabsEnabled: process.env.NODE_ENV !== 'production',
         activeTab: 'components',
+
+        get ready() {
+            return this.settings.loaded && this.latest
+        },
 
         get isLatest() {
             if (!this.version || !this.latest) return null
@@ -87,19 +89,30 @@ export default function devtools() {
         },
 
         init() {
+            try {
+                chrome.storage.sync.get(['alpine-devtools-settings'], (result) => {
+                    result.loaded = true
+                    result.error = ''
+                    Object.assign(this.settings, result)
+                    console.log(this.settings)
+                })
+            } catch (error) {
+                this.settings = {
+                    loaded: true,
+                    error: error.message,
+                }
+                console.warn(error.message, this.settings)
+            }
             this.initSplitPanes()
 
             this.$watch('components', () => {
-                if (!this.showTools) {
+                if (!this.latest) {
                     fetchWithTimeout('https://registry.npmjs.com/alpinejs', { timeout: this.showTimeout })
                         .then((data) => {
                             this.latest = data['dist-tags'].latest
-                            this.showTools = true
                         })
                         .catch((_error) => {
                             console.error('Could not load Alpine.js version data from registry.npmjs.com')
-                            // latest will be as defaulted in state.js
-                            this.showTools = true
                         })
                 }
             })
