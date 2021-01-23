@@ -13,7 +13,7 @@
         "default_title": "Alpine.js devtools",
         "default_popup": "popups/not-found.html"
     },
-    "permissions": ["http://*/*", "https://*/*", "file:///*", "contextMenus", "storage", "tabs"],
+    "permissions": ["http://*/*", "https://*/*", "file:///*"],
     "background": {
         "scripts": ["background.js"],
         "persistent": false
