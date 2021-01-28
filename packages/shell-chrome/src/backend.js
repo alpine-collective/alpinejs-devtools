@@ -69,6 +69,7 @@ function init() {
             window.console.warn = this._realLogWarn
         }
         instrumentAlpineLogging() {
+            if (process.env.NODE_ENV === 'production') return
             if (!isRequiredVersion('2.8.0', window.Alpine.version) || !window.Alpine.version) {
                 return
             }
