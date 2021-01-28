@@ -3,6 +3,7 @@ import { flattenData, convertInputDataToType } from '../utils'
 export default class State {
     constructor() {
         this.components = {}
+        this.errors = []
         this.allDataAttributes = {}
         this.renderedComponentId = null
         this.version = {
@@ -67,6 +68,11 @@ export default class State {
         this.updateXdata()
     }
 
+    renderError(error) {
+        this.errors.push(error)
+        this.updateXdata()
+    }
+
     closeOpenedComponent() {
         if (this.renderedComponentId) {
             this.components[this.renderedComponentId].isOpened = false
@@ -124,6 +130,8 @@ export default class State {
         appData.version = this.version.detected
         appData.latest = this.version.latest
 
+        appData.errors = [...this.errors]
+
         appData.components = Object.values(this.components).sort(function (a, b) {
             return a.index - b.index
         })
@@ -135,6 +143,24 @@ export default class State {
             return true
         }
         return false
+    }
+
+    showErrorSource(errorId) {
+        if (this._hasNoDevtools('showErrorSource')) return
+        window.__alpineDevtool.port.postMessage({
+            errorId,
+            action: 'show-error-source',
+            source: 'alpineDevtool',
+        })
+    }
+
+    hideErrorSource(errorId) {
+        if (this._hasNoDevtools('hideErrorSource')) return
+        window.__alpineDevtool.port.postMessage({
+            errorId,
+            action: 'hide-error-source',
+            source: 'alpineDevtool',
+        })
     }
 
     hoverOnComponent(component) {
