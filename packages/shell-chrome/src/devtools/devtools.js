@@ -38,6 +38,8 @@ export default function devtools() {
         version: null,
         latest: null,
         components: [],
+        errors: [],
+        showTools: false,
         showTimeout: 1500,
         activeTheme: 'dark-header',
         loadingText: 'Alpine.js tools loading',
@@ -72,10 +74,6 @@ export default function devtools() {
             return this.version ? `v${this.version}` : '<v2.3.1'
         },
 
-        get footerText() {
-            return `Watching ${this.components.length} components`
-        },
-
         get openComponent() {
             return (
                 this.components.filter((component) => {
@@ -84,8 +82,23 @@ export default function devtools() {
             )
         },
 
+        get isWarningsOverflowing() {
+            return this.$refs.warnings.scrollHeight > this.$refs.warnings.clientHeight
+        },
+
         get theme() {
             return this.themes[this.activeTheme]
+        },
+
+        scrollToLastError() {
+            // @todo add debounce
+            this.$nextTick(() => {
+                if (this.$refs.last_error) {
+                    this.$refs.last_error.scrollIntoView({
+                        behavior: 'smooth',
+                    })
+                }
+            })
         },
 
         init() {
@@ -104,6 +117,15 @@ export default function devtools() {
                 console.warn(error.message, this.settings)
             }
             this.initSplitPanes()
+
+            this.$watch('activeTab', (value) => {
+                if (value === 'warnings') {
+                    this.scrollToLastError()
+                }
+            })
+            this.$watch('errors', () => {
+                this.scrollToLastError()
+            })
 
             this.$watch('components', () => {
                 if (!this.latest) {
