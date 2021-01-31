@@ -39,7 +39,6 @@ export default function devtools() {
         latest: null,
         components: [],
         errors: [],
-        showTools: false,
         showTimeout: 1500,
         activeTheme: 'dark-header',
         loadingText: 'Alpine.js tools loading',

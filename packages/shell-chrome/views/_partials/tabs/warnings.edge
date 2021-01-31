@@ -1,12 +1,12 @@
 <div
     :class="{
-        'opacity-75': !showTools,
+        'opacity-75': !ready,
     }"
     class="grid h-full w-full overflow-hidden"
     data-testid="warnings-tab-content"
 >
     <div x-ref="warnings" class="flex-1 flex flex-col max-h-full overflow-scroll text-gray-600" data-testid="warnings-scroll-container">
-        <template x-if="showTools && errors.length === 0">
+        <template x-if="ready && errors.length === 0">
             <div
                 data-testid="no-warnings-message"
                 class="flex flex-1 h-full w-full items-center justify-center p-4 text-gray-400 text-sm"
@@ -15,7 +15,7 @@
             </div>
         </template>
 
-        <template x-if="showTools && errors.length > 0">
+        <template x-if="ready && errors.length > 0">
             <div>
                 <template x-for="(error, index) in errors" :key="error.errorId">
                     <div
@@ -26,7 +26,7 @@
                     >
                         @verbatim
                         <template x-if="error.type === 'eval'">
-                            <div 
+                            <div
                             :class="{
                                 'border-b': !isWarningsOverflowing || (isWarningsOverflowing && index !== errors.length - 1)
                             }"
@@ -45,7 +45,7 @@
                                             Error evaluating "<span class="text-purple" x-text="error.expression"></span>"
                                         </div>
 
-                                        <div 
+                                        <div
                                             class="flex"
                                             @click="activeTab = 'componenets', alpineState.renderComponentData(component)"
                                         >
