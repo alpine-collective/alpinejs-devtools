@@ -126,17 +126,13 @@ export default function devtools() {
                 this.scrollToLastError()
             })
 
-            this.$watch('components', () => {
-                if (!this.latest) {
-                    fetchWithTimeout('https://registry.npmjs.com/alpinejs', { timeout: this.showTimeout })
-                        .then((data) => {
-                            this.latest = data['dist-tags'].latest
-                        })
-                        .catch((_error) => {
-                            console.error('Could not load Alpine.js version data from registry.npmjs.com')
-                        })
-                }
-            })
+            fetchWithTimeout('https://registry.npmjs.com/alpinejs', { timeout: this.showTimeout })
+                .then((data) => {
+                    this.latest = data['dist-tags'].latest
+                })
+                .catch((_error) => {
+                    console.error('Could not load Alpine.js version data from registry.npmjs.com')
+                })
 
             this.$watch('orientation', () => {
                 this.initSplitPanes()
