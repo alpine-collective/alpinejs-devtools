@@ -103,6 +103,7 @@ export default function devtools() {
         init() {
             try {
                 chrome.storage.sync.get(['alpine-devtools-settings'], (result) => {
+                    result = result['alpine-devtools-settings']
                     result.loaded = true
                     result.error = ''
                     Object.assign(this.settings, result)
@@ -137,6 +138,18 @@ export default function devtools() {
             this.$watch('orientation', () => {
                 this.initSplitPanes()
             })
+
+            this.$watch('settings', (value) => {
+                chrome.storage.sync.set({ 'alpine-devtools-settings': JSON.parse(JSON.stringify(value)) }, () => {
+                    console.log('Settings updated', JSON.parse(JSON.stringify(value)))
+                })
+            })
+        },
+
+        updateSetting(name, value) {
+            const settings = this.settings
+            settings[name] = value
+            this.settings = settings
         },
 
         initSplitPanes() {

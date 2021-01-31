@@ -41,11 +41,16 @@
                         }
                     ].filter(p => p.enabled),
                     active: 'Preferences',
+                    savedNotice: false,
                     settings: {
                         error: 'Something went wrong...'
                     },
-                    updateSetting(name, value) {
-                        // $dispatch()
+                    async updateSetting(name, value) {
+                        this.savedNotice = true
+                        this.settings[name] = value
+                        document.getElementById('app').__x.$data.updateSetting(name, value)
+                        await new Promise(resolve => setTimeout(resolve, 3000))
+                        this.savedNotice = false
                     },
                     waitForSettings() {
                         const checker = setInterval(() => {
@@ -59,22 +64,29 @@
                         }, 2500)
                     }
                 }"
-                class="flex space-x-4"
+                class="flex space-x-4 h-full"
                 x-init="waitForSettings()"
             >
                 <div x-show="settings.error" x-text="'Error: ' + settings.error"></div>
-                <div x-show="!settings.error">
-                    <h2 class="text-lg font-light">Settings</h2>
-                    <nav class="flex flex-col items-start text-sm mt-3 text-cool-gray-500 space-y-1">
-                        <template x-for="page in pages" :key="page.name">
-                            <button
-                                x-text="page.name"
-                                class="focus:outline-none border-l-8 pl-2 border-transparent"
-                                :class="{ 'border-ice-500': active === page.name }"
-                                @click="active = page.name"
-                            ></button>
-                        </template>
-                    </nav>
+                <div x-show="!settings.error" class="flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-lg font-light">Settings</h2>
+                        <nav class="flex flex-col items-start text-sm mt-3 text-cool-gray-500 space-y-1">
+                            <template x-for="page in pages" :key="page.name">
+                                <button
+                                    x-text="page.name"
+                                    class="focus:outline-none border-l-8 pl-2 border-transparent"
+                                    :class="{ 'border-ice-500': active === page.name }"
+                                    @click="active = page.name"
+                                ></button>
+                            </template>
+                        </nav>
+                    </div>
+                    <div
+                        x-show.transition.duration.200="savedNotice"
+                        class="text-base bg-ice-300 text-center p-2 shadow-lg rounded">
+                        saved!
+                    </div>
                 </div>
                 <div x-show="!settings.error" class="flex-grow">
                     @each(page in ['Preferences', 'Experimental'], include = 'settings/pages/' + page.toLowerCase())

@@ -7,17 +7,22 @@
             <h2 class="uppercase text-sm font-medium mb-3 text-cool-gray-500">Visibility</h2>
             <div>
                 <label for="email" class="block text-sm font-medium text-gray-700">Hidden components</label>
-                <div class="mt-1">
+                <div class="mt-1 flex space-x-2">
                     <input
                         type="text"
                         autocomplete="off"
                         name="hide-component"
+                        x-ref="ignoreSelector"
                         :value="settings.ignoreSelector"
-                        @input.debounce.500="updateSetting('ignoreSelector', $event.target.value)"
                         class="p-0.5 px-2 shadow-sm focus:ring-ice-500 focus:border-transparent block w-full sm:text-xs border-gray-300 rounded-md placeholder-cool-gray-400"
                         placeholder="[x-devtools-ignore]"
                         aria-describedby="hide-component-description"
                     />
+                    <button
+                        class="px-4 rounded text-black text-base bg-silver-500"
+                        x-on:click="updateSetting('ignoreSelector', $refs.ignoreSelector.value)">
+                        save
+                    </button>
                 </div>
                 <p class="mt-1 text-xs text-gray-500" id="hide-component-description">
                     Hide components using the above selector.
