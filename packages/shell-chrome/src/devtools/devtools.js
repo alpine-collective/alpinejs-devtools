@@ -52,7 +52,6 @@ export default function devtools() {
         settingsPanelEnabled: process.env.NODE_ENV !== 'production',
         settingsPanelOpen: false,
 
-        tabsEnabled: process.env.NODE_ENV !== 'production',
         activeTab: 'components',
 
         get isLatest() {

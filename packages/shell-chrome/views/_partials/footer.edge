@@ -12,22 +12,19 @@
                         <span x-text="`${components.length} ${components.length > 1 || components.length == 0? 'components' : 'component'}`"></span>
                         @endverbatim
                     </a>
-                    
-                    @if(devOnly)
-                        ,&nbsp;
-                        <a 
-                            href="#" 
-                            data-testid="footer-warnings-link" 
-                            @click.prevent="activeTab = 'warnings'" 
-                            :class="{
-                                'text-red-400': errors.length > 0
-                            }"
-                        >
-                            @verbatim
-                            <span x-text="`${errors.length} ${errors.length > 1 || errors.length == 0? 'warnings' : 'warning'}`"></span>
-                            @endverbatim
-                        </a>
-                    @endif
+                    ,&nbsp;
+                    <a
+                        href="#"
+                        data-testid="footer-warnings-link"
+                        @click.prevent="activeTab = 'warnings'"
+                        :class="{
+                            'text-red-400': errors.length > 0
+                        }"
+                    >
+                        @verbatim
+                        <span x-text="`${errors.length} ${errors.length > 1 || errors.length == 0? 'warnings' : 'warning'}`"></span>
+                        @endverbatim
+                    </a>
                 </div>
             </div>
 
