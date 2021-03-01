@@ -60,6 +60,11 @@ export default function devtools() {
             return isRequiredVersion(this.latest, this.version)
         },
 
+        get canCollectErrors() {
+            if (!this.version || !this.latest) return null
+            return isRequiredVersion('2.8.0', this.version)
+        },
+
         get isLandscape() {
             return this.orientation === 'landscape'
         },
