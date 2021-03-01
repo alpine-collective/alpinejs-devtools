@@ -1,4 +1,12 @@
-import { getComponentName, isSerializable, serializeHTMLElement, set, waitForAlpine, isRequiredVersion } from './utils'
+import {
+    getComponentName,
+    isSerializable,
+    serializeHTMLElement,
+    set,
+    digest,
+    waitForAlpine,
+    isRequiredVersion,
+} from './utils'
 
 function serializeDataProperty(value) {
     if (value instanceof HTMLElement) {
@@ -60,6 +68,33 @@ function init() {
             // Watch on the body for injected components. This is lightweight
             // as work is only done if there are components added/removed
             this.observeNode(document.querySelector('body'))
+            this._pollStateChanges({
+                initial: true,
+            })
+        }
+
+        async _pollStateChanges({ initial, interval } = { initial: false, interval: 200 }) {
+            const next = () => setTimeout(() => this._pollStateChanges(), interval)
+            if (initial) {
+                next()
+                return
+            }
+            if (this._stopMutationObserver) return
+            let anyChanged = false
+            await Promise.all(
+                this.pollTargets.map(async (el) => {
+                    if (!el.__alpineDevtool.dataDigest) return
+                    const newData = await digest(el.__x.getUnobservedData())
+                    if (newData !== el.__alpineDevtool.dataDigest) {
+                        el.__alpineDevtool.dataDigest = newData
+                        anyChanged = true
+                    }
+                }),
+            )
+            if (anyChanged) {
+                this.discoverComponents(true)
+            }
+            next()
         }
 
         shutdown() {
@@ -104,15 +139,16 @@ function init() {
             window.console.warn = instrumentedWarn
         }
 
-        discoverComponents() {
+        discoverComponents(force = false) {
             const rootEls = document.querySelectorAll('[x-data]')
             // Exit early if no components have been added or removed
             const allComponentsInitialized = Object.values(rootEls).every((e) => e.__alpineDevtool)
-            if (this.components.length === rootEls.length && allComponentsInitialized) {
+            if (!force && this.components.length === rootEls.length && allComponentsInitialized) {
                 return false
             }
 
             this.components = []
+            this.pollTargets = []
 
             rootEls.forEach((rootEl, index) => {
                 if (!rootEl.__x) {
@@ -144,6 +180,11 @@ function init() {
                         }
                     })
                 }
+
+                digest(rootEl.__x.getUnobservedData()).then((hashDigest) => {
+                    rootEl.__alpineDevtool.dataDigest = hashDigest
+                    this.pollTargets.push(rootEl)
+                })
 
                 const data = Object.entries(rootEl.__x.getUnobservedData()).reduce((acc, [key, value]) => {
                     acc[key] = serializeDataProperty(value)

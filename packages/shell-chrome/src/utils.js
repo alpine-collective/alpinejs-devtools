@@ -59,6 +59,30 @@ export function set(object, path, value) {
     set(object[nextProperty], rest.join('.'), value)
 }
 
+/**
+ * Convert a serializable object into a sha256 hex digest
+ *
+ * @param {object} data
+ * @returns {Promise<string>}
+ */
+export async function digest(data) {
+    return hash(JSON.stringify(data))
+}
+
+/**
+ * SHA-256 hex digest of a string
+ *
+ * @param {string} string
+ * @returns {Promise<string>}
+ */
+async function hash(str) {
+    const msgUint8 = new TextEncoder().encode(str)
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8)
+    const hashArray = Array.from(new Uint8Array(hashBuffer))
+    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
+    return hashHex
+}
+
 // with default options, will run 3 attempts, 1 at 0s, 1 at 500ms, 1 at 1000ms
 // so should hook into Alpine.js if it loads within 1s of the script triggering
 export function waitForAlpine(cb, { maxAttempts = 3, interval = 500, delayFirstAttempt = false } = {}) {
