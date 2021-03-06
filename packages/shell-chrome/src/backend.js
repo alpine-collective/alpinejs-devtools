@@ -75,25 +75,15 @@ function init() {
             }
             if (isRequiredVersion('2.8.1', window.Alpine.version)) {
                 window.addEventListener('error', (errorEvent) => {
-                    if (
-                        errorEvent.error &&
-                        errorEvent.error.el &&
-                        errorEvent.error.expression &&
-                        errorEvent.error.message
-                    ) {
-                        const { el, expression, message } = errorEvent.error
-                        this._handleAlpineError(el, expression, message)
+                    if (errorEvent.error && errorEvent.error.el && errorEvent.error.expression) {
+                        const { el, expression } = errorEvent.error
+                        this._handleAlpineError(el, expression, errorEvent.error.toString())
                     }
                 })
                 window.addEventListener('unhandledrejection', (rejectionEvent) => {
-                    if (
-                        rejectionEvent.reason &&
-                        rejectionEvent.reason.el &&
-                        rejectionEvent.reason.expression &&
-                        rejectionEvent.reason.message
-                    ) {
-                        const { el, expression, message } = rejectionEvent.reason
-                        this._handleAlpineError(el, expression, message)
+                    if (rejectionEvent.reason && rejectionEvent.reason.el && rejectionEvent.reason.expression) {
+                        const { el, expression } = rejectionEvent.reason
+                        this._handleAlpineError(el, expression, rejectionEvent.reason.toString())
                     }
                 })
                 return
