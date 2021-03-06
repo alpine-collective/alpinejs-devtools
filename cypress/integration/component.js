@@ -219,6 +219,23 @@ it('should allow editing of booleans, numbers and strings', () => {
     cy.iframe('#target').contains('Str, type: "string", value: "devtools"')
 })
 
+it('should support x-model updates (even without a re-render) and editing values', () => {
+    cy.get('[data-testid=component-name]').contains('model-no-render').click().trigger('mouseleave')
+    cy.get('[data-testid=data-property-name-text]').should('be.visible').contains('text')
+    cy.get('[data-testid=data-property-value-text]').should('be.visible').contains('initial')
+    cy.iframe('#target').find('[data-testid=model-no-render]').should('be.visible').clear().type('updated')
+    cy.get('[data-testid=data-property-value-text]').should('be.visible').contains('updated')
+
+    cy.get('[data-testid=edit-icon-text]').click({ force: true })
+    cy.get('[data-testid=input-text]')
+        .clear({ force: true })
+        .type('from-devtools', { force: true })
+        .siblings('[data-testid=save-icon]')
+        .click({ force: true })
+
+    cy.iframe('#target').find('[data-testid=model-no-render]').should('have.value', 'from-devtools')
+})
+
 it('should display message with number of components watched', () => {
     cy.visit('/')
         .get('[data-testid=component-name]')

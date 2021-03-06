@@ -1,3 +1,5 @@
+import { ADDED_ATTRIBUTES } from './constants'
+
 export function fetchWithTimeout(resource, options) {
     const { timeout = 3000 } = options
     const controller = new AbortController()
@@ -152,7 +154,9 @@ function isReadyOnlyType(type) {
 export function serializeHTMLElement(element, { include = [] } = {}) {
     let object = { name: element.localName }
     if (include.includes('attributes')) {
-        object.attributes = Array.from(element.attributes).map((attribute) => attribute.name)
+        object.attributes = Array.from(element.attributes)
+            .filter((attribute) => !ADDED_ATTRIBUTES.includes(attribute.name))
+            .map((attribute) => attribute.name)
     }
     // `include` is used to avoid getting the children of children.
     // For the top-level iteration, children are included,
