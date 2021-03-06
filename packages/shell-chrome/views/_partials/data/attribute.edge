@@ -56,8 +56,12 @@
                     </div>
                 </template>
 
-                <template x-if="['string', 'boolean'].includes(singleData.dataType) === false">
-                    <span x-text="singleData.attributeValue"></span>
+                <template x-if="!['string', 'boolean'].includes(singleData.dataType)">
+                    <a
+                        :href="singleData.attributeValue === 'Unserializable Value' ? 'https://github.com/alpine-collective/alpinejs-devtools/discussions/new' : null "
+                        :title="singleData.attributeValue === 'Unserializable Value' ? 'Click to report this unserializable value' : null"
+                        x-text="singleData.attributeValue"
+                    ></a>
                 </template>
             </div>
         </h5>
