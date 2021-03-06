@@ -109,13 +109,18 @@ export default function devtools() {
 
             this.$watch('components', () => {
                 if (!this.showTools) {
+                    if (process.env.NODE_ENV !== 'production') {
+                        console.warn('Ignore following CORS error in simulator')
+                    }
                     fetchWithTimeout('https://registry.npmjs.com/alpinejs', { timeout: this.showTimeout })
                         .then((data) => {
                             this.latest = data['dist-tags'].latest
                             this.showTools = true
                         })
                         .catch((_error) => {
-                            console.error('Could not load Alpine.js version data from registry.npmjs.com')
+                            if (process.env.NODE_ENV === 'production') {
+                                console.error('Could not load Alpine.js version data from registry.npmjs.com')
+                            }
                             // latest will be as defaulted in state.js
                             this.showTools = true
                         })
