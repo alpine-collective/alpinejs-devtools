@@ -69,8 +69,7 @@ it('should handle replacing a component and keep its listed position', () => {
 it('should add/remove hover overlay on component mouseenter/leave', () => {
     cy.visit('/')
     // check overlay works for first component
-    cy.get('[data-testid=component-container]').first().should('be.visible')
-    cy.get('[data-testid=component-container]').first().trigger('mouseenter')
+    cy.get('[data-testid=component-container]').first().should('be.visible').trigger('mouseenter')
 
     cy.iframe('#target').find('[data-testid=hover-element]').should('be.visible')
 
@@ -100,7 +99,6 @@ it('should add/remove hover overlay on component mouseenter/leave', () => {
     cy.get('[data-testid=component-container]').last().trigger('mouseleave')
 
     cy.iframe('#target').find('[data-testid=hover-element]').should('not.exist')
-    cy.get('[data-testid=component-container]').last().should('be.visible')
 
     cy.get('[data-testid=component-container]').last().trigger('mouseenter')
 
@@ -119,8 +117,6 @@ it('should add/remove hover overlay on component mouseenter/leave', () => {
     cy.iframe('#target').find('[data-testid=hover-element]').should('not.exist')
 
     // check overlay disappears on `shutdown`
-    cy.get('[data-testid=component-container]').first().should('be.visible')
-
     cy.get('[data-testid=component-container]').first().trigger('mouseenter')
 
     cy.iframe('#target').find('[data-testid=hover-element]').should('be.visible')
