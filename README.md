@@ -1,6 +1,7 @@
 ![Chrome Web Store](https://img.shields.io/chrome-web-store/v/fopaemeedckajflibkpifppcankfmbhk)
-![Chrome Web Store](https://img.shields.io/chrome-web-store/users/fopaemeedckajflibkpifppcankfmbhk)
-![Mozilla Add-on](https://img.shields.io/amo/v/alpinejs-devtools)
+![Chrome Web Store](https://img.shields.io/chrome-web-store/users/fopaemeedckajflibkpifppcankfmbhk?label=chrome%20users%20%28weekly%29)
+![Mozilla Add-on](https://img.shields.io/amo/v/alpinejs-devtools?label=firefox%20add-on)
+![Mozilla Add-on](https://img.shields.io/amo/users/alpinejs-devtools?label=firefox%20users%20%28daily%29)
 
 # Alpine.js devtools
 
