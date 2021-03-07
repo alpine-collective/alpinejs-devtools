@@ -4,7 +4,7 @@
 
 # Alpine.js devtools
 
-![Screenshot of Alpine.js devtools](docs/alpine-devtools-screenshot.png)
+![Screenshot of Alpine.js devtools](docs/devtools-only.png)
 
 Alpine.js devtools is a simple extension to help you debug [Alpine.js](https://github.com/alpinejs/alpine) components easily.
 
