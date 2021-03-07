@@ -10,6 +10,8 @@ it('should get names of components', () => {
 })
 
 it('should create globals + add annotation for each component', () => {
+    cy.visit('/').get('[data-testid=component-name]').should('be.visible')
+
     let win
     cy.frameLoaded('#target').then(() => {
         win = cy.$$('#target').get(0).contentWindow
@@ -69,8 +71,7 @@ it('should handle replacing a component and keep its listed position', () => {
 it('should add/remove hover overlay on component mouseenter/leave', () => {
     cy.visit('/')
     // check overlay works for first component
-    cy.get('[data-testid=component-container]').first().should('be.visible')
-    cy.get('[data-testid=component-container]').first().trigger('mouseenter')
+    cy.get('[data-testid=component-container]').first().should('be.visible').trigger('mouseenter')
 
     cy.iframe('#target').find('[data-testid=hover-element]').should('be.visible')
 
@@ -100,7 +101,6 @@ it('should add/remove hover overlay on component mouseenter/leave', () => {
     cy.get('[data-testid=component-container]').last().trigger('mouseleave')
 
     cy.iframe('#target').find('[data-testid=hover-element]').should('not.exist')
-    cy.get('[data-testid=component-container]').last().should('be.visible')
 
     cy.get('[data-testid=component-container]').last().trigger('mouseenter')
 
@@ -119,8 +119,6 @@ it('should add/remove hover overlay on component mouseenter/leave', () => {
     cy.iframe('#target').find('[data-testid=hover-element]').should('not.exist')
 
     // check overlay disappears on `shutdown`
-    cy.get('[data-testid=component-container]').first().should('be.visible')
-
     cy.get('[data-testid=component-container]').first().trigger('mouseenter')
 
     cy.iframe('#target').find('[data-testid=hover-element]').should('be.visible')
@@ -146,7 +144,11 @@ it('should support selecting/unselecting a component', () => {
     cy.get('[data-testid=component-container]').last().should('not.have.class', 'text-white bg-alpine-300')
 })
 
-it('should display read-only function/HTMLElement attributes', () => {
+it('should display read-only function/HTMLElement attributes + allow editing of booleans, numbers and strings', () => {
+    cy.visit('/').get('[data-testid=component-name]').should('be.visible')
+
+    cy.get('[data-testid=component-container]').first().click()
+
     cy.get('[data-testid=data-property-name-myFunction]').should('be.visible').contains('myFunction')
 
     cy.get('[data-testid=data-property-value-myFunction]').should('contain.text', 'function')
@@ -172,9 +174,7 @@ it('should display read-only function/HTMLElement attributes', () => {
 
     cy.get('[data-testid=data-property-name-attributes]').should('not.be.visible')
     cy.get('[data-testid=data-property-name-children]').should('not.be.visible')
-})
 
-it('should allow editing of booleans, numbers and strings', () => {
     // booleans
     cy.get('[data-testid=data-property-name-bool]').should('be.visible').contains('bool')
     cy.get('[data-testid=data-property-value-bool]').should('contain.text', 'true')
@@ -217,6 +217,25 @@ it('should allow editing of booleans, numbers and strings', () => {
         .click({ force: true })
 
     cy.iframe('#target').contains('Str, type: "string", value: "devtools"')
+})
+
+it('should support x-model updates (even without a re-render) and editing values', () => {
+    cy.visit('/').get('[data-testid=component-name]').should('be.visible')
+
+    cy.get('[data-testid=component-name]').contains('model-no-render').click().trigger('mouseleave')
+    cy.get('[data-testid=data-property-name-text]').should('be.visible').contains('text')
+    cy.get('[data-testid=data-property-value-text]').should('be.visible').contains('initial')
+    cy.iframe('#target').find('[data-testid=model-no-render]').should('be.visible').clear().type('updated')
+    cy.get('[data-testid=data-property-value-text]').should('be.visible').contains('updated')
+
+    cy.get('[data-testid=edit-icon-text]').click({ force: true })
+    cy.get('[data-testid=input-text]')
+        .clear({ force: true })
+        .type('from-devtools', { force: true })
+        .siblings('[data-testid=save-icon]')
+        .click({ force: true })
+
+    cy.iframe('#target').find('[data-testid=model-no-render]').should('have.value', 'from-devtools')
 })
 
 it('should display message with number of components watched', () => {

@@ -1,3 +1,4 @@
+import { DEVTOOLS_RENDER_ATTR_NAME, DEVTOOLS_RENDER_BINDING_ATTR_NAME } from './constants'
 import { getComponentName, isSerializable, serializeHTMLElement, set, waitForAlpine, isRequiredVersion } from './utils'
 
 function serializeDataProperty(value) {
@@ -37,6 +38,7 @@ function init() {
             this.errorSourceId = 1
 
             this._stopMutationObserver = false
+            this._lastComponentCrawl = Date.now()
         }
 
         runWithMutationPaused(cb) {
@@ -126,10 +128,28 @@ function init() {
 
         discoverComponents() {
             const rootEls = document.querySelectorAll('[x-data]')
-            // Exit early if no components have been added or removed
+
             const allComponentsInitialized = Object.values(rootEls).every((e) => e.__alpineDevtool)
-            if (this.components.length === rootEls.length && allComponentsInitialized) {
-                return false
+            if (allComponentsInitialized) {
+                const lastAlpineRender = [...rootEls].reduce((acc, el) => {
+                    // we add `:data-devtools-render="Date.now()"` when initialising components
+                    const renderTimeStr = el.getAttribute(DEVTOOLS_RENDER_ATTR_NAME)
+                    const renderTime = parseInt(renderTimeStr, 10)
+                    if (renderTime && renderTime > acc) {
+                        return renderTime
+                    }
+                    return acc
+                }, this._lastComponentCrawl)
+
+                const someComponentHasUpdated = lastAlpineRender > this._lastComponentCrawl
+                if (someComponentHasUpdated) {
+                    this._lastComponentCrawl = Date.now()
+                }
+
+                // Exit early if no components have been added, removed and no data has changed
+                if (!someComponentHasUpdated && this.components.length === rootEls.length) {
+                    return false
+                }
             }
 
             this.components = []
@@ -143,11 +163,12 @@ function init() {
                 Alpine.initializeComponent(rootEl)
 
                 if (!rootEl.__alpineDevtool) {
-                    rootEl.__alpineDevtool = {}
-                }
-
-                if (!rootEl.__alpineDevtool.id) {
-                    rootEl.__alpineDevtool.id = this.uuid++
+                    // add an attr to trigger the mutation observer and run this function
+                    // that will send updated state to devtools
+                    rootEl.setAttribute(DEVTOOLS_RENDER_BINDING_ATTR_NAME, 'Date.now()')
+                    rootEl.__alpineDevtool = {
+                        id: this.uuid++,
+                    }
                     window[`$x${rootEl.__alpineDevtool.id - 1}`] = rootEl.__x
                 }
 

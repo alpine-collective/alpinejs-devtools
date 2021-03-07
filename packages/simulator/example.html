@@ -55,6 +55,12 @@
         <div role="combobox" x-data="{ hello: 'world' }">
             <span x-text="hello"></span>
         </div>
+        <div x-title="model-no-render" x-data="{ text: 'initial' }">
+            <label>
+                Doesn't re-render but has x-model
+                <input type="text" x-model="text" data-testid="model-no-render" />
+            </label>
+        </div>
         <button
             data-testid="replace-component-button"
             onclick="event.target.parentNode.replaceChild(window.span, event.target)"
