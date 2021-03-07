@@ -57,6 +57,7 @@ export default [
         input,
         output: {
             dir: 'dist/chrome',
+            format: 'iife',
         },
         plugins: [
             replace({
