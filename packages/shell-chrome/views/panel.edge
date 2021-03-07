@@ -30,10 +30,11 @@
                         </div>
                     </div>
 
-                    <div x-show="activeTab === 'warnings'" class="flex-1 overflow-hidden">
-                        @include('_partials.tabs.warnings')
-                    </div>
                 @endif
+
+                <div x-show="activeTab === 'warnings'" class="flex-1 overflow-hidden">
+                    @include('_partials.tabs.warnings')
+                </div>
 
                 @include('_partials.footer')
 

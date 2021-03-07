@@ -53,7 +53,7 @@ function init() {
         }
 
         start() {
-            this.instrumentAlpineLogging()
+            this.initAlpineErrorCollection()
             this.getAlpineVersion()
             this.discoverComponents()
 
@@ -68,11 +68,27 @@ function init() {
 
             window.console.warn = this._realLogWarn
         }
-        instrumentAlpineLogging() {
-            if (process.env.NODE_ENV === 'production') return
+
+        initAlpineErrorCollection() {
             if (!isRequiredVersion('2.8.0', window.Alpine.version) || !window.Alpine.version) {
                 return
             }
+            if (isRequiredVersion('2.8.1', window.Alpine.version)) {
+                window.addEventListener('error', (errorEvent) => {
+                    if (errorEvent.error && errorEvent.error.el && errorEvent.error.expression) {
+                        const { el, expression } = errorEvent.error
+                        this._handleAlpineError(el, expression, errorEvent.error.toString())
+                    }
+                })
+                window.addEventListener('unhandledrejection', (rejectionEvent) => {
+                    if (rejectionEvent.reason && rejectionEvent.reason.el && rejectionEvent.reason.expression) {
+                        const { el, expression } = rejectionEvent.reason
+                        this._handleAlpineError(el, expression, rejectionEvent.reason.toString())
+                    }
+                })
+                return
+            }
+
             this._realLogWarn = console.warn
 
             const instrumentedWarn = (...args) => {
@@ -81,27 +97,31 @@ function init() {
                     const [errorMessage] = argsString.match(/(?<=Alpine Error: ").*(?=")/)
                     const [expression] = argsString.match(/(?<=Expression: ").*(?=")/)
                     const element = args.find((el) => el instanceof HTMLElement)
-                    if (!element.__alpineErrorSourceId) {
-                        element.__alpineErrorSourceId = this.errorSourceId++
-                    }
-                    this.errorElements.push(element)
-
-                    const alpineError = {
-                        type: 'eval',
-                        message: errorMessage,
-                        expression,
-                        source: serializeHTMLElement(element),
-                        errorId: element.__alpineErrorSourceId,
-                    }
-                    this._postMessage({
-                        error: alpineError,
-                        type: 'render-error',
-                    })
+                    this._handleAlpineError(element, expression, errorMessage)
                 }
                 this._realLogWarn(...args)
             }
 
             window.console.warn = instrumentedWarn
+        }
+
+        _handleAlpineError(element, expression, errorMessage) {
+            if (!element.__alpineErrorSourceId) {
+                element.__alpineErrorSourceId = this.errorSourceId++
+            }
+            this.errorElements.push(element)
+
+            const alpineError = {
+                type: 'eval',
+                message: errorMessage,
+                expression,
+                source: serializeHTMLElement(element),
+                errorId: element.__alpineErrorSourceId,
+            }
+            this._postMessage({
+                error: alpineError,
+                type: 'render-error',
+            })
         }
 
         discoverComponents() {

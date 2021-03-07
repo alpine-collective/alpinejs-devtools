@@ -52,12 +52,16 @@ export default function devtools() {
         settingsPanelEnabled: process.env.NODE_ENV !== 'production',
         settingsPanelOpen: false,
 
-        tabsEnabled: process.env.NODE_ENV !== 'production',
         activeTab: 'components',
 
         get isLatest() {
             if (!this.version || !this.latest) return null
             return isRequiredVersion(this.latest, this.version)
+        },
+
+        get canCollectErrors() {
+            if (!this.version || !this.latest) return null
+            return isRequiredVersion('2.8.0', this.version)
         },
 
         get isLandscape() {
