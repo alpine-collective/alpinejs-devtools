@@ -10,6 +10,8 @@ it('should get names of components', () => {
 })
 
 it('should create globals + add annotation for each component', () => {
+    cy.visit('/').get('[data-testid=component-name]').should('be.visible')
+
     let win
     cy.frameLoaded('#target').then(() => {
         win = cy.$$('#target').get(0).contentWindow
@@ -142,7 +144,11 @@ it('should support selecting/unselecting a component', () => {
     cy.get('[data-testid=component-container]').last().should('not.have.class', 'text-white bg-alpine-300')
 })
 
-it('should display read-only function/HTMLElement attributes', () => {
+it('should display read-only function/HTMLElement attributes + allow editing of booleans, numbers and strings', () => {
+    cy.visit('/').get('[data-testid=component-name]').should('be.visible')
+
+    cy.get('[data-testid=component-container]').first().click()
+
     cy.get('[data-testid=data-property-name-myFunction]').should('be.visible').contains('myFunction')
 
     cy.get('[data-testid=data-property-value-myFunction]').should('contain.text', 'function')
@@ -168,9 +174,7 @@ it('should display read-only function/HTMLElement attributes', () => {
 
     cy.get('[data-testid=data-property-name-attributes]').should('not.be.visible')
     cy.get('[data-testid=data-property-name-children]').should('not.be.visible')
-})
 
-it('should allow editing of booleans, numbers and strings', () => {
     // booleans
     cy.get('[data-testid=data-property-name-bool]').should('be.visible').contains('bool')
     cy.get('[data-testid=data-property-value-bool]').should('contain.text', 'true')
@@ -216,6 +220,8 @@ it('should allow editing of booleans, numbers and strings', () => {
 })
 
 it('should support x-model updates (even without a re-render) and editing values', () => {
+    cy.visit('/').get('[data-testid=component-name]').should('be.visible')
+
     cy.get('[data-testid=component-name]').contains('model-no-render').click().trigger('mouseleave')
     cy.get('[data-testid=data-property-name-text]').should('be.visible').contains('text')
     cy.get('[data-testid=data-property-value-text]').should('be.visible').contains('initial')
