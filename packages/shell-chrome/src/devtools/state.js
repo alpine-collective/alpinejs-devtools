@@ -12,6 +12,67 @@ export default class State {
         }
     }
 
+    setComponentsList(components) {
+        this.checkForRemovedComponents(components)
+        components.forEach((component, index) => {
+            component.index = index
+            component.isOpened = this.renderedComponentId === component.id
+            this.components[component.id] = component
+        })
+
+        this.updateXdata()
+    }
+
+    setComponentData(componentId, data) {
+        const flattenedData = flattenData(data).map((d) => {
+            let isOpened = false
+            if (
+                (this.allDataAttributes[componentId] &&
+                    this.allDataAttributes[componentId][d.id] &&
+                    this.allDataAttributes[componentId][d.id].isOpened) ||
+                (d.directParentId.length &&
+                    this.allDataAttributes[componentId][d.directParentId] &&
+                    this.allDataAttributes[componentId][d.directParentId].isArrowDown)
+            ) {
+                isOpened = true
+            }
+
+            let isArrowDown = false
+            if (
+                this.allDataAttributes[componentId] &&
+                this.allDataAttributes[componentId][d.id] &&
+                this.allDataAttributes[componentId][d.id].hasArrow
+            ) {
+                isArrowDown = this.allDataAttributes[componentId][d.id].isArrowDown
+            }
+
+            const parentComponentId = componentId
+
+            if (!this.allDataAttributes[componentId]) {
+                this.allDataAttributes[componentId] = {}
+            }
+
+            this.allDataAttributes[componentId][d.id] = {
+                ...d,
+                isOpened,
+                isArrowDown,
+                parentComponentId,
+            }
+
+            return {
+                ...d,
+                isOpened,
+                isArrowDown,
+                parentComponentId,
+            }
+        })
+
+        this.selectedComponentFlattenedData = flattenedData
+        this.renderedComponentId = componentId
+        this.updateXdata()
+    }
+
+    // @todo remove this
     renderComponentsFromBackend(components) {
         this.checkForRemovedComponents(components)
 
@@ -65,6 +126,15 @@ export default class State {
         this.closeOpenedComponent()
         this.renderedComponentId = component.id
         this.components[component.id].isOpened = true
+        this.selectedComponentFlattenedData = null
+        if (!this._hasNoDevtools('renderComponentData')) {
+            window.__alpineDevtool.port.postMessage({
+                componentId: component.id,
+                action: 'get-data',
+                source: 'alpineDevtool',
+            })
+        }
+
         this.updateXdata()
     }
 
@@ -103,7 +173,7 @@ export default class State {
             })
 
             childrenAttributesIds.forEach((childId) => {
-                this.components[attribute.parentComponentId].flattenedData.forEach((d) => {
+                this.selectedComponentFlattenedData.forEach((d) => {
                     if (d.id === childId) {
                         d.isOpened = !attribute.isArrowDown
 
@@ -114,7 +184,7 @@ export default class State {
                 })
             })
 
-            this.components[attribute.parentComponentId].flattenedData.forEach((d) => {
+            this.selectedComponentFlattenedData.forEach((d) => {
                 if (d.hasArrow && d.id == attribute.id) {
                     d.isArrowDown = !d.isArrowDown
                 }
@@ -135,6 +205,8 @@ export default class State {
         appData.components = Object.values(this.components).sort(function (a, b) {
             return a.index - b.index
         })
+        appData.selectedComponentFlattenedData = this.selectedComponentFlattenedData
+        appData.openComponent = (this.components && this.components[this.renderedComponentId]) || null
     }
 
     _hasNoDevtools(methodName) {
@@ -170,6 +242,13 @@ export default class State {
             action: 'hover',
             source: 'alpineDevtool',
         })
+
+        // pre-load component
+        // window.__alpineDevtool.port.postMessage({
+        //     componentId: component.id,
+        //     action: 'get-data',
+        //     source: 'alpineDevtool',
+        // })
     }
 
     hoverLeftComponent(component) {
@@ -193,8 +272,8 @@ export default class State {
         )
         clickedAttribute.inEditingMode = false
 
-        this.components[clickedAttribute.parentComponentId].flattenedData.forEach((f) => {
-            if (f.id == clickedAttribute.id) {
+        this.selectedComponentFlattenedData.forEach((f) => {
+            if (f.id === clickedAttribute.id) {
                 f.attributeValue = clickedAttribute.attributeValue
                 f.editAttributeValue = clickedAttribute.editAttributeValue
             }

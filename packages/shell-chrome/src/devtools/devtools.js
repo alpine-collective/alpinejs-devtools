@@ -37,6 +37,8 @@ export default function devtools() {
     return {
         version: null,
         latest: null,
+        selectedComponentFlattenedData: null,
+        openComponent: null,
         components: [],
         errors: [],
         showTools: false,
@@ -70,14 +72,6 @@ export default function devtools() {
 
         get detected() {
             return this.version ? `v${this.version}` : '<v2.3.1'
-        },
-
-        get openComponent() {
-            return (
-                this.components.filter((component) => {
-                    return component.isOpened
-                })[0] || {}
-            )
         },
 
         get isWarningsOverflowing() {

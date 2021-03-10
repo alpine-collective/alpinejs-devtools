@@ -1,13 +1,13 @@
 @verbatim
 <div class="group flex items-center">
     <a
-        :style="`margin-left: ${singleData.depth}px; `"
+        :style="`margin-left: ${singleData.depth}px;`"
         @click="alpineState.toggleDataAttribute(singleData)"
         class="block px-1 rounded hover:bg-blue-100"
         :class="{
-                'cursor-pointer': singleData.hasArrow
-            }"
-        x-show="singleData.isOpened"
+            'cursor-pointer': singleData.hasArrow
+        }"
+        x-show="singleData.depth === 0 || singleData.isOpened"
     >
         <h5 data-testid="data-property" class="flex items-center relative pl-3 leading-6 text-sm whitespace-nowrap">
             <div class="absolute left-0 h-full flex items-center">
@@ -36,10 +36,12 @@
                 x-show="!singleData.inEditingMode"
             >
                 <template x-if="singleData.dataType === 'string'">
-                    &quot;<span class="text-red-700" x-text="singleData.attributeValue"></span>&quot;
+                    <div>
+                        &quot;<span class="text-red-700" x-text="singleData.attributeValue"></span>&quot;
+                    </div>
                 </template>
 
-                <template x-if="singleData.dataType == 'boolean'">
+                <template x-if="singleData.dataType === 'boolean'">
                     <div class="flex items-center">
                         <span
                             class="block pr-1 text-blue-700 cursor-pointer"
@@ -69,14 +71,11 @@
 
     <div
         class="flex flex-col"
-        x-show="!singleData.hasArrow
-            && !singleData.readOnly
-            && singleData.isOpened"
+        x-show="!singleData.hasArrow && !singleData.readOnly && (singleData.depth === 0 || singleData.isOpened)"
     >
         <svg
             fill="currentColor"
-            x-show="!singleData.inEditingMode
-                && singleData.dataType !== 'boolean'"
+            x-show="!singleData.inEditingMode && singleData.dataType !== 'boolean'"
             :data-testid="`edit-icon-${singleData.attributeName}`"
             @click="alpineState.editAttribute(singleData)"
             viewBox="0 0 20 20"

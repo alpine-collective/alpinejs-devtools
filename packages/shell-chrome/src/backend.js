@@ -1,4 +1,9 @@
-import { DEVTOOLS_RENDER_ATTR_NAME, DEVTOOLS_RENDER_BINDING_ATTR_NAME } from './constants'
+import {
+    BACKEND_TO_PANEL_MESSAGES,
+    DEVTOOLS_RENDER_ATTR_NAME,
+    DEVTOOLS_RENDER_BINDING_ATTR_NAME,
+    PANEL_TO_BACKEND_MESSAGES,
+} from './constants'
 import { getComponentName, isSerializable, serializeHTMLElement, set, waitForAlpine, isRequiredVersion } from './utils'
 
 function serializeDataProperty(value) {
@@ -36,6 +41,7 @@ function init() {
             this.observer = null
             this.errorElements = []
             this.errorSourceId = 1
+            this.selectedComponentId = null
 
             this._stopMutationObserver = false
             this._lastComponentCrawl = Date.now()
@@ -58,7 +64,6 @@ function init() {
             this.initAlpineErrorCollection()
             this.getAlpineVersion()
             this.discoverComponents()
-
             // Watch on the body for injected components. This is lightweight
             // as work is only done if there are components added/removed
             this.observeNode(document.querySelector('body'))
@@ -127,11 +132,11 @@ function init() {
         }
 
         discoverComponents() {
-            const rootEls = document.querySelectorAll('[x-data]')
+            const alpineRoots = Array.from(document.querySelectorAll('[x-data]'))
 
-            const allComponentsInitialized = Object.values(rootEls).every((e) => e.__alpineDevtool)
+            const allComponentsInitialized = Object.values(alpineRoots).every((e) => e.__alpineDevtool)
             if (allComponentsInitialized) {
-                const lastAlpineRender = [...rootEls].reduce((acc, el) => {
+                const lastAlpineRender = alpineRoots.reduce((acc, el) => {
                     // we add `:data-devtools-render="Date.now()"` when initialising components
                     const renderTimeStr = el.getAttribute(DEVTOOLS_RENDER_ATTR_NAME)
                     const renderTime = parseInt(renderTimeStr, 10)
@@ -147,20 +152,17 @@ function init() {
                 }
 
                 // Exit early if no components have been added, removed and no data has changed
-                if (!someComponentHasUpdated && this.components.length === rootEls.length) {
+                if (!someComponentHasUpdated && this.components.length === alpineRoots.length) {
                     return false
                 }
             }
-
-            this.components = []
-
-            rootEls.forEach((rootEl, index) => {
+            this.components = alpineRoots.map((rootEl, index) => {
                 if (!rootEl.__x) {
                     // this component probably crashed during init
                     return
                 }
 
-                Alpine.initializeComponent(rootEl)
+                // Alpine.initializeComponent(rootEl)
 
                 if (!rootEl.__alpineDevtool) {
                     // add an attr to trigger the mutation observer and run this function
@@ -172,43 +174,34 @@ function init() {
                     window[`$x${rootEl.__alpineDevtool.id - 1}`] = rootEl.__x
                 }
 
-                let depth = 0
-
-                if (index != 0) {
-                    rootEls.forEach((innerElement, innerIndex) => {
-                        if (index == innerIndex) {
-                            return false
-                        }
-
-                        if (innerElement.contains(rootEl)) {
-                            depth = depth + 1
-                        }
-                    })
+                if (rootEl.__alpineDevtool.id === this.selectedComponentId) {
+                    this.getComponentData(this.selectedComponentId, rootEl)
                 }
 
-                const data = Object.entries(rootEl.__x.getUnobservedData()).reduce((acc, [key, value]) => {
-                    acc[key] = serializeDataProperty(value)
+                const componentDepth =
+                    index === 0
+                        ? 0
+                        : alpineRoots.reduce((depth, el, innerIndex) => {
+                              if (index === innerIndex) {
+                                  return depth
+                              }
 
-                    return acc
-                }, {})
+                              if (el.contains(rootEl)) {
+                                  depth = depth + 1
+                              }
+                          }, 0)
 
-                this.components.push({
+                return {
                     name: getComponentName(rootEl),
-                    depth: depth,
-                    data: data,
-                    index: index,
+                    depth: componentDepth,
+                    index,
                     id: rootEl.__alpineDevtool.id,
-                })
+                }
             })
 
             this._postMessage({
-                // stringify to unfurl proxies
-                // there's no way to detect proxies but
-                // we need to get rid of them
-                // this avoids `DataCloneError: The object could not be cloned.`
-                // see https://github.com/Te7a-Houdini/alpinejs-devtools/issues/17
-                components: JSON.stringify(this.components),
-                type: 'render-components',
+                components: this.components,
+                type: 'set-components',
             })
         }
 
@@ -240,6 +233,30 @@ function init() {
                 },
                 '*',
             )
+        }
+
+        getComponentData(componentId, componentRoot) {
+            const data = Object.entries(componentRoot.__x.getUnobservedData()).reduce((acc, [key, value]) => {
+                acc[key] = serializeDataProperty(value)
+
+                return acc
+            }, {})
+            this._postMessage({
+                type: BACKEND_TO_PANEL_MESSAGES.SET_DATA,
+                componentId,
+                data: JSON.stringify(data),
+            })
+        }
+
+        handleGetComponentData(componentId) {
+            this.selectedComponentId = componentId
+            this.runWithMutationPaused(() => {
+                Alpine.discoverComponents((component) => {
+                    if (component.__alpineDevtool.id === componentId) {
+                        this.getComponentData(componentId, component)
+                    }
+                })
+            })
         }
 
         observeNode(node) {
@@ -364,6 +381,10 @@ function init() {
                         }
                     })
                 })
+            }
+
+            if (e.data.payload.action === PANEL_TO_BACKEND_MESSAGES.GET_DATA) {
+                devtoolsBackend.handleGetComponentData(e.data.payload.componentId)
             }
         }
     }

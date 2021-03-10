@@ -34,7 +34,7 @@
 
     <!-- Active Component/Data -->
     <div class="flex-1 relative flex flex-col max-h-full overflow-scroll">
-        <template x-if="openComponent.name">
+        <template x-if="openComponent">
             <div
                 class="sticky top-0 left-0 z-20 w-full flex items-center px-3 py-2 text-base font-mono text-gray-600 bg-gray-100"
             >
@@ -44,7 +44,7 @@
             </div>
         </template>
 
-        <template x-if="!openComponent.name">
+        <template x-if="!openComponent">
             <div
                 data-testid="select-component-message"
                 x-text="showTools && components.length > 0 ? 'Select a component to view' : ''"
@@ -54,23 +54,21 @@
 
         <div
             :class="{
-            'hidden': !showTools || !openComponent.name,
+            'hidden': !showTools || !openComponent,
         }"
             class="flex-1 px-3 py-2"
         >
-            <template x-for="(singleComponent, componentIndex) in components">
-                <div x-show="singleComponent.isOpened" class="font-mono">
-                    <div class="leading-6 text-gray-300">x-data: {</div>
-
+        <div class="font-mono">
+            <div class="leading-6 text-gray-300">x-data: {</div>
+                <template x-if="selectedComponentFlattenedData">
                     <div>
-                        <template x-for="(singleData, index) in singleComponent.flattenedData">
+                        <template x-for="(singleData, index) in selectedComponentFlattenedData">
                             @include('_partials.data.attribute')
                         </template>
                     </div>
-
-                    <div class="leading-7 text-gray-300">}</div>
-                </div>
-            </template>
+                </template>
+            <div class="leading-7 text-gray-300">}</div>
+        </div>
         </div>
     </div>
 </div>
