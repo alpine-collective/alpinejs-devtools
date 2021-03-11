@@ -19,7 +19,8 @@
                 bool: true,
                 num: 5,
                 str: 'string',
-                arr: ['world', 'bar']
+                arr: ['world', 'bar'],
+                nestedSerializable: { array: [ { hello: 'world' }] },
             }"
         >
             <div>Bool, type: "<span x-text="typeof bool"></span>", value: "<span x-text="bool"></span>"</div>
@@ -32,8 +33,8 @@
                 >"
             </div>
             <div>
-                Nested.array, type "<span x-text="typeof nested.array"></span>, value (stringified): "<span
-                    x-text="JSON.stringify(nested.array)"
+                Nested serializable array/object value (stringified): "<span
+                    x-text="JSON.stringify(nestedSerializable)"
                 ></span
                 >"
             </div>
@@ -54,6 +55,10 @@
         </div>
         <div role="combobox" x-data="{ hello: 'world' }">
             <span x-text="hello"></span>
+            <div x-data x-title="nested1">
+                Nesting 1
+                <div x-data x-title="nested2">Nesting 2</div>
+            </div>
         </div>
         <div x-title="model-no-render" x-data="{ text: 'initial' }">
             <label>
