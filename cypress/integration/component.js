@@ -135,7 +135,6 @@ it('should add/remove hover overlay on component mouseenter/leave', () => {
 it('should support selecting/unselecting a component', () => {
     cy.visit('/')
 
-    cy.get('[data-testid=component-container]').last().should('be.visible')
     cy.get('[data-testid=component-container]').last().click().should('have.class', 'text-white bg-alpine-300')
 
     cy.get('[data-testid=component-container]').first().click()
@@ -217,6 +216,59 @@ it('should display read-only function/HTMLElement attributes + allow editing of 
         .click({ force: true })
 
     cy.iframe('#target').contains('Str, type: "string", value: "devtools"')
+})
+
+it('should display nested arrays/object attributes and support editing', () => {
+    cy.visit('/').get('[data-testid=component-name]').should('be.visible')
+
+    cy.get('[data-testid=component-name]').first().click().trigger('mouseleave')
+
+    cy.get('[data-testid="data-property-name-nestedObjArr"]').contains('nestedObjArr')
+    cy.get('[data-testid="data-property-value-nestedObjArr"]').contains('Object')
+
+    cy.get('[data-testid="data-property-value-nestedObjArr"]').click()
+    cy.get('[data-testid=data-property-name-array]').should('be.visible').contains('array')
+    cy.get('[data-testid=data-property-value-array]').should('be.visible').contains('Array[1]')
+
+    cy.get('[data-testid=data-property-value-array]').click()
+
+    cy.get('[data-testid=data-property-name-0]').last().should('be.visible').contains('0')
+    cy.get('[data-testid=data-property-value-0]').last().should('be.visible').contains('Object')
+
+    cy.get('[data-testid=data-property-name-0]').last().click()
+
+    cy.get('[data-testid=data-property-name-nested]').should('be.visible').contains('nested')
+    cy.get('[data-testid=data-property-value-nested]').should('be.visible').contains('property')
+
+    // check untoggling also works
+    cy.get('[data-testid=data-property-name-0]').last().click()
+
+    cy.get('[data-testid=data-property-name-nested]').should('not.be.visible')
+    cy.get('[data-testid=data-property-value-nested]').should('not.be.visible')
+
+    cy.get('[data-testid=data-property-value-array]').click()
+
+    cy.get('[data-testid=data-property-name-0]').last().should('not.be.visible')
+    cy.get('[data-testid=data-property-value-0]').last().should('not.be.visible')
+
+    cy.get('[data-testid="data-property-value-nestedObjArr"]').click()
+    cy.get('[data-testid=data-property-name-array]').should('not.be.visible')
+    cy.get('[data-testid=data-property-value-array]').should('not.be.visible')
+
+    cy.get('[data-testid="data-property-value-nestedObjArr"]').click()
+    cy.get('[data-testid=data-property-value-array]').click()
+    cy.get('[data-testid=data-property-name-0]').last().click()
+    // editing the nested array/object
+    cy.get('[data-testid=edit-icon-nested]').click({ force: true })
+    cy.get('[data-testid=input-nested]')
+        .clear({ force: true })
+        .type('from-devtools', { force: true })
+        .siblings('[data-testid=save-icon]')
+        .click({ force: true })
+
+    cy.iframe('#target')
+        .find('[data-testid=nested-obj-arr]')
+        .should('have.text', JSON.stringify({ array: [{ nested: 'from-devtools' }] }))
 })
 
 it('should support x-model updates (even without a re-render) and editing values', () => {
