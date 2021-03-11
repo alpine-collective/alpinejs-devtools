@@ -188,8 +188,10 @@ function init() {
                               }
 
                               if (el.contains(rootEl)) {
-                                  depth = depth + 1
+                                  return depth + 1
                               }
+
+                              return depth
                           }, 0)
 
                 return {
