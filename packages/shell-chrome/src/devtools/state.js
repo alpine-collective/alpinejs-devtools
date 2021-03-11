@@ -1,4 +1,7 @@
 import { flattenData, convertInputDataToType } from '../utils'
+import { PANEL_TO_BACKEND_MESSAGES } from '../constants'
+
+const ALPINE_DEVTOOL_SOURCE = 'alpineDevtool'
 
 export default class State {
     constructor() {
@@ -176,8 +179,8 @@ export default class State {
         if (this._hasNoDevtools('showErrorSource')) return
         window.__alpineDevtool.port.postMessage({
             errorId,
-            action: 'show-error-source',
-            source: 'alpineDevtool',
+            action: PANEL_TO_BACKEND_MESSAGES.SHOW_ERROR_SOURCE,
+            source: ALPINE_DEVTOOL_SOURCE,
         })
     }
 
@@ -185,8 +188,8 @@ export default class State {
         if (this._hasNoDevtools('hideErrorSource')) return
         window.__alpineDevtool.port.postMessage({
             errorId,
-            action: 'hide-error-source',
-            source: 'alpineDevtool',
+            action: PANEL_TO_BACKEND_MESSAGES.HIDE_ERROR_SOURCE,
+            source: ALPINE_DEVTOOL_SOURCE,
         })
     }
 
@@ -194,8 +197,8 @@ export default class State {
         if (this._hasNoDevtools('hoverOnComponent')) return
         window.__alpineDevtool.port.postMessage({
             componentId: component.id,
-            action: 'hover',
-            source: 'alpineDevtool',
+            action: PANEL_TO_BACKEND_MESSAGES.HOVER_COMPONENT,
+            source: ALPINE_DEVTOOL_SOURCE,
         })
 
         // pre-load component
@@ -210,8 +213,8 @@ export default class State {
         if (this._hasNoDevtools('hoverLeftComponent')) return
         window.__alpineDevtool.port.postMessage({
             componentId: component.id,
-            action: 'hoverLeft',
-            source: 'alpineDevtool',
+            action: PANEL_TO_BACKEND_MESSAGES.HIDE_HOVER,
+            source: ALPINE_DEVTOOL_SOURCE,
         })
     }
 
@@ -238,8 +241,8 @@ export default class State {
             componentId: clickedAttribute.parentComponentId,
             attributeSequence: clickedAttribute.id,
             attributeValue: clickedAttribute.attributeValue,
-            action: 'editAttribute',
-            source: 'alpineDevtool',
+            action: PANEL_TO_BACKEND_MESSAGES.EDIT_ATTRIBUTE,
+            source: ALPINE_DEVTOOL_SOURCE,
         })
     }
 

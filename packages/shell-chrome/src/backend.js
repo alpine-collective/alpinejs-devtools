@@ -127,7 +127,7 @@ function init() {
             }
             this._postMessage({
                 error: alpineError,
-                type: 'render-error',
+                type: BACKEND_TO_PANEL_MESSAGES.ADD_ERROR,
             })
         }
 
@@ -329,15 +329,17 @@ function init() {
     }
 
     function handleMessages(e) {
-        if (e.data.source === ALPINE_DEVTOOLS_PROXY) {
-            if (e.data.payload === 'shutdown') {
-                window.removeEventListener('message', handleMessages)
-                window.addEventListener('message', handshake)
-                devtoolsBackend.shutdown()
-                return
-            }
-
-            if (e.data.payload.action === 'show-error-source') {
+        if (e.data.source !== ALPINE_DEVTOOLS_PROXY) {
+            return
+        }
+        if (e.data.payload === PANEL_TO_BACKEND_MESSAGES.SHUTDOWN) {
+            window.removeEventListener('message', handleMessages)
+            window.addEventListener('message', handshake)
+            devtoolsBackend.shutdown()
+            return
+        }
+        switch (e.data.payload.action) {
+            case PANEL_TO_BACKEND_MESSAGES.SHOW_ERROR_SOURCE: {
                 devtoolsBackend.runWithMutationPaused(() => {
                     const errorSource = devtoolsBackend.errorElements.find((el) => {
                         return el.__alpineErrorSourceId === e.data.payload.errorId
@@ -345,14 +347,15 @@ function init() {
 
                     devtoolsBackend.addHoverElement(errorSource)
                 })
+                break
             }
-            if (e.data.payload.action === 'hide-error-source') {
+            case PANEL_TO_BACKEND_MESSAGES.HIDE_ERROR_SOURCE: {
                 devtoolsBackend.runWithMutationPaused(() => {
                     devtoolsBackend.cleanupHoverElement()
                 })
+                break
             }
-
-            if (e.data.payload.action === 'hover') {
+            case PANEL_TO_BACKEND_MESSAGES.HOVER_COMPONENT: {
                 devtoolsBackend.runWithMutationPaused(() => {
                     Alpine.discoverComponents((component) => {
                         if (component.__alpineDevtool && component.__alpineDevtool.id === e.data.payload.componentId) {
@@ -360,9 +363,9 @@ function init() {
                         }
                     })
                 })
+                break
             }
-
-            if (e.data.payload.action === 'hoverLeft') {
+            case PANEL_TO_BACKEND_MESSAGES.HIDE_HOVER: {
                 devtoolsBackend.runWithMutationPaused(() => {
                     Alpine.discoverComponents((component) => {
                         if (component.__alpineDevtool && component.__alpineDevtool.id === e.data.payload.componentId) {
@@ -370,9 +373,9 @@ function init() {
                         }
                     })
                 })
+                break
             }
-
-            if (e.data.payload.action === 'editAttribute') {
+            case PANEL_TO_BACKEND_MESSAGES.EDIT_ATTRIBUTE: {
                 devtoolsBackend.runWithMutationPaused(() => {
                     Alpine.discoverComponents((component) => {
                         if (component.__alpineDevtool.id === e.data.payload.componentId) {
@@ -381,10 +384,11 @@ function init() {
                         }
                     })
                 })
+                break
             }
-
-            if (e.data.payload.action === PANEL_TO_BACKEND_MESSAGES.GET_DATA) {
+            case PANEL_TO_BACKEND_MESSAGES.GET_DATA: {
                 devtoolsBackend.handleGetComponentData(e.data.payload.componentId)
+                break
             }
         }
     }
