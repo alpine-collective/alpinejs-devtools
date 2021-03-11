@@ -20,7 +20,7 @@ export default class State {
             this.components[component.id] = component
         })
 
-        this.updateXdata()
+        this.updateDevtoolsXData()
     }
 
     setComponentData(componentId, data) {
@@ -69,57 +69,12 @@ export default class State {
 
         this.selectedComponentFlattenedData = flattenedData
         this.renderedComponentId = componentId
-        this.updateXdata()
-    }
-
-    // @todo remove this
-    renderComponentsFromBackend(components) {
-        this.checkForRemovedComponents(components)
-
-        components.forEach((component, index) => {
-            component.index = index
-            component.isOpened = this.renderedComponentId == component.id
-
-            component.flattenedData = flattenData(component.data)
-
-            component.flattenedData.forEach((d) => {
-                if (
-                    (this.allDataAttributes[component.id] &&
-                        this.allDataAttributes[component.id][d.id] &&
-                        this.allDataAttributes[component.id][d.id].isOpened) ||
-                    (d.directParentId.length &&
-                        this.allDataAttributes[component.id][d.directParentId] &&
-                        this.allDataAttributes[component.id][d.directParentId].isArrowDown)
-                ) {
-                    d.isOpened = true
-                }
-
-                if (
-                    this.allDataAttributes[component.id] &&
-                    this.allDataAttributes[component.id][d.id] &&
-                    this.allDataAttributes[component.id][d.id].hasArrow
-                ) {
-                    d.isArrowDown = this.allDataAttributes[component.id][d.id].isArrowDown
-                }
-
-                d.parentComponentId = component.id
-
-                if (!this.allDataAttributes[component.id]) {
-                    this.allDataAttributes[component.id] = {}
-                }
-
-                this.allDataAttributes[component.id][d.id] = d
-            })
-
-            this.components[component.id] = component
-        })
-
-        this.updateXdata()
+        this.updateDevtoolsXData()
     }
 
     setAlpineVersionFromBackend(version) {
         this.version.detected = version
-        this.updateXdata()
+        this.updateDevtoolsXData()
     }
 
     renderComponentData(component) {
@@ -135,12 +90,12 @@ export default class State {
             })
         }
 
-        this.updateXdata()
+        this.updateDevtoolsXData()
     }
 
     renderError(error) {
         this.errors.push(error)
-        this.updateXdata()
+        this.updateDevtoolsXData()
     }
 
     closeOpenedComponent() {
@@ -190,11 +145,11 @@ export default class State {
                 }
             })
 
-            this.updateXdata()
+            this.updateDevtoolsXData()
         }
     }
 
-    updateXdata() {
+    updateDevtoolsXData() {
         let appData = document.getElementById('app').__x.$data
 
         appData.version = this.version.detected

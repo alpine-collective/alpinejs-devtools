@@ -12,14 +12,6 @@ export function handleMessage(message, port) {
     /** @type {{alpineState: State}} */
     const { alpineState } = window
 
-    // @todo remove this
-    if (message.type === 'render-components') {
-        // message.components is a serialised JSON string
-        alpineState.renderComponentsFromBackend(JSON.parse(message.components))
-
-        window.__alpineDevtool.port = port
-    }
-
     if (message.type === 'set-components') {
         alpineState.setComponentsList(message.components)
 
