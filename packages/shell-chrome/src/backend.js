@@ -202,14 +202,14 @@ function init() {
 
             this._postMessage({
                 components: this.components,
-                type: 'set-components',
+                type: BACKEND_TO_PANEL_MESSAGES.SET_COMPONENTS,
             })
         }
 
         getAlpineVersion() {
             this._postMessage({
                 version: window.Alpine.version,
-                type: 'set-version',
+                type: BACKEND_TO_PANEL_MESSAGES.SET_VERSION,
             })
         }
 
@@ -218,19 +218,6 @@ function init() {
                 {
                     source: 'alpine-devtools-backend',
                     payload,
-                },
-                '*',
-            )
-        }
-
-        getAlpineVersion() {
-            window.postMessage(
-                {
-                    source: 'alpine-devtools-backend',
-                    payload: {
-                        version: window.Alpine.version,
-                        type: 'set-version',
-                    },
                 },
                 '*',
             )
