@@ -3,23 +3,36 @@ import { PANEL_TO_BACKEND_MESSAGES } from '../constants'
 
 const ALPINE_DEVTOOL_SOURCE = 'alpineDevtool'
 
+const unavailablePortShim = {
+    unavailable: true,
+    postMessage(message) {
+        console.warn(`No devtools available to post message ${JSON.stringify(message)}`)
+    },
+}
+
 export default class State {
     constructor() {
         this.components = {}
         this.errors = []
         this.allDataAttributes = {}
-        this.renderedComponentId = null
+        this.selectedComponentId = null
+        this.selectedComponentFlattenedData = null
+        this.preloadedComponentData = {}
         this.version = {
             detected: null,
             latest: '__alpine_version__',
         }
     }
 
+    get _port() {
+        return window.__alpineDevtool.port || unavailablePortShim
+    }
+
     setComponentsList(components) {
         this.checkForRemovedComponents(components)
         components.forEach((component, index) => {
             component.index = index
-            component.isOpened = this.renderedComponentId === component.id
+            component.isOpened = this.selectedComponentId === component.id
             this.components[component.id] = component
         })
 
@@ -70,8 +83,7 @@ export default class State {
             }
         })
 
-        this.selectedComponentFlattenedData = flattenedData
-        this.renderedComponentId = componentId
+        this.preloadedComponentData[componentId] = flattenedData
         this.updateDevtoolsXData()
     }
 
@@ -82,15 +94,13 @@ export default class State {
 
     renderComponentData(component) {
         this.closeOpenedComponent()
-        this.renderedComponentId = component.id
+
+        this.selectedComponentId = component.id
         this.components[component.id].isOpened = true
-        this.selectedComponentFlattenedData = null
-        if (!this._hasNoDevtools('renderComponentData')) {
-            window.__alpineDevtool.port.postMessage({
-                componentId: component.id,
-                action: 'get-data',
-                source: 'alpineDevtool',
-            })
+
+        if (!this.preloadedComponentData[component.id]) {
+            // preload didn't happen for whatever reason
+            this.triggerComponentDataLoad(component.id)
         }
 
         this.updateDevtoolsXData()
@@ -102,8 +112,8 @@ export default class State {
     }
 
     closeOpenedComponent() {
-        if (this.renderedComponentId) {
-            this.components[this.renderedComponentId].isOpened = false
+        if (this.selectedComponentId) {
+            this.components[this.selectedComponentId].isOpened = false
         }
     }
 
@@ -163,21 +173,17 @@ export default class State {
         appData.components = Object.values(this.components).sort(function (a, b) {
             return a.index - b.index
         })
-        appData.selectedComponentFlattenedData = this.selectedComponentFlattenedData
-        appData.openComponent = (this.components && this.components[this.renderedComponentId]) || null
-    }
 
-    _hasNoDevtools(methodName) {
-        if (!window.__alpineDevtool.port) {
-            console.warn(`${methodName} no devtools available`)
-            return true
+        if (this.selectedComponentId && this.preloadedComponentData[this.selectedComponentId]) {
+            this.selectedComponentFlattenedData = this.preloadedComponentData[this.selectedComponentId]
+
+            appData.selectedComponentFlattenedData = this.selectedComponentFlattenedData
+            appData.openComponent = this.components[this.selectedComponentId] || null
         }
-        return false
     }
 
     showErrorSource(errorId) {
-        if (this._hasNoDevtools('showErrorSource')) return
-        window.__alpineDevtool.port.postMessage({
+        this._port.postMessage({
             errorId,
             action: PANEL_TO_BACKEND_MESSAGES.SHOW_ERROR_SOURCE,
             source: ALPINE_DEVTOOL_SOURCE,
@@ -185,33 +191,34 @@ export default class State {
     }
 
     hideErrorSource(errorId) {
-        if (this._hasNoDevtools('hideErrorSource')) return
-        window.__alpineDevtool.port.postMessage({
+        this._port.postMessage({
             errorId,
             action: PANEL_TO_BACKEND_MESSAGES.HIDE_ERROR_SOURCE,
             source: ALPINE_DEVTOOL_SOURCE,
         })
     }
 
+    triggerComponentDataLoad(componentId) {
+        this._port.postMessage({
+            componentId,
+            action: PANEL_TO_BACKEND_MESSAGES.GET_DATA,
+            source: ALPINE_DEVTOOL_SOURCE,
+        })
+    }
+
     hoverOnComponent(component) {
-        if (this._hasNoDevtools('hoverOnComponent')) return
-        window.__alpineDevtool.port.postMessage({
+        this._port.postMessage({
             componentId: component.id,
             action: PANEL_TO_BACKEND_MESSAGES.HOVER_COMPONENT,
             source: ALPINE_DEVTOOL_SOURCE,
         })
 
         // pre-load component
-        // window.__alpineDevtool.port.postMessage({
-        //     componentId: component.id,
-        //     action: 'get-data',
-        //     source: 'alpineDevtool',
-        // })
+        this.triggerComponentDataLoad(component.id)
     }
 
     hoverLeftComponent(component) {
-        if (this._hasNoDevtools('hoverLeftComponent')) return
-        window.__alpineDevtool.port.postMessage({
+        this._port.postMessage({
             componentId: component.id,
             action: PANEL_TO_BACKEND_MESSAGES.HIDE_HOVER,
             source: ALPINE_DEVTOOL_SOURCE,
@@ -223,7 +230,7 @@ export default class State {
     }
 
     saveEditing(clickedAttribute) {
-        if (this._hasNoDevtools('saveEditing')) return
+        if (this._port.unavailable) return
         clickedAttribute.attributeValue = convertInputDataToType(
             clickedAttribute.inputType,
             clickedAttribute.editAttributeValue,
@@ -237,7 +244,7 @@ export default class State {
             }
         })
 
-        window.__alpineDevtool.port.postMessage({
+        this._port.postMessage({
             componentId: clickedAttribute.parentComponentId,
             attributeSequence: clickedAttribute.id,
             attributeValue: clickedAttribute.attributeValue,
@@ -262,8 +269,8 @@ export default class State {
         componentsToRemove
             .map((c) => c.id)
             .forEach((c) => {
-                if (this.renderedComponentId === c) {
-                    this.renderedComponentId = null
+                if (this.selectedComponentId === c) {
+                    this.selectedComponentId = null
                 }
                 delete this.components[c]
             })

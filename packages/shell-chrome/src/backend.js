@@ -162,6 +162,7 @@ function init() {
                     return
                 }
 
+                // doesn't look like we need this
                 // Alpine.initializeComponent(rootEl)
 
                 if (!rootEl.__alpineDevtool) {
