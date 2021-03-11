@@ -14,13 +14,13 @@
             x-data="{
                 el: $el,
                 els: [$el],
-                nested: { el: $el, nestedFn() {}, array: [ { hello: 'world' }] },
+                nestedUnserializable: { el: $el, nestedFn() {}, array: [ { hello: 'world' }] },
                 myFunction() { return true },
                 bool: true,
                 num: 5,
                 str: 'string',
                 arr: ['world', 'bar'],
-                nestedSerializable: { array: [ { hello: 'world' }] },
+                nestedObjArr: { array: [ { nested: 'property' }] },
             }"
         >
             <div>Bool, type: "<span x-text="typeof bool"></span>", value: "<span x-text="bool"></span>"</div>
@@ -34,7 +34,8 @@
             </div>
             <div>
                 Nested serializable array/object value (stringified): "<span
-                    x-text="JSON.stringify(nestedSerializable)"
+                    data-testid="nested-obj-arr"
+                    x-text="JSON.stringify(nestedObjArr)"
                 ></span
                 >"
             </div>
