@@ -239,6 +239,11 @@ function init() {
         }
 
         handleGetComponentData(componentId) {
+            if (this.selectedComponentId === componentId) {
+                // component already loaded
+                // any changes to the component's data will be picked up by the mutation observer
+                return
+            }
             this.selectedComponentId = componentId
             this.runWithMutationPaused(() => {
                 Alpine.discoverComponents((component) => {
