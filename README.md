@@ -35,6 +35,11 @@ Unlike other frameworks, Alpine does not include named components. Therefore by 
 
 ## Development
 
+### Prerequisites
+
+-   Node ^14.x
+-   npm ^6.x
+
 ### Chrome
 
 1. Clone this repo

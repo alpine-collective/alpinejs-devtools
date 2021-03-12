@@ -14,6 +14,7 @@ import { renderPanel } from './lib/edge/render'
 renderPanel()
 
 const isWatch = process.env.ROLLUP_WATCH === 'true'
+const shouldServe = process.env.ROLLUP_SERVE === 'true' || isWatch
 if (isWatch) {
     fs.watch('./packages/shell-chrome/assets', { recursive: true }, (_event, filename) => {
         try {
@@ -47,7 +48,7 @@ const JS_INPUTS = [
 ]
 
 const MIXED_INPUT = ['packages/shell-chrome/src/devtools/panel.js']
-if (isWatch) {
+if (shouldServe) {
     MIXED_INPUT.push('packages/simulator/dev.js')
 }
 
@@ -99,7 +100,7 @@ export default [
                 ],
             }),
             filesize(),
-            isWatch &&
+            shouldServe &&
                 serve({
                     port: process.env.PORT || 8080,
                     contentBase: ['./dist/chrome', './packages/simulator', './node_modules/alpinejs/dist'],

@@ -6,6 +6,7 @@
     "homepage": "https://github.com/alpine-collective/alpinejs-devtools",
     "scripts": {
         "start": "rollup -c -w",
+        "start:ci": "ROLLUP_SERVE=true rollup -c",
         "build:dev": "rollup -c",
         "build": "NODE_ENV=production rollup -c",
         "watch": "npm start",
