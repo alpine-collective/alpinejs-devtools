@@ -1,6 +1,6 @@
 name: Build
 
-on: 
+on:
   pull_request:
   push:
     branches:
@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [14.x]
 
     env:
       CI: true
