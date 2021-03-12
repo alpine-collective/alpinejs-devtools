@@ -48,7 +48,7 @@ const JS_INPUTS = [
 ]
 
 const MIXED_INPUT = ['packages/shell-chrome/src/devtools/panel.js']
-if (isWatch) {
+if (shouldServe) {
     MIXED_INPUT.push('packages/simulator/dev.js')
 }
 
