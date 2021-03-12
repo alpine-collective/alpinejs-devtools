@@ -162,9 +162,6 @@ function init() {
                     return
                 }
 
-                // doesn't look like we need this
-                // Alpine.initializeComponent(rootEl)
-
                 if (!rootEl.__alpineDevtool) {
                     // add an attr to trigger the mutation observer and run this function
                     // that will send updated state to devtools
