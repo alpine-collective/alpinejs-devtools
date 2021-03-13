@@ -47,13 +47,13 @@
                             <span
                                 class="block pr-1 text-blue-700 cursor-pointer"
                                 x-text="singleData.attributeValue"
-                                @click="singleData.editAttributeValue = !singleData.editAttributeValue, $nextTick(() => alpineState.saveEditing(singleData))"
+                                @click="singleData.editAttributeValue = !singleData.editAttributeValue; alpineState.saveEditing(singleData)"
                             ></span>
 
                             <input
                                 type="checkbox"
                                 x-model="singleData.editAttributeValue"
-                                @change.stop="$nextTick(() => alpineState.saveEditing(singleData))"
+                                @change.stop="alpineState.saveEditing(singleData)"
                                 class="focus:ring-transparent h-4 w-4 text-blue-700 border-gray-300 cursor-pointer rounded transition duration-150 ease-in-out opacity-0 group-hover:opacity-100"
                             />
                         </div>
