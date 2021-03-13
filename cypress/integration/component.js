@@ -218,7 +218,7 @@ it('should display read-only function/HTMLElement attributes + allow editing of 
     cy.iframe('#target').contains('Str, type: "string", value: "devtools"')
 })
 
-it.only('should display nested arrays/object attributes and support editing', () => {
+it('should display nested arrays/object attributes and support editing', () => {
     cy.visit('/').get('[data-testid=component-name]').should('be.visible')
 
     cy.get('[data-testid=component-name]').first().click().trigger('mouseleave')
