@@ -303,3 +303,17 @@ it('should display message with number of components watched', () => {
             })
         })
 })
+
+it('should reset component selection when changing page', () => {
+    cy.visit('/')
+
+    cy.get('[data-testid=component-name]').first().click()
+    cy.get('[data-testid=component-container]').first().should('have.class', 'text-white bg-alpine-300')
+
+    cy.get('[data-testid=data-property-name-myFunction]').should('be.visible').contains('myFunction')
+
+    cy.iframe('#target').find('[data-testid=navigation-target]').click()
+
+    cy.get('[data-testid=component-container]').first().should('not.have.class', 'text-white bg-alpine-300')
+    cy.get('[data-testid=data-property-name-myFunction]').should('not.exist')
+})
