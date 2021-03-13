@@ -201,6 +201,7 @@ function init() {
 
             this._postMessage({
                 components: this.components,
+                url: btoa(window.location.href),
                 type: BACKEND_TO_PANEL_MESSAGES.SET_COMPONENTS,
             })
         }

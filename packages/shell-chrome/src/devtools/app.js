@@ -18,7 +18,7 @@ export function handleMessage(message, port) {
     const { alpineState } = window
 
     if (message.type === BACKEND_TO_PANEL_MESSAGES.SET_COMPONENTS) {
-        alpineState.setComponentsList(message.components)
+        alpineState.setComponentsList(message.components, message.url)
         setPort(port)
     }
 
