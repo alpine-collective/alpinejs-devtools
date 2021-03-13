@@ -12,6 +12,7 @@ const unavailablePortShim = {
 
 export default class State {
     constructor() {
+        this.appUrl = null
         this.components = {}
         this.errors = []
         this.allDataAttributes = {}
@@ -28,13 +29,20 @@ export default class State {
         return window.__alpineDevtool.port || unavailablePortShim
     }
 
-    setComponentsList(components) {
+    setComponentsList(components, appUrl) {
         this.checkForRemovedComponents(components)
         components.forEach((component, index) => {
             component.index = index
             component.isOpened = this.selectedComponentId === component.id
             this.components[component.id] = component
         })
+
+        if (appUrl !== this.appUrl || !components.find((c) => c.id === this.selectedComponentId)) {
+            this.selectedComponentId = null
+            this.preloadedComponentData = {}
+            this.selectedComponentFlattenedData = null
+            this.appUrl = appUrl
+        }
 
         this.updateDevtoolsXData()
     }
@@ -176,10 +184,10 @@ export default class State {
 
         if (this.selectedComponentId && this.preloadedComponentData[this.selectedComponentId]) {
             this.selectedComponentFlattenedData = this.preloadedComponentData[this.selectedComponentId]
-
-            appData.selectedComponentFlattenedData = this.selectedComponentFlattenedData
-            appData.openComponent = this.components[this.selectedComponentId] || null
         }
+
+        appData.selectedComponentFlattenedData = this.selectedComponentFlattenedData
+        appData.openComponent = this.components[this.selectedComponentId] || null
     }
 
     showErrorSource(errorId) {
