@@ -1,6 +1,6 @@
 @verbatim
 <div class="group flex items-center">
-    <template x-if="singleData.depth === 0 || singleData.isOpened">
+    <template x-if="singleData.isOpened">
         <a
             :style="`margin-left: ${singleData.depth}px;`"
             @click="alpineState.toggleDataAttribute(singleData)"
@@ -71,7 +71,7 @@
         </a>
     </template>
 
-    <template x-if="!singleData.hasArrow && !singleData.readOnly && (singleData.depth === 0 || singleData.isOpened)">
+    <template x-if="!singleData.hasArrow && !singleData.readOnly && singleData.isOpened">
         <div
             class="flex flex-col"
         >

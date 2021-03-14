@@ -240,6 +240,18 @@ it('should display nested arrays/object attributes and support editing', () => {
     cy.get('[data-testid=data-property-name-nested]').should('be.visible').contains('nested')
     cy.get('[data-testid=data-property-value-nested]').should('be.visible').contains('property')
 
+    // editing the nested array/object
+    cy.get('[data-testid=edit-icon-nested]').click({ force: true })
+    cy.get('[data-testid=input-nested]')
+        .clear({ force: true })
+        .type('from-devtools', { force: true })
+        .siblings('[data-testid=save-icon]')
+        .click({ force: true })
+
+    cy.iframe('#target')
+        .find('[data-testid=nested-obj-arr]')
+        .should('have.text', JSON.stringify({ array: [{ nested: 'from-devtools' }] }))
+
     // check untoggling also works
     cy.get('[data-testid=data-property-name-0]').click()
 
@@ -258,23 +270,16 @@ it('should display nested arrays/object attributes and support editing', () => {
     cy.get('[data-testid="data-property-value-nestedObjArr"]').click()
     cy.get('[data-testid=data-property-value-array]').click()
     cy.get('[data-testid=data-property-name-0]').click()
-    // editing the nested array/object
-    cy.get('[data-testid=edit-icon-nested]').click({ force: true })
-    cy.get('[data-testid=input-nested]')
-        .clear({ force: true })
-        .type('from-devtools', { force: true })
-        .siblings('[data-testid=save-icon]')
-        .click({ force: true })
-
-    cy.iframe('#target')
-        .find('[data-testid=nested-obj-arr]')
-        .should('have.text', JSON.stringify({ array: [{ nested: 'from-devtools' }] }))
 })
 
-it('should support x-model updates (even without a re-render) and editing values', () => {
+it('should support x-model updates and editing values', () => {
     cy.visit('/').get('[data-testid=component-name]').should('be.visible')
 
     cy.get('[data-testid=component-name]').contains('model-no-render').click().trigger('mouseleave')
+
+    // check preloading doesn't cause issues with selected component tracking
+    cy.get('[data-testid=component-name]').last().trigger('mouseenter').trigger('mouseleave')
+
     cy.get('[data-testid=data-property-name-text]').should('be.visible').contains('text')
     cy.get('[data-testid=data-property-value-text]').should('be.visible').contains('initial')
     cy.iframe('#target').find('[data-testid=model-no-render]').should('be.visible').clear().type('updated')
@@ -288,6 +293,24 @@ it('should support x-model updates (even without a re-render) and editing values
         .click({ force: true })
 
     cy.iframe('#target').find('[data-testid=model-no-render]').should('have.value', 'from-devtools')
+
+    // nested updates
+    cy.get('[data-testid=data-property-name-model]').click()
+    cy.get('[data-testid=data-property-name-nested').should('be.visible').contains('nested')
+    cy.get('[data-testid=data-property-value-nested').should('be.visible').contains('nested-initial')
+
+    cy.iframe('#target').find('[data-testid=nested-model-no-render]').clear().type('nested-update')
+    cy.get('[data-testid=data-property-name-nested').should('be.visible').contains('nested')
+    cy.get('[data-testid=data-property-value-nested').should('be.visible').contains('nested-update')
+
+    cy.get('[data-testid=edit-icon-nested]').click({ force: true })
+    cy.get('[data-testid=input-nested]')
+        .clear({ force: true })
+        .type('nested-from-devtools', { force: true })
+        .siblings('[data-testid=save-icon]')
+        .click({ force: true })
+
+    cy.iframe('#target').find('[data-testid=nested-model-no-render]').should('have.value', 'nested-from-devtools')
 })
 
 it('should display message with number of components watched', () => {

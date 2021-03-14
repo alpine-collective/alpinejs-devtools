@@ -15,7 +15,6 @@ export default class State {
         this.appUrl = null
         this.components = {}
         this.errors = []
-        this.allDataAttributes = {}
         this.selectedComponentId = null
         this.selectedComponentFlattenedData = null
         this.preloadedComponentData = {}
@@ -49,45 +48,45 @@ export default class State {
 
     setComponentData(componentId, data) {
         const flattenedData = flattenData(data).map((d) => {
-            let isOpened = false
+            const prevDataAttributeState = this.selectedComponentFlattenedData
+                ? this.selectedComponentFlattenedData.reduce((acc, curr) => {
+                      if (!acc[curr.parentComponentId]) {
+                          acc[curr.parentComponentId] = {}
+                      }
+                      acc[curr.parentComponentId][curr.id] = curr
+                      return acc
+                  }, {})
+                : {}
+
+            // top-level attributes should be open
+            let isOpened = d.depth === 0
             if (
-                (this.allDataAttributes[componentId] &&
-                    this.allDataAttributes[componentId][d.id] &&
-                    this.allDataAttributes[componentId][d.id].isOpened) ||
-                (d.directParentId.length &&
-                    this.allDataAttributes[componentId][d.directParentId] &&
-                    this.allDataAttributes[componentId][d.directParentId].isArrowDown)
+                (prevDataAttributeState[componentId] &&
+                    prevDataAttributeState[componentId][d.id] &&
+                    prevDataAttributeState[componentId][d.id].isOpened) ||
+                (d.directParentId &&
+                    prevDataAttributeState[componentId] &&
+                    prevDataAttributeState[componentId][d.directParentId] &&
+                    prevDataAttributeState[componentId][d.directParentId].isArrowDown)
             ) {
+                // maintain previous open state
                 isOpened = true
             }
 
             let isArrowDown = false
             if (
-                this.allDataAttributes[componentId] &&
-                this.allDataAttributes[componentId][d.id] &&
-                this.allDataAttributes[componentId][d.id].hasArrow
+                prevDataAttributeState[componentId] &&
+                prevDataAttributeState[componentId][d.id] &&
+                prevDataAttributeState[componentId][d.id].hasArrow
             ) {
-                isArrowDown = this.allDataAttributes[componentId][d.id].isArrowDown
-            }
-
-            const parentComponentId = componentId
-
-            if (!this.allDataAttributes[componentId]) {
-                this.allDataAttributes[componentId] = {}
-            }
-
-            this.allDataAttributes[componentId][d.id] = {
-                ...d,
-                isOpened,
-                isArrowDown,
-                parentComponentId,
+                isArrowDown = prevDataAttributeState[componentId][d.id].isArrowDown
             }
 
             return {
                 ...d,
                 isOpened,
                 isArrowDown,
-                parentComponentId,
+                parentComponentId: componentId,
             }
         })
 
@@ -127,7 +126,7 @@ export default class State {
 
     toggleDataAttribute(attribute) {
         if (attribute.hasArrow) {
-            let childrenIdLength = attribute.id.split('.').length + 1
+            const childrenIdLength = attribute.id.split('.').length + 1
 
             // this code generate something like that \\w+\\.\\w+\\.\\w+$
             let closeRegexStr = ''
@@ -138,15 +137,17 @@ export default class State {
 
             closeRegexStr += String.raw`\w+$`
 
-            let closeRegex = new RegExp(closeRegexStr)
+            const closeRegex = new RegExp(closeRegexStr)
 
-            let childrenAttributesIds = Object.keys(this.allDataAttributes[attribute.parentComponentId]).filter((a) => {
-                if (attribute.isArrowDown) {
-                    return a.startsWith(attribute.id) && a != attribute.id && closeRegex.test(a)
-                }
-
-                return a.startsWith(`${attribute.id}.`) && a.split('.').length === childrenIdLength
-            })
+            const childrenAttributesIds = this.selectedComponentFlattenedData
+                .filter((attr) => {
+                    const { id } = attr
+                    if (attribute.isArrowDown) {
+                        return id.startsWith(attribute.id) && id !== attribute.id && closeRegex.test(id)
+                    }
+                    return id.startsWith(`${attribute.id}.`) && id.split('.').length === childrenIdLength
+                })
+                .map((attr) => attr.id)
 
             childrenAttributesIds.forEach((childId) => {
                 this.selectedComponentFlattenedData.forEach((d) => {
@@ -161,7 +162,7 @@ export default class State {
             })
 
             this.selectedComponentFlattenedData.forEach((d) => {
-                if (d.hasArrow && d.id == attribute.id) {
+                if (d.hasArrow && d.id === attribute.id) {
                     d.isArrowDown = !d.isArrowDown
                 }
             })
@@ -231,6 +232,11 @@ export default class State {
             action: PANEL_TO_BACKEND_MESSAGES.HIDE_HOVER,
             source: ALPINE_DEVTOOL_SOURCE,
         })
+
+        if (this.selectedComponentId && component.id !== this.selectedComponentId) {
+            // undo component preload when hovering away without clicking
+            this.triggerComponentDataLoad(this.selectedComponentId)
+        }
     }
 
     editAttribute(clickedAttribute) {
