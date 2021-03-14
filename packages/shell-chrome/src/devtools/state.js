@@ -231,6 +231,11 @@ export default class State {
             action: PANEL_TO_BACKEND_MESSAGES.HIDE_HOVER,
             source: ALPINE_DEVTOOL_SOURCE,
         })
+
+        if (this.selectedComponentId && component.id !== this.selectedComponentId) {
+            // undo component preload when hovering away without clicking
+            this.triggerComponentDataLoad(this.selectedComponentId)
+        }
     }
 
     editAttribute(clickedAttribute) {

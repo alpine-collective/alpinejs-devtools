@@ -271,10 +271,14 @@ it('should display nested arrays/object attributes and support editing', () => {
         .should('have.text', JSON.stringify({ array: [{ nested: 'from-devtools' }] }))
 })
 
-it('should support x-model updates (even without a re-render) and editing values', () => {
+it.only('should support x-model updates and editing values', () => {
     cy.visit('/').get('[data-testid=component-name]').should('be.visible')
 
     cy.get('[data-testid=component-name]').contains('model-no-render').click().trigger('mouseleave')
+
+    // check preloading doesn't cause issues with selected component tracking
+    cy.get('[data-testid=component-name]').last().trigger('mouseenter').trigger('mouseleave')
+
     cy.get('[data-testid=data-property-name-text]').should('be.visible').contains('text')
     cy.get('[data-testid=data-property-value-text]').should('be.visible').contains('initial')
     cy.iframe('#target').find('[data-testid=model-no-render]').should('be.visible').clear().type('updated')
