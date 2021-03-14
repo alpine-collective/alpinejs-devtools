@@ -137,16 +137,18 @@ export default class State {
 
             let closeRegex = new RegExp(closeRegexStr)
 
-            let childrenAttributesIds = this.selectedComponentFlattenedData
-                .filter((attr) => attr.parentComponentId === attribute.parentComponentId)
-                .map((attr) => attr.id)
-                .filter((a) => {
-                    if (attribute.isArrowDown) {
-                        return a.startsWith(attribute.id) && a != attribute.id && closeRegex.test(a)
+            const childrenAttributesIds = this.selectedComponentFlattenedData
+                .filter((attr) => {
+                    if (attr.parentComponentId !== attribute.parentComponentId) {
+                        return false
                     }
-
-                    return a.startsWith(`${attribute.id}.`) && a.split('.').length === childrenIdLength
+                    const { id } = attr
+                    if (attribute.isArrowDown) {
+                        return id.startsWith(attribute.id) && id !== attribute.id && closeRegex.test(id)
+                    }
+                    return id.startsWith(`${attribute.id}.`) && id.split('.').length === childrenIdLength
                 })
+                .map((attr) => attr.id)
 
             childrenAttributesIds.forEach((childId) => {
                 this.selectedComponentFlattenedData.forEach((d) => {

@@ -240,6 +240,18 @@ it('should display nested arrays/object attributes and support editing', () => {
     cy.get('[data-testid=data-property-name-nested]').should('be.visible').contains('nested')
     cy.get('[data-testid=data-property-value-nested]').should('be.visible').contains('property')
 
+    // editing the nested array/object
+    cy.get('[data-testid=edit-icon-nested]').click({ force: true })
+    cy.get('[data-testid=input-nested]')
+        .clear({ force: true })
+        .type('from-devtools', { force: true })
+        .siblings('[data-testid=save-icon]')
+        .click({ force: true })
+
+    cy.iframe('#target')
+        .find('[data-testid=nested-obj-arr]')
+        .should('have.text', JSON.stringify({ array: [{ nested: 'from-devtools' }] }))
+
     // check untoggling also works
     cy.get('[data-testid=data-property-name-0]').click()
 
@@ -258,17 +270,6 @@ it('should display nested arrays/object attributes and support editing', () => {
     cy.get('[data-testid="data-property-value-nestedObjArr"]').click()
     cy.get('[data-testid=data-property-value-array]').click()
     cy.get('[data-testid=data-property-name-0]').click()
-    // editing the nested array/object
-    cy.get('[data-testid=edit-icon-nested]').click({ force: true })
-    cy.get('[data-testid=input-nested]')
-        .clear({ force: true })
-        .type('from-devtools', { force: true })
-        .siblings('[data-testid=save-icon]')
-        .click({ force: true })
-
-    cy.iframe('#target')
-        .find('[data-testid=nested-obj-arr]')
-        .should('have.text', JSON.stringify({ array: [{ nested: 'from-devtools' }] }))
 })
 
 it('should support x-model updates and editing values', () => {
