@@ -124,7 +124,7 @@ export default class State {
 
     toggleDataAttribute(attribute) {
         if (attribute.hasArrow) {
-            let childrenIdLength = attribute.id.split('.').length + 1
+            const childrenIdLength = attribute.id.split('.').length + 1
 
             // this code generate something like that \\w+\\.\\w+\\.\\w+$
             let closeRegexStr = ''
@@ -135,13 +135,10 @@ export default class State {
 
             closeRegexStr += String.raw`\w+$`
 
-            let closeRegex = new RegExp(closeRegexStr)
+            const closeRegex = new RegExp(closeRegexStr)
 
             const childrenAttributesIds = this.selectedComponentFlattenedData
                 .filter((attr) => {
-                    if (attr.parentComponentId !== attribute.parentComponentId) {
-                        return false
-                    }
                     const { id } = attr
                     if (attribute.isArrowDown) {
                         return id.startsWith(attribute.id) && id !== attribute.id && closeRegex.test(id)
