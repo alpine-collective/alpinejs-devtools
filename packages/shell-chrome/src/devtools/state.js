@@ -15,7 +15,6 @@ export default class State {
         this.appUrl = null
         this.components = {}
         this.errors = []
-        this.allDataAttributes = {}
         this.selectedComponentId = null
         this.selectedComponentFlattenedData = null
         this.preloadedComponentData = {}
@@ -49,45 +48,43 @@ export default class State {
 
     setComponentData(componentId, data) {
         const flattenedData = flattenData(data).map((d) => {
+            const prevDataAttributeState = this.selectedComponentFlattenedData
+                ? this.selectedComponentFlattenedData.reduce((acc, curr) => {
+                      if (!acc[curr.parentComponentId]) {
+                          acc[curr.parentComponentId] = {}
+                      }
+                      acc[curr.parentComponentId][curr.id] = curr
+                      return acc
+                  }, {})
+                : {}
+
             let isOpened = false
             if (
-                (this.allDataAttributes[componentId] &&
-                    this.allDataAttributes[componentId][d.id] &&
-                    this.allDataAttributes[componentId][d.id].isOpened) ||
-                (d.directParentId.length &&
-                    this.allDataAttributes[componentId][d.directParentId] &&
-                    this.allDataAttributes[componentId][d.directParentId].isArrowDown)
+                (prevDataAttributeState[componentId] &&
+                    prevDataAttributeState[componentId][d.id] &&
+                    prevDataAttributeState[componentId][d.id].isOpened) ||
+                (d.directParentId &&
+                    prevDataAttributeState[componentId] &&
+                    prevDataAttributeState[componentId][d.directParentId] &&
+                    prevDataAttributeState[componentId][d.directParentId].isArrowDown)
             ) {
                 isOpened = true
             }
 
             let isArrowDown = false
             if (
-                this.allDataAttributes[componentId] &&
-                this.allDataAttributes[componentId][d.id] &&
-                this.allDataAttributes[componentId][d.id].hasArrow
+                prevDataAttributeState[componentId] &&
+                prevDataAttributeState[componentId][d.id] &&
+                prevDataAttributeState[componentId][d.id].hasArrow
             ) {
-                isArrowDown = this.allDataAttributes[componentId][d.id].isArrowDown
-            }
-
-            const parentComponentId = componentId
-
-            if (!this.allDataAttributes[componentId]) {
-                this.allDataAttributes[componentId] = {}
-            }
-
-            this.allDataAttributes[componentId][d.id] = {
-                ...d,
-                isOpened,
-                isArrowDown,
-                parentComponentId,
+                isArrowDown = prevDataAttributeState[componentId][d.id].isArrowDown
             }
 
             return {
                 ...d,
                 isOpened,
                 isArrowDown,
-                parentComponentId,
+                parentComponentId: componentId,
             }
         })
 
@@ -140,13 +137,16 @@ export default class State {
 
             let closeRegex = new RegExp(closeRegexStr)
 
-            let childrenAttributesIds = Object.keys(this.allDataAttributes[attribute.parentComponentId]).filter((a) => {
-                if (attribute.isArrowDown) {
-                    return a.startsWith(attribute.id) && a != attribute.id && closeRegex.test(a)
-                }
+            let childrenAttributesIds = this.selectedComponentFlattenedData
+                .filter((attr) => attr.parentComponentId === attribute.parentComponentId)
+                .map((attr) => attr.id)
+                .filter((a) => {
+                    if (attribute.isArrowDown) {
+                        return a.startsWith(attribute.id) && a != attribute.id && closeRegex.test(a)
+                    }
 
-                return a.startsWith(`${attribute.id}.`) && a.split('.').length === childrenIdLength
-            })
+                    return a.startsWith(`${attribute.id}.`) && a.split('.').length === childrenIdLength
+                })
 
             childrenAttributesIds.forEach((childId) => {
                 this.selectedComponentFlattenedData.forEach((d) => {
@@ -161,7 +161,7 @@ export default class State {
             })
 
             this.selectedComponentFlattenedData.forEach((d) => {
-                if (d.hasArrow && d.id == attribute.id) {
+                if (d.hasArrow && d.id === attribute.id) {
                     d.isArrowDown = !d.isArrowDown
                 }
             })

@@ -271,7 +271,7 @@ it('should display nested arrays/object attributes and support editing', () => {
         .should('have.text', JSON.stringify({ array: [{ nested: 'from-devtools' }] }))
 })
 
-it.only('should support x-model updates and editing values', () => {
+it('should support x-model updates and editing values', () => {
     cy.visit('/').get('[data-testid=component-name]').should('be.visible')
 
     cy.get('[data-testid=component-name]').contains('model-no-render').click().trigger('mouseleave')
@@ -292,6 +292,24 @@ it.only('should support x-model updates and editing values', () => {
         .click({ force: true })
 
     cy.iframe('#target').find('[data-testid=model-no-render]').should('have.value', 'from-devtools')
+
+    // nested updates
+    cy.get('[data-testid=data-property-name-model]').click()
+    cy.get('[data-testid=data-property-name-nested').should('be.visible').contains('nested')
+    cy.get('[data-testid=data-property-value-nested').should('be.visible').contains('nested-initial')
+
+    cy.iframe('#target').find('[data-testid=nested-model-no-render]').clear().type('nested-update')
+    cy.get('[data-testid=data-property-name-nested').should('be.visible').contains('nested')
+    cy.get('[data-testid=data-property-value-nested').should('be.visible').contains('nested-update')
+
+    cy.get('[data-testid=edit-icon-nested]').click({ force: true })
+    cy.get('[data-testid=input-nested]')
+        .clear({ force: true })
+        .type('nested-from-devtools', { force: true })
+        .siblings('[data-testid=save-icon]')
+        .click({ force: true })
+
+    cy.iframe('#target').find('[data-testid=nested-model-no-render]').should('have.value', 'nested-from-devtools')
 })
 
 it('should display message with number of components watched', () => {

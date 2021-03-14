@@ -61,10 +61,14 @@
                 <div x-data x-title="nested2">Nesting 2</div>
             </div>
         </div>
-        <div x-title="model-no-render" x-data="{ text: 'initial' }">
+        <div x-title="model-no-render" x-data="{ text: 'initial', model: { nested: 'nested-initial' } }">
             <label>
                 Doesn't re-render but has x-model
                 <input type="text" x-model="text" data-testid="model-no-render" />
+            </label>
+            <label>
+                x-model on nested value
+                <input type="text" x-model="model.nested" data-testid="nested-model-no-render" />
             </label>
         </div>
         <button
