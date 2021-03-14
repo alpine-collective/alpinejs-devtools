@@ -58,7 +58,8 @@ export default class State {
                   }, {})
                 : {}
 
-            let isOpened = false
+            // top-level attributes should be open
+            let isOpened = d.depth === 0
             if (
                 (prevDataAttributeState[componentId] &&
                     prevDataAttributeState[componentId][d.id] &&
@@ -68,6 +69,7 @@ export default class State {
                     prevDataAttributeState[componentId][d.directParentId] &&
                     prevDataAttributeState[componentId][d.directParentId].isArrowDown)
             ) {
+                // maintain previous open state
                 isOpened = true
             }
 
