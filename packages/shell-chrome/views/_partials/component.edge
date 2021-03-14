@@ -1,8 +1,8 @@
 @verbatim
 <a
     :class="{
-        'text-white bg-alpine-300': component.isOpened,
-        'text-gray-600 hover:bg-blue-200': !component.isOpened,
+        'text-white bg-alpine-300': openComponent && component.isOpened,
+        'text-gray-600 hover:bg-blue-200': !openComponent || !component.isOpened,
     }"
     class="block cursor-pointer rounded"
     :style="`padding-left: ${component.depth * 20}px; `"

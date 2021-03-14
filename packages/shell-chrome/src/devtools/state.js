@@ -1,81 +1,127 @@
 import { flattenData, convertInputDataToType } from '../utils'
+import { PANEL_TO_BACKEND_MESSAGES } from '../constants'
+
+const ALPINE_DEVTOOL_SOURCE = 'alpineDevtool'
+
+const unavailablePortShim = {
+    unavailable: true,
+    postMessage(message) {
+        console.warn(`No devtools available to post message ${JSON.stringify(message)}`)
+    },
+}
 
 export default class State {
     constructor() {
+        this.appUrl = null
         this.components = {}
         this.errors = []
         this.allDataAttributes = {}
-        this.renderedComponentId = null
+        this.selectedComponentId = null
+        this.selectedComponentFlattenedData = null
+        this.preloadedComponentData = {}
         this.version = {
             detected: null,
             latest: '__alpine_version__',
         }
     }
 
-    renderComponentsFromBackend(components) {
-        this.checkForRemovedComponents(components)
+    get _port() {
+        return window.__alpineDevtool.port || unavailablePortShim
+    }
 
+    setComponentsList(components, appUrl) {
+        this.checkForRemovedComponents(components)
         components.forEach((component, index) => {
             component.index = index
-            component.isOpened = this.renderedComponentId == component.id
-
-            component.flattenedData = flattenData(component.data)
-
-            component.flattenedData.forEach((d) => {
-                if (
-                    (this.allDataAttributes[component.id] &&
-                        this.allDataAttributes[component.id][d.id] &&
-                        this.allDataAttributes[component.id][d.id].isOpened) ||
-                    (d.directParentId.length &&
-                        this.allDataAttributes[component.id][d.directParentId] &&
-                        this.allDataAttributes[component.id][d.directParentId].isArrowDown)
-                ) {
-                    d.isOpened = true
-                }
-
-                if (
-                    this.allDataAttributes[component.id] &&
-                    this.allDataAttributes[component.id][d.id] &&
-                    this.allDataAttributes[component.id][d.id].hasArrow
-                ) {
-                    d.isArrowDown = this.allDataAttributes[component.id][d.id].isArrowDown
-                }
-
-                d.parentComponentId = component.id
-
-                if (!this.allDataAttributes[component.id]) {
-                    this.allDataAttributes[component.id] = {}
-                }
-
-                this.allDataAttributes[component.id][d.id] = d
-            })
-
+            component.isOpened = this.selectedComponentId === component.id
             this.components[component.id] = component
         })
 
-        this.updateXdata()
+        if (appUrl !== this.appUrl || !components.find((c) => c.id === this.selectedComponentId)) {
+            this.selectedComponentId = null
+            this.preloadedComponentData = {}
+            this.selectedComponentFlattenedData = null
+            this.appUrl = appUrl
+        }
+
+        this.updateDevtoolsXData()
+    }
+
+    setComponentData(componentId, data) {
+        const flattenedData = flattenData(data).map((d) => {
+            let isOpened = false
+            if (
+                (this.allDataAttributes[componentId] &&
+                    this.allDataAttributes[componentId][d.id] &&
+                    this.allDataAttributes[componentId][d.id].isOpened) ||
+                (d.directParentId.length &&
+                    this.allDataAttributes[componentId][d.directParentId] &&
+                    this.allDataAttributes[componentId][d.directParentId].isArrowDown)
+            ) {
+                isOpened = true
+            }
+
+            let isArrowDown = false
+            if (
+                this.allDataAttributes[componentId] &&
+                this.allDataAttributes[componentId][d.id] &&
+                this.allDataAttributes[componentId][d.id].hasArrow
+            ) {
+                isArrowDown = this.allDataAttributes[componentId][d.id].isArrowDown
+            }
+
+            const parentComponentId = componentId
+
+            if (!this.allDataAttributes[componentId]) {
+                this.allDataAttributes[componentId] = {}
+            }
+
+            this.allDataAttributes[componentId][d.id] = {
+                ...d,
+                isOpened,
+                isArrowDown,
+                parentComponentId,
+            }
+
+            return {
+                ...d,
+                isOpened,
+                isArrowDown,
+                parentComponentId,
+            }
+        })
+
+        this.preloadedComponentData[componentId] = flattenedData
+        this.updateDevtoolsXData()
     }
 
     setAlpineVersionFromBackend(version) {
         this.version.detected = version
-        this.updateXdata()
+        this.updateDevtoolsXData()
     }
 
     renderComponentData(component) {
         this.closeOpenedComponent()
-        this.renderedComponentId = component.id
+
+        this.selectedComponentId = component.id
         this.components[component.id].isOpened = true
-        this.updateXdata()
+
+        if (!this.preloadedComponentData[component.id]) {
+            // preload didn't happen for whatever reason
+            this.triggerComponentDataLoad(component.id)
+        }
+
+        this.updateDevtoolsXData()
     }
 
     renderError(error) {
         this.errors.push(error)
-        this.updateXdata()
+        this.updateDevtoolsXData()
     }
 
     closeOpenedComponent() {
-        if (this.renderedComponentId) {
-            this.components[this.renderedComponentId].isOpened = false
+        if (this.selectedComponentId) {
+            this.components[this.selectedComponentId].isOpened = false
         }
     }
 
@@ -103,7 +149,7 @@ export default class State {
             })
 
             childrenAttributesIds.forEach((childId) => {
-                this.components[attribute.parentComponentId].flattenedData.forEach((d) => {
+                this.selectedComponentFlattenedData.forEach((d) => {
                     if (d.id === childId) {
                         d.isOpened = !attribute.isArrowDown
 
@@ -114,17 +160,17 @@ export default class State {
                 })
             })
 
-            this.components[attribute.parentComponentId].flattenedData.forEach((d) => {
+            this.selectedComponentFlattenedData.forEach((d) => {
                 if (d.hasArrow && d.id == attribute.id) {
                     d.isArrowDown = !d.isArrowDown
                 }
             })
 
-            this.updateXdata()
+            this.updateDevtoolsXData()
         }
     }
 
-    updateXdata() {
+    updateDevtoolsXData() {
         let appData = document.getElementById('app').__x.$data
 
         appData.version = this.version.detected
@@ -135,49 +181,55 @@ export default class State {
         appData.components = Object.values(this.components).sort(function (a, b) {
             return a.index - b.index
         })
-    }
 
-    _hasNoDevtools(methodName) {
-        if (!window.__alpineDevtool.port) {
-            console.warn(`${methodName} no devtools available`)
-            return true
+        if (this.selectedComponentId && this.preloadedComponentData[this.selectedComponentId]) {
+            this.selectedComponentFlattenedData = this.preloadedComponentData[this.selectedComponentId]
         }
-        return false
+
+        appData.selectedComponentFlattenedData = this.selectedComponentFlattenedData
+        appData.openComponent = this.components[this.selectedComponentId] || null
     }
 
     showErrorSource(errorId) {
-        if (this._hasNoDevtools('showErrorSource')) return
-        window.__alpineDevtool.port.postMessage({
+        this._port.postMessage({
             errorId,
-            action: 'show-error-source',
-            source: 'alpineDevtool',
+            action: PANEL_TO_BACKEND_MESSAGES.SHOW_ERROR_SOURCE,
+            source: ALPINE_DEVTOOL_SOURCE,
         })
     }
 
     hideErrorSource(errorId) {
-        if (this._hasNoDevtools('hideErrorSource')) return
-        window.__alpineDevtool.port.postMessage({
+        this._port.postMessage({
             errorId,
-            action: 'hide-error-source',
-            source: 'alpineDevtool',
+            action: PANEL_TO_BACKEND_MESSAGES.HIDE_ERROR_SOURCE,
+            source: ALPINE_DEVTOOL_SOURCE,
+        })
+    }
+
+    triggerComponentDataLoad(componentId) {
+        this._port.postMessage({
+            componentId,
+            action: PANEL_TO_BACKEND_MESSAGES.GET_DATA,
+            source: ALPINE_DEVTOOL_SOURCE,
         })
     }
 
     hoverOnComponent(component) {
-        if (this._hasNoDevtools('hoverOnComponent')) return
-        window.__alpineDevtool.port.postMessage({
+        this._port.postMessage({
             componentId: component.id,
-            action: 'hover',
-            source: 'alpineDevtool',
+            action: PANEL_TO_BACKEND_MESSAGES.HOVER_COMPONENT,
+            source: ALPINE_DEVTOOL_SOURCE,
         })
+
+        // pre-load component
+        this.triggerComponentDataLoad(component.id)
     }
 
     hoverLeftComponent(component) {
-        if (this._hasNoDevtools('hoverLeftComponent')) return
-        window.__alpineDevtool.port.postMessage({
+        this._port.postMessage({
             componentId: component.id,
-            action: 'hoverLeft',
-            source: 'alpineDevtool',
+            action: PANEL_TO_BACKEND_MESSAGES.HIDE_HOVER,
+            source: ALPINE_DEVTOOL_SOURCE,
         })
     }
 
@@ -186,26 +238,26 @@ export default class State {
     }
 
     saveEditing(clickedAttribute) {
-        if (this._hasNoDevtools('saveEditing')) return
+        if (this._port.unavailable) return
         clickedAttribute.attributeValue = convertInputDataToType(
             clickedAttribute.inputType,
             clickedAttribute.editAttributeValue,
         )
         clickedAttribute.inEditingMode = false
 
-        this.components[clickedAttribute.parentComponentId].flattenedData.forEach((f) => {
-            if (f.id == clickedAttribute.id) {
+        this.selectedComponentFlattenedData.forEach((f) => {
+            if (f.id === clickedAttribute.id) {
                 f.attributeValue = clickedAttribute.attributeValue
                 f.editAttributeValue = clickedAttribute.editAttributeValue
             }
         })
 
-        window.__alpineDevtool.port.postMessage({
+        this._port.postMessage({
             componentId: clickedAttribute.parentComponentId,
             attributeSequence: clickedAttribute.id,
             attributeValue: clickedAttribute.attributeValue,
-            action: 'editAttribute',
-            source: 'alpineDevtool',
+            action: PANEL_TO_BACKEND_MESSAGES.EDIT_ATTRIBUTE,
+            source: ALPINE_DEVTOOL_SOURCE,
         })
     }
 
@@ -225,8 +277,8 @@ export default class State {
         componentsToRemove
             .map((c) => c.id)
             .forEach((c) => {
-                if (this.renderedComponentId === c) {
-                    this.renderedComponentId = null
+                if (this.selectedComponentId === c) {
+                    this.selectedComponentId = null
                 }
                 delete this.components[c]
             })

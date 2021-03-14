@@ -169,10 +169,10 @@ it('should display read-only function/HTMLElement attributes + allow editing of 
     // check they toggle off
     cy.get('[data-testid=data-property-value-el]').click()
 
-    cy.get('[data-testid=data-property-value-name]').should('not.be.visible')
+    cy.get('[data-testid=data-property-value-name]').should('not.exist')
 
-    cy.get('[data-testid=data-property-name-attributes]').should('not.be.visible')
-    cy.get('[data-testid=data-property-name-children]').should('not.be.visible')
+    cy.get('[data-testid=data-property-name-attributes]').should('not.exist')
+    cy.get('[data-testid=data-property-name-children]').should('not.exist')
 
     // booleans
     cy.get('[data-testid=data-property-name-bool]').should('be.visible').contains('bool')
@@ -232,32 +232,32 @@ it('should display nested arrays/object attributes and support editing', () => {
 
     cy.get('[data-testid=data-property-value-array]').click()
 
-    cy.get('[data-testid=data-property-name-0]').last().should('be.visible').contains('0')
-    cy.get('[data-testid=data-property-value-0]').last().should('be.visible').contains('Object')
+    cy.get('[data-testid=data-property-name-0]').should('be.visible').contains('0')
+    cy.get('[data-testid=data-property-value-0]').should('be.visible').contains('Object')
 
-    cy.get('[data-testid=data-property-name-0]').last().click()
+    cy.get('[data-testid=data-property-name-0]').click()
 
     cy.get('[data-testid=data-property-name-nested]').should('be.visible').contains('nested')
     cy.get('[data-testid=data-property-value-nested]').should('be.visible').contains('property')
 
     // check untoggling also works
-    cy.get('[data-testid=data-property-name-0]').last().click()
+    cy.get('[data-testid=data-property-name-0]').click()
 
-    cy.get('[data-testid=data-property-name-nested]').should('not.be.visible')
-    cy.get('[data-testid=data-property-value-nested]').should('not.be.visible')
+    cy.get('[data-testid=data-property-name-nested]').should('not.exist')
+    cy.get('[data-testid=data-property-value-nested]').should('not.exist')
 
     cy.get('[data-testid=data-property-value-array]').click()
 
-    cy.get('[data-testid=data-property-name-0]').last().should('not.be.visible')
-    cy.get('[data-testid=data-property-value-0]').last().should('not.be.visible')
+    cy.get('[data-testid=data-property-name-0]').should('not.exist')
+    cy.get('[data-testid=data-property-value-0]').should('not.exist')
 
     cy.get('[data-testid="data-property-value-nestedObjArr"]').click()
-    cy.get('[data-testid=data-property-name-array]').should('not.be.visible')
-    cy.get('[data-testid=data-property-value-array]').should('not.be.visible')
+    cy.get('[data-testid=data-property-name-array]').should('not.exist')
+    cy.get('[data-testid=data-property-value-array]').should('not.exist')
 
     cy.get('[data-testid="data-property-value-nestedObjArr"]').click()
     cy.get('[data-testid=data-property-value-array]').click()
-    cy.get('[data-testid=data-property-name-0]').last().click()
+    cy.get('[data-testid=data-property-name-0]').click()
     // editing the nested array/object
     cy.get('[data-testid=edit-icon-nested]').click({ force: true })
     cy.get('[data-testid=input-nested]')
@@ -302,4 +302,18 @@ it('should display message with number of components watched', () => {
                 )
             })
         })
+})
+
+it('should reset component selection when changing page', () => {
+    cy.visit('/')
+
+    cy.get('[data-testid=component-name]').first().click()
+    cy.get('[data-testid=component-container]').first().should('have.class', 'text-white bg-alpine-300')
+
+    cy.get('[data-testid=data-property-name-myFunction]').should('be.visible').contains('myFunction')
+
+    cy.iframe('#target').find('[data-testid=navigation-target]').click()
+
+    cy.get('[data-testid=component-container]').first().should('not.have.class', 'text-white bg-alpine-300')
+    cy.get('[data-testid=data-property-name-myFunction]').should('not.exist')
 })

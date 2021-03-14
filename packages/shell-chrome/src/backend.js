@@ -1,4 +1,9 @@
-import { DEVTOOLS_RENDER_ATTR_NAME, DEVTOOLS_RENDER_BINDING_ATTR_NAME } from './constants'
+import {
+    BACKEND_TO_PANEL_MESSAGES,
+    DEVTOOLS_RENDER_ATTR_NAME,
+    DEVTOOLS_RENDER_BINDING_ATTR_NAME,
+    PANEL_TO_BACKEND_MESSAGES,
+} from './constants'
 import { getComponentName, isSerializable, serializeHTMLElement, set, waitForAlpine, isRequiredVersion } from './utils'
 
 function serializeDataProperty(value) {
@@ -36,6 +41,7 @@ function init() {
             this.observer = null
             this.errorElements = []
             this.errorSourceId = 1
+            this.selectedComponentId = null
 
             this._stopMutationObserver = false
             this._lastComponentCrawl = Date.now()
@@ -58,7 +64,6 @@ function init() {
             this.initAlpineErrorCollection()
             this.getAlpineVersion()
             this.discoverComponents()
-
             // Watch on the body for injected components. This is lightweight
             // as work is only done if there are components added/removed
             this.observeNode(document.querySelector('body'))
@@ -122,16 +127,16 @@ function init() {
             }
             this._postMessage({
                 error: alpineError,
-                type: 'render-error',
+                type: BACKEND_TO_PANEL_MESSAGES.ADD_ERROR,
             })
         }
 
         discoverComponents() {
-            const rootEls = document.querySelectorAll('[x-data]')
+            const alpineRoots = Array.from(document.querySelectorAll('[x-data]'))
 
-            const allComponentsInitialized = Object.values(rootEls).every((e) => e.__alpineDevtool)
+            const allComponentsInitialized = Object.values(alpineRoots).every((e) => e.__alpineDevtool)
             if (allComponentsInitialized) {
-                const lastAlpineRender = [...rootEls].reduce((acc, el) => {
+                const lastAlpineRender = alpineRoots.reduce((acc, el) => {
                     // we add `:data-devtools-render="Date.now()"` when initialising components
                     const renderTimeStr = el.getAttribute(DEVTOOLS_RENDER_ATTR_NAME)
                     const renderTime = parseInt(renderTimeStr, 10)
@@ -147,20 +152,15 @@ function init() {
                 }
 
                 // Exit early if no components have been added, removed and no data has changed
-                if (!someComponentHasUpdated && this.components.length === rootEls.length) {
+                if (!someComponentHasUpdated && this.components.length === alpineRoots.length) {
                     return false
                 }
             }
-
-            this.components = []
-
-            rootEls.forEach((rootEl, index) => {
+            this.components = alpineRoots.map((rootEl, index) => {
                 if (!rootEl.__x) {
                     // this component probably crashed during init
                     return
                 }
-
-                Alpine.initializeComponent(rootEl)
 
                 if (!rootEl.__alpineDevtool) {
                     // add an attr to trigger the mutation observer and run this function
@@ -172,50 +172,44 @@ function init() {
                     window[`$x${rootEl.__alpineDevtool.id - 1}`] = rootEl.__x
                 }
 
-                let depth = 0
-
-                if (index != 0) {
-                    rootEls.forEach((innerElement, innerIndex) => {
-                        if (index == innerIndex) {
-                            return false
-                        }
-
-                        if (innerElement.contains(rootEl)) {
-                            depth = depth + 1
-                        }
-                    })
+                if (rootEl.__alpineDevtool.id === this.selectedComponentId) {
+                    this.getComponentData(this.selectedComponentId, rootEl)
                 }
 
-                const data = Object.entries(rootEl.__x.getUnobservedData()).reduce((acc, [key, value]) => {
-                    acc[key] = serializeDataProperty(value)
+                const componentDepth =
+                    index === 0
+                        ? 0
+                        : alpineRoots.reduce((depth, el, innerIndex) => {
+                              if (index === innerIndex) {
+                                  return depth
+                              }
 
-                    return acc
-                }, {})
+                              if (el.contains(rootEl)) {
+                                  return depth + 1
+                              }
 
-                this.components.push({
+                              return depth
+                          }, 0)
+
+                return {
                     name: getComponentName(rootEl),
-                    depth: depth,
-                    data: data,
-                    index: index,
+                    depth: componentDepth,
+                    index,
                     id: rootEl.__alpineDevtool.id,
-                })
+                }
             })
 
             this._postMessage({
-                // stringify to unfurl proxies
-                // there's no way to detect proxies but
-                // we need to get rid of them
-                // this avoids `DataCloneError: The object could not be cloned.`
-                // see https://github.com/Te7a-Houdini/alpinejs-devtools/issues/17
-                components: JSON.stringify(this.components),
-                type: 'render-components',
+                components: this.components,
+                url: btoa(window.location.href),
+                type: BACKEND_TO_PANEL_MESSAGES.SET_COMPONENTS,
             })
         }
 
         getAlpineVersion() {
             this._postMessage({
                 version: window.Alpine.version,
-                type: 'set-version',
+                type: BACKEND_TO_PANEL_MESSAGES.SET_VERSION,
             })
         }
 
@@ -229,17 +223,33 @@ function init() {
             )
         }
 
-        getAlpineVersion() {
-            window.postMessage(
-                {
-                    source: 'alpine-devtools-backend',
-                    payload: {
-                        version: window.Alpine.version,
-                        type: 'set-version',
-                    },
-                },
-                '*',
-            )
+        getComponentData(componentId, componentRoot) {
+            const data = Object.entries(componentRoot.__x.getUnobservedData()).reduce((acc, [key, value]) => {
+                acc[key] = serializeDataProperty(value)
+
+                return acc
+            }, {})
+            this._postMessage({
+                type: BACKEND_TO_PANEL_MESSAGES.SET_DATA,
+                componentId,
+                data: JSON.stringify(data),
+            })
+        }
+
+        handleGetComponentData(componentId) {
+            if (this.selectedComponentId === componentId) {
+                // component already loaded
+                // any changes to the component's data will be picked up by the mutation observer
+                return
+            }
+            this.selectedComponentId = componentId
+            this.runWithMutationPaused(() => {
+                Alpine.discoverComponents((component) => {
+                    if (component.__alpineDevtool.id === componentId) {
+                        this.getComponentData(componentId, component)
+                    }
+                })
+            })
         }
 
         observeNode(node) {
@@ -312,15 +322,17 @@ function init() {
     }
 
     function handleMessages(e) {
-        if (e.data.source === ALPINE_DEVTOOLS_PROXY) {
-            if (e.data.payload === 'shutdown') {
-                window.removeEventListener('message', handleMessages)
-                window.addEventListener('message', handshake)
-                devtoolsBackend.shutdown()
-                return
-            }
-
-            if (e.data.payload.action === 'show-error-source') {
+        if (e.data.source !== ALPINE_DEVTOOLS_PROXY) {
+            return
+        }
+        if (e.data.payload === PANEL_TO_BACKEND_MESSAGES.SHUTDOWN) {
+            window.removeEventListener('message', handleMessages)
+            window.addEventListener('message', handshake)
+            devtoolsBackend.shutdown()
+            return
+        }
+        switch (e.data.payload.action) {
+            case PANEL_TO_BACKEND_MESSAGES.SHOW_ERROR_SOURCE: {
                 devtoolsBackend.runWithMutationPaused(() => {
                     const errorSource = devtoolsBackend.errorElements.find((el) => {
                         return el.__alpineErrorSourceId === e.data.payload.errorId
@@ -328,14 +340,15 @@ function init() {
 
                     devtoolsBackend.addHoverElement(errorSource)
                 })
+                break
             }
-            if (e.data.payload.action === 'hide-error-source') {
+            case PANEL_TO_BACKEND_MESSAGES.HIDE_ERROR_SOURCE: {
                 devtoolsBackend.runWithMutationPaused(() => {
                     devtoolsBackend.cleanupHoverElement()
                 })
+                break
             }
-
-            if (e.data.payload.action === 'hover') {
+            case PANEL_TO_BACKEND_MESSAGES.HOVER_COMPONENT: {
                 devtoolsBackend.runWithMutationPaused(() => {
                     Alpine.discoverComponents((component) => {
                         if (component.__alpineDevtool && component.__alpineDevtool.id === e.data.payload.componentId) {
@@ -343,9 +356,9 @@ function init() {
                         }
                     })
                 })
+                break
             }
-
-            if (e.data.payload.action === 'hoverLeft') {
+            case PANEL_TO_BACKEND_MESSAGES.HIDE_HOVER: {
                 devtoolsBackend.runWithMutationPaused(() => {
                     Alpine.discoverComponents((component) => {
                         if (component.__alpineDevtool && component.__alpineDevtool.id === e.data.payload.componentId) {
@@ -353,9 +366,9 @@ function init() {
                         }
                     })
                 })
+                break
             }
-
-            if (e.data.payload.action === 'editAttribute') {
+            case PANEL_TO_BACKEND_MESSAGES.EDIT_ATTRIBUTE: {
                 devtoolsBackend.runWithMutationPaused(() => {
                     Alpine.discoverComponents((component) => {
                         if (component.__alpineDevtool.id === e.data.payload.componentId) {
@@ -364,6 +377,11 @@ function init() {
                         }
                     })
                 })
+                break
+            }
+            case PANEL_TO_BACKEND_MESSAGES.GET_DATA: {
+                devtoolsBackend.handleGetComponentData(e.data.payload.componentId)
+                break
             }
         }
     }

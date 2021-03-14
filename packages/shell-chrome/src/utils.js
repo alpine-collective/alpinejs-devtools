@@ -191,7 +191,7 @@ export function flattenSingleAttribute(
         inputType: mapDataTypeToInputType(type),
         id: generatedId,
         inEditingMode: false,
-        isOpened: id.length == 0,
+        isOpened: id.length === 0,
         isArrowDown: false,
         directParentId: directParentId,
     })
