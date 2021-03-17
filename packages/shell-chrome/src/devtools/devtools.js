@@ -1,6 +1,5 @@
 /* Devtools panel app */
 import './styles.css'
-import 'alpinejs'
 import Split from 'split-grid'
 import { fetchWithTimeout, isRequiredVersion } from '../utils'
 
