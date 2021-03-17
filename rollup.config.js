@@ -73,6 +73,7 @@ export default [
         input,
         output: {
             dir: 'dist/chrome',
+            format: 'iife',
         },
         plugins: [
             replace({
@@ -90,6 +91,10 @@ export default [
                         dest: 'dist/chrome',
                     },
                     {
+                        src: 'node_modules/alpinejs/dist/alpine.js',
+                        dest: 'dist/chrome',
+                    },
+                    {
                         src: 'packages/shell-chrome/assets/manifest.json',
                         dest: 'dist/chrome',
                         // inject version into manifest
@@ -103,7 +108,7 @@ export default [
             shouldServe &&
                 serve({
                     port: process.env.PORT || 8080,
-                    contentBase: ['./dist/chrome', './packages/simulator', './node_modules/alpinejs/dist'],
+                    contentBase: ['./dist/chrome', './packages/simulator'],
                 }),
         ],
     })),
