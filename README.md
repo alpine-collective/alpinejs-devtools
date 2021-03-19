@@ -73,7 +73,7 @@ Note that when using the simulator all Chrome/Firefox devtools/Extension APIs ar
 
 We have 2 levels of tests in the project:
 
--   unit tests in [./tests](./tests), written and run with [Jest](https://jestjs.io)
+-   unit tests in [./tests](./tests), written and run with [uvu](https://github.com/lukeed/uvu)
     -   The command to run them is `npm test`.
 -   E2E tests that run against the devtools simulator, in [./cypress](./cypress), using [Cypress](https://cypress.io).
     -   The command to run Cypress tests is `npm run cy:run`
