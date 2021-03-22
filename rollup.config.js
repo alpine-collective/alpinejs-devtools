@@ -62,6 +62,7 @@ export default [
         },
         plugins: [
             replace({
+                preventAssignment: true,
                 __alpine_version__: dependencies.alpinejs.version,
                 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
             }),
@@ -77,6 +78,7 @@ export default [
         },
         plugins: [
             replace({
+                preventAssignment: true,
                 __alpine_version__: dependencies.alpinejs.version,
                 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
             }),
