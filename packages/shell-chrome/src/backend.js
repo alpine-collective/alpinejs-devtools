@@ -156,7 +156,10 @@ function init() {
                     return false
                 }
             }
-            this.components = alpineRoots.map((rootEl, index) => {
+
+            this.components = []
+
+            alpineRoots.forEach((rootEl, index) => {
                 if (!rootEl.__x) {
                     // this component probably crashed during init
                     return
@@ -191,12 +194,12 @@ function init() {
                               return depth
                           }, 0)
 
-                return {
+                this.components.push({
                     name: getComponentName(rootEl),
                     depth: componentDepth,
                     index,
                     id: rootEl.__alpineDevtool.id,
-                }
+                })
             })
 
             this._postMessage({
