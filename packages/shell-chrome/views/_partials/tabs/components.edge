@@ -24,13 +24,13 @@
             class="absolute min-w-full min-h-full p-2"
         >
             <template x-for="(component, index) in components">
-                @include('_partials.component')
+                @include('_partials/component')
             </template>
         </div>
     </div>
 
     <!-- Split Pane Drag Handle -->
-    @include('_partials.handle')
+    @include('_partials/handle')
 
     <!-- Active Component/Data -->
     <div class="flex-1 relative flex flex-col max-h-full overflow-scroll">
@@ -63,7 +63,7 @@
                 <template x-if="selectedComponentFlattenedData">
                     <div>
                         <template x-for="(singleData, index) in selectedComponentFlattenedData">
-                            @include('_partials.data.attribute')
+                            @include('_partials/data/attribute')
                         </template>
                     </div>
                 </template>

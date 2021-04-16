@@ -62,51 +62,57 @@
         style="line-height: 3.25rem"
     >
         @set('iconClasses', 'inline-block w-6 h-6 xs:w-5 xs:h-5 xs:mr-0.5 xs:opacity-50')
-        @component('_components.tab-link', { tab: 'components' })
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="{{ iconClasses }}"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-        >
-            <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
-            />
-        </svg>
+        @component('_components/tab-link', { tab: 'components' })
+            @slot('body')
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="{{ iconClasses }}"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                />
+            </svg>
+            @endslot
         @endcomponent
 
 
         @if(devOnly)
-        @component('_components.tab-link', { tab: 'events' })
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="{{ iconClasses }}"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-        >
-            <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728m-9.9-2.829a5 5 0 010-7.07m7.072 0a5 5 0 010 7.07M13 12a1 1 0 11-2 0 1 1 0 012 0z"
-            />
-        </svg>
+        @component('_components/tab-link', { tab: 'events' })
+            @slot('body')
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="{{ iconClasses }}"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728m-9.9-2.829a5 5 0 010-7.07m7.072 0a5 5 0 010 7.07M13 12a1 1 0 11-2 0 1 1 0 012 0z"
+                />
+            </svg>
+            @endslot
         @endcomponent
         @endif
 
-        @component('_components.tab-link', { tab: 'warnings' })
-        <svg xmlns="http://www.w3.org/2000/svg" class="{{ iconClasses }}" viewBox="0 0 20 20" fill="currentColor">
-            <path
-                fill-rule="evenodd"
-                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                clip-rule="evenodd"
-            />
-        </svg>
+        @component('_components/tab-link', { tab: 'warnings' })
+            @slot('body')
+            <svg xmlns="http://www.w3.org/2000/svg" class="{{ iconClasses }}" viewBox="0 0 20 20" fill="currentColor">
+                <path
+                    fill-rule="evenodd"
+                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                    clip-rule="evenodd"
+                />
+            </svg>
+            @endslot
         @endcomponent
     </div>
 </div>

@@ -13,10 +13,11 @@
         "test": "uvu -r esm ./tests",
         "cy:run": "cypress run",
         "cy:open": "cypress open",
-        "format": "prettier './{packages/**/,cypress/**/*,}*.{js,html,css}' --write",
+        "format": "prettier './{packages/**/,cypress/**/*,lib/}*.{js,html,css}' --write",
         "check:format": "prettier './{packages/**/,cypress/**/*,}*.{js,html,css}' -c",
         "prepackage": "npm run build",
-        "package": "cd ./dist/chrome && zip -r ../alpine-devtools-$npm_package_version.zip . && rm -rf ../chrome"
+        "package": "cd ./dist/chrome && zip -r ../alpine-devtools-$npm_package_version.zip . && rm -rf ../chrome",
+        "prepare": "husky install"
     },
     "license": "MIT",
     "devDependencies": {
@@ -27,7 +28,7 @@
         "alpinejs": "^2.8.2",
         "cypress": "^6.8.0",
         "cypress-iframe": "^1.0.1",
-        "edge.js": "^1.1.4",
+        "edge.js": "^4.0.4",
         "esm": "^3.2.25",
         "husky": "^5.2.0",
         "linkedom": "^0.7.3",

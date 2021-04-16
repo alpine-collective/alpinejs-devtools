@@ -1,14 +1,14 @@
 <a
     href="#"
-    title="{{ label || upperFirst(tab) }}"
+    title="{{ label || tab }}"
     :class="{
         'text-white border-ice-500 cursor-default': activeTab === '{{ tab }}',
         'border-transparent hover:text-white hover:border-ice-700': activeTab !== '{{ tab }}',
     }"
     data-testid="tab-link-{{ tab }}"
-    class="px-4 border-b-3 xs:pl-2 xs:pr-3"
+    class="px-4 border-b-3 xs:pl-2 xs:pr-3 capitalize"
     @click.prevent="activeTab = '{{ tab }}'"
 >
-    @!yield($slot.main)
-    <span class="hidden xs:inline-block">{{ label || upperFirst(tab) }}</span>
+    {{{ $slots.body() }}}
+    <span class="hidden xs:inline-block">{{ label || tab }}</span>
 </a>
