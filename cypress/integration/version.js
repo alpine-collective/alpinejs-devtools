@@ -84,7 +84,7 @@ it('should display message with latest Alpine version from npm registry', () => 
             overrideAlpineVersion(win, '4.0.0')
         },
     })
-        .intercept('https://registry.npmjs.com/alpinejs', {
+        .intercept('GET', 'https://registry.npmjs.com/alpinejs', {
             headers: {
                 'Access-Control-Allow-Origin': 'http://localhost:8080',
             },
