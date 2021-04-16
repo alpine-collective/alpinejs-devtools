@@ -62,7 +62,7 @@
         style="line-height: 3.25rem"
     >
         @set('iconClasses', 'inline-block w-6 h-6 xs:w-5 xs:h-5 xs:mr-0.5 xs:opacity-50')
-        @component('_components.tab-link', { tab: 'components' })
+        @component('_components/tab-link', { tab: 'components' })
             @slot('body')
             <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -83,7 +83,7 @@
 
 
         @if(devOnly)
-        @component('_components.tab-link', { tab: 'events' })
+        @component('_components/tab-link', { tab: 'events' })
             @slot('body')
             <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -103,7 +103,7 @@
         @endcomponent
         @endif
 
-        @component('_components.tab-link', { tab: 'warnings' })
+        @component('_components/tab-link', { tab: 'warnings' })
             @slot('body')
             <svg xmlns="http://www.w3.org/2000/svg" class="{{ iconClasses }}" viewBox="0 0 20 20" fill="currentColor">
                 <path

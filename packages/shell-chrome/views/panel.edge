@@ -17,10 +17,10 @@
 
         <div id="app" class="h-full" x-cloak x-data="devtools()" x-init="init()" x-spread="devtoolsRootDirectives()">
             <div class="bg-white flex flex-col relative h-full w-full mx-auto">
-                @include('_partials.header')
+                @include('_partials/header')
 
                 <div x-show="activeTab === 'components'" class="flex-1 overflow-hidden">
-                    @include('_partials.tabs.components')
+                    @include('_partials/tabs/components')
                 </div>
 
                 @if(devOnly)
@@ -33,12 +33,12 @@
                 @endif
 
                 <div x-show="activeTab === 'warnings'" class="flex-1 overflow-hidden">
-                    @include('_partials.tabs.warnings')
+                    @include('_partials/tabs/warnings')
                 </div>
 
-                @include('_partials.footer')
+                @include('_partials/footer')
 
-                @include('_partials.settings')
+                @include('_partials/settings')
             </div>
         </div>
         <script src="./panel.js"></script>
