@@ -6,8 +6,7 @@ import postcss from 'rollup-plugin-postcss'
 import serve from 'rollup-plugin-serve'
 import pkg from './package.json'
 import { dependencies } from './package-lock.json'
-import { renderPanel } from './packages/build/edge/render'
-import { watch } from './packages/build/watch'
+import { renderPanel, watch } from './packages/build/index'
 
 renderPanel()
 
