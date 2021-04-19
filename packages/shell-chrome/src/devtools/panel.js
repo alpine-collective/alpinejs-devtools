@@ -2,9 +2,9 @@
 import { init, handleMessage } from './app'
 
 function connect() {
-    injectScript(chrome.runtime.getURL('./backend.js'), () => {
-        init()
+    init()
 
+    injectScript(chrome.runtime.getURL('./backend.js'), () => {
         const port = chrome.runtime.connect({
             name: '' + chrome.devtools.inspectedWindow.tabId,
         })
