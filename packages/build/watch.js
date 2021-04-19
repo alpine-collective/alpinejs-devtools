@@ -2,21 +2,17 @@ import fs from 'fs'
 import path from 'path'
 import { renderPanel } from './edge/render'
 
-const inputPath = './packages/shell-chrome'
-export function watch() {
-    fs.watch(`${inputPath}/assets`, { recursive: true }, (_event, filename) => {
+export function watch({ assetsDir, viewsDir, outputDir }) {
+    fs.watch(assetsDir, { recursive: true }, (_event, filename) => {
         try {
             console.info(`Copying asset "${filename}" to dist/chrome`)
-            fs.copyFileSync(
-                path.join('./packages/shell-chrome/assets/', filename),
-                path.join('./dist/chrome', filename),
-            )
+            fs.copyFileSync(path.join(assetsDir, filename), path.join(outputDir, filename))
         } catch (e) {
             console.error(e)
         }
     })
 
-    fs.watch(`${inputPath}/views`, { recursive: true }, (_event, filename) => {
+    fs.watch(viewsDir, { recursive: true }, (_event, filename) => {
         try {
             console.info(`View "${filename}" updated. Rendering panel to dist/chrome`)
 

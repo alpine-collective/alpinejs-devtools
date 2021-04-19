@@ -13,7 +13,11 @@ renderPanel()
 const isWatch = process.env.ROLLUP_WATCH === 'true'
 const shouldServe = process.env.ROLLUP_SERVE === 'true' || isWatch
 if (isWatch) {
-    watch()
+    watch({
+        assetsDir: 'packages/shell-chrome/assets',
+        viewsDir: 'packages/shell-chrome/views',
+        outputDir: 'dist/chrome',
+    })
 }
 
 const JS_INPUTS = [
