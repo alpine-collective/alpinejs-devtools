@@ -6,36 +6,17 @@ import postcss from 'rollup-plugin-postcss'
 import serve from 'rollup-plugin-serve'
 import pkg from './package.json'
 import { dependencies } from './package-lock.json'
+import { renderPanel, watch } from './packages/build/index'
 
-import fs from 'fs'
-import path from 'path'
-
-import { renderPanel } from './lib/edge/render'
 renderPanel()
 
 const isWatch = process.env.ROLLUP_WATCH === 'true'
 const shouldServe = process.env.ROLLUP_SERVE === 'true' || isWatch
 if (isWatch) {
-    fs.watch('./packages/shell-chrome/assets', { recursive: true }, (_event, filename) => {
-        try {
-            console.info(`Copying asset "${filename}" to dist/chrome`)
-            fs.copyFileSync(
-                path.join('./packages/shell-chrome/assets/', filename),
-                path.join('./dist/chrome', filename),
-            )
-        } catch (e) {
-            console.error(e)
-        }
-    })
-
-    fs.watch('./packages/shell-chrome/views', { recursive: true }, (_event, filename) => {
-        try {
-            console.info(`View "${filename}" updated. Rendering panel to dist/chrome`)
-
-            renderPanel()
-        } catch (e) {
-            console.error(e)
-        }
+    watch({
+        assetsDir: 'packages/shell-chrome/assets',
+        viewsDir: 'packages/shell-chrome/views',
+        outputDir: 'dist/chrome',
     })
 }
 
@@ -52,14 +33,16 @@ if (shouldServe) {
     MIXED_INPUT.push('packages/simulator/dev.js')
 }
 
+const output = {
+    dir: 'dist/chrome',
+    format: 'iife',
+}
+
 export default [
     // create standalone builds to avoid rollup creating a common "utils" chunk
     ...JS_INPUTS.map((input) => ({
         input,
-        output: {
-            dir: 'dist/chrome',
-            format: 'iife',
-        },
+        output,
         plugins: [
             replace({
                 preventAssignment: true,
@@ -72,10 +55,7 @@ export default [
     })),
     ...MIXED_INPUT.map((input) => ({
         input,
-        output: {
-            dir: 'dist/chrome',
-            format: 'iife',
-        },
+        output,
         plugins: [
             replace({
                 preventAssignment: true,
