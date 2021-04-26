@@ -28,7 +28,7 @@
         "alpinejs": "^2.8.2",
         "cypress": "^7.1.0",
         "cypress-iframe": "^1.0.1",
-        "edge.js": "^4.0.4",
+        "edge.js": "^5.0.0",
         "esm": "^3.2.25",
         "husky": "^5.2.0",
         "linkedom": "^0.7.3",

@@ -11,8 +11,8 @@ const viewData = {
     devOnly: process.env.NODE_ENV !== 'production',
 }
 
-export function renderView(view, outputFilename, outputPath) {
-    let contents = edge.render(view, viewData)
+export async function renderView(view, outputFilename, outputPath) {
+    let contents = await edge.render(view, viewData)
     let dir = outputPath || path.join(__dirname, './dist/chrome')
 
     if (process.env.NODE_ENV === 'production') {
