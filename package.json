@@ -26,7 +26,7 @@
         "@tailwindcss/forms": "^0.3.2",
         "@tailwindcss/jit": "^0.1.18",
         "alpinejs": "^2.8.2",
-        "cypress": "^7.1.0",
+        "cypress": "^7.2.0",
         "cypress-iframe": "^1.0.1",
         "edge.js": "^5.0.0",
         "esm": "^3.2.25",
