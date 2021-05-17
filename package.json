@@ -31,7 +31,7 @@
         "edge.js": "^5.1.1",
         "esm": "^3.2.25",
         "husky": "^5.2.0",
-        "linkedom": "^0.7.6",
+        "linkedom": "^0.8.0",
         "lint-staged": "^11.0.0",
         "prettier": "^2.3.0",
         "rollup": "^2.48.0",
