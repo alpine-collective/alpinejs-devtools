@@ -9,6 +9,6 @@
     class="px-4 border-b-3 xs:pl-2 xs:pr-3 capitalize"
     @click.prevent="activeTab = '{{ tab }}'"
 >
-    {{{ $slots.body() }}}
+    {{{ await $slots.body() }}}
     <span class="hidden xs:inline-block">{{ label || tab }}</span>
 </a>
