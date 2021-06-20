@@ -70,7 +70,7 @@ function init() {
             return node.__x
         }
 
-        getAlpineData(node) {
+        getReadOnlyAlpineData(node) {
             const alpineDataInstance = this.getAlpineDataInstance(node)
             if (this.isV3) {
                 // in v3 magics are registered on the data stack
@@ -79,10 +79,15 @@ function init() {
             return alpineDataInstance && alpineDataInstance.getUnobservedData()
         }
 
+        getWriteableAlpineData(node) {
+            const alpineDataInstance = this.getAlpineDataInstance(node)
+            return this.isV3 ? alpineDataInstance : alpineDataInstance.$data
+        }
+
         start() {
             this.initAlpineErrorCollection()
             this.getAlpineVersion()
-            this._registerComponents()
+            this.watchComponents()
             // Watch on the body for injected components. This is lightweight
             // as work is only done if there are components added/removed
             this.observeNode(document.querySelector('body'))
@@ -150,7 +155,7 @@ function init() {
             })
         }
 
-        _registerComponents() {
+        watchComponents() {
             const alpineRoots = Array.from(document.querySelectorAll('[x-data]'))
 
             const allComponentsInitialized = Object.values(alpineRoots).every((e) => e.__alpineDevtool)
@@ -201,6 +206,22 @@ function init() {
                     this.sendComponentData(this.selectedComponentId, rootEl)
                 }
 
+                if (this.isV3) {
+                    const componentData = this.getAlpineDataInstance(rootEl)
+                    Alpine.effect(() => {
+                        Object.keys(componentData).forEach((key) => {
+                            // since effects track which dependencies are accessed,
+                            // run a fake component data access so that the effect runs
+                            void componentData[key]
+                            if (rootEl.__alpineDevtool.id === this.selectedComponentId) {
+                                // this re-computes the whole component data
+                                // with effect we could send only the key-value of the field that's changed
+                                this.sendComponentData(this.selectedComponentId, rootEl)
+                            }
+                        })
+                    })
+                }
+
                 const componentDepth =
                     index === 0
                         ? 0
@@ -249,7 +270,7 @@ function init() {
         }
 
         sendComponentData(componentId, componentRoot) {
-            const componentData = this.getAlpineData(componentRoot)
+            const componentData = this.getReadOnlyAlpineData(componentRoot)
             const data = Object.entries(componentData).reduce((acc, [key, value]) => {
                 acc[key] = serializeDataProperty(value)
 
@@ -290,7 +311,7 @@ function init() {
             devtoolsBackend.runWithMutationPaused(() => {
                 this.discoverComponents((component) => {
                     if (component.__alpineDevtool.id === componentId) {
-                        set(this.getAlpineDataInstance(component), attributeSequence, attributeValue)
+                        set(this.getWriteableAlpineData(component), attributeSequence, attributeValue)
                     }
                 })
             })
@@ -305,7 +326,7 @@ function init() {
 
             this.observer = new MutationObserver((_mutations) => {
                 if (!this._stopMutationObserver) {
-                    this.discoverComponents()
+                    this.watchComponents()
                 }
             })
 

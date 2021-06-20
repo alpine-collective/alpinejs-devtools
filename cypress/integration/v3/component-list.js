@@ -1,4 +1,4 @@
-it('should get names of components', () => {
+it('v3 -  should get names of components', () => {
     cy.visit('/?target=v3.html')
         .get('[data-testid=component-name]')
         .should('be.visible')
@@ -9,7 +9,7 @@ it('should get names of components', () => {
         .should('contain.text', 'combobox')
 })
 
-it('should create globals + add annotation for each component', () => {
+it('v3 -  should create globals + add annotation for each component', () => {
     cy.visit('/?target=v3.html').get('[data-testid=component-name]').should('be.visible')
 
     let win
@@ -22,7 +22,7 @@ it('should create globals + add annotation for each component', () => {
         .then((components) => {
             components.each((i, component) => {
                 expect(win[`$x${i}`].$el).to.equal(component)
-                expect(win[`$x${i}`]).to.equal(component.__x)
+                expect(win[`$x${i}`]).to.equal(component._x_dataStack[0])
             })
             return components.length
         })
@@ -38,7 +38,7 @@ it('should create globals + add annotation for each component', () => {
         })
 })
 
-it('should handle adding and removing new components', () => {
+it('v3 -  should handle adding and removing new components', () => {
     cy.visit('/?target=v3.html')
         .get('[data-testid=component-name]')
         .should('have.length.above', 0)
@@ -53,7 +53,7 @@ it('should handle adding and removing new components', () => {
         })
 })
 
-it('should handle replacing a component and keep its listed position', () => {
+it('v3 -  should handle replacing a component and keep its listed position', () => {
     let currentIndex = -1
     cy.visit('/?target=v3.html')
         .get('[data-testid=component-name]')
@@ -68,7 +68,7 @@ it('should handle replacing a component and keep its listed position', () => {
         .then((index) => expect(currentIndex).to.equal(index))
 })
 
-it('should add/remove hover overlay on component mouseenter/leave', () => {
+it('v3 -  should add/remove hover overlay on component mouseenter/leave', () => {
     cy.visit('/?target=v3.html')
     // check overlay works for first component
     cy.get('[data-testid=component-container]').first().should('be.visible').trigger('mouseenter')
@@ -132,7 +132,7 @@ it('should add/remove hover overlay on component mouseenter/leave', () => {
     cy.iframe('#target').find('[data-testid=hover-element]').should('not.exist')
 })
 
-it('should support selecting/unselecting a component', () => {
+it('v3 -  should support selecting/unselecting a component', () => {
     cy.visit('/?target=v3.html')
 
     cy.get('[data-testid=component-container]').last().click().should('have.class', 'text-white bg-alpine-300')
@@ -143,7 +143,7 @@ it('should support selecting/unselecting a component', () => {
     cy.get('[data-testid=component-container]').last().should('not.have.class', 'text-white bg-alpine-300')
 })
 
-it('should display message with number of components watched', () => {
+it('v3 -  should display message with number of components watched', () => {
     cy.visit('/?target=v3.html')
         .get('[data-testid=component-name]')
         .should('have.length.above', 0)
