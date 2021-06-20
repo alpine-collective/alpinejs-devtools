@@ -45,6 +45,9 @@ function init() {
 
             this._stopMutationObserver = false
             this._lastComponentCrawl = Date.now()
+
+            this.alpineVersion = window.Alpine.version
+            this.isV3 = isRequiredVersion('3.0.0', this.alpineVersion)
         }
 
         runWithMutationPaused(cb) {
@@ -60,10 +63,26 @@ function init() {
             }, 10)
         }
 
+        getAlpineDataInstance(node) {
+            if (this.isV3) {
+                return node._x_dataStack[0]
+            }
+            return node.__x
+        }
+
+        getAlpineData(node) {
+            const alpineDataInstance = this.getAlpineDataInstance(node)
+            if (this.isV3) {
+                // in v3 magics are registered on the data stack
+                return Object.fromEntries(Object.entries(alpineDataInstance).filter(([key]) => !key.startsWith('$')))
+            }
+            return alpineDataInstance && alpineDataInstance.getUnobservedData()
+        }
+
         start() {
             this.initAlpineErrorCollection()
             this.getAlpineVersion()
-            this.discoverComponents()
+            this._registerComponents()
             // Watch on the body for injected components. This is lightweight
             // as work is only done if there are components added/removed
             this.observeNode(document.querySelector('body'))
@@ -77,10 +96,10 @@ function init() {
         }
 
         initAlpineErrorCollection() {
-            if (!isRequiredVersion('2.8.0', window.Alpine.version) || !window.Alpine.version) {
+            if (!isRequiredVersion('2.8.0', this.alpineVersion) || !this.alpineVersion) {
                 return
             }
-            if (isRequiredVersion('2.8.1', window.Alpine.version)) {
+            if (isRequiredVersion('2.8.1', this.alpineVersion)) {
                 window.addEventListener('error', (errorEvent) => {
                     if (errorEvent.error && errorEvent.error.el && errorEvent.error.expression) {
                         const { el, expression } = errorEvent.error
@@ -131,7 +150,7 @@ function init() {
             })
         }
 
-        discoverComponents() {
+        _registerComponents() {
             const alpineRoots = Array.from(document.querySelectorAll('[x-data]'))
 
             const allComponentsInitialized = Object.values(alpineRoots).every((e) => e.__alpineDevtool)
@@ -160,23 +179,26 @@ function init() {
             this.components = []
 
             alpineRoots.forEach((rootEl, index) => {
-                if (!rootEl.__x) {
+                if (!this.getAlpineDataInstance(rootEl)) {
                     // this component probably crashed during init
                     return
                 }
 
                 if (!rootEl.__alpineDevtool) {
-                    // add an attr to trigger the mutation observer and run this function
-                    // that will send updated state to devtools
-                    rootEl.setAttribute(DEVTOOLS_RENDER_BINDING_ATTR_NAME, 'Date.now()')
+                    if (!this.isV3) {
+                        // only necessary for Alpine v2
+                        // add an attr to trigger the mutation observer and run this function
+                        // that will send updated state to devtools
+                        rootEl.setAttribute(DEVTOOLS_RENDER_BINDING_ATTR_NAME, 'Date.now()')
+                    }
                     rootEl.__alpineDevtool = {
                         id: this.uuid++,
                     }
-                    window[`$x${rootEl.__alpineDevtool.id - 1}`] = rootEl.__x
+                    window[`$x${rootEl.__alpineDevtool.id - 1}`] = this.getAlpineDataInstance(rootEl)
                 }
 
                 if (rootEl.__alpineDevtool.id === this.selectedComponentId) {
-                    this.getComponentData(this.selectedComponentId, rootEl)
+                    this.sendComponentData(this.selectedComponentId, rootEl)
                 }
 
                 const componentDepth =
@@ -211,7 +233,7 @@ function init() {
 
         getAlpineVersion() {
             this._postMessage({
-                version: window.Alpine.version,
+                version: this.alpineVersion,
                 type: BACKEND_TO_PANEL_MESSAGES.SET_VERSION,
             })
         }
@@ -226,8 +248,9 @@ function init() {
             )
         }
 
-        getComponentData(componentId, componentRoot) {
-            const data = Object.entries(componentRoot.__x.getUnobservedData()).reduce((acc, [key, value]) => {
+        sendComponentData(componentId, componentRoot) {
+            const componentData = this.getAlpineData(componentRoot)
+            const data = Object.entries(componentData).reduce((acc, [key, value]) => {
                 acc[key] = serializeDataProperty(value)
 
                 return acc
@@ -247,9 +270,27 @@ function init() {
             }
             this.selectedComponentId = componentId
             this.runWithMutationPaused(() => {
-                Alpine.discoverComponents((component) => {
+                this.discoverComponents((component) => {
                     if (component.__alpineDevtool.id === componentId) {
-                        this.getComponentData(componentId, component)
+                        this.sendComponentData(componentId, component)
+                    }
+                })
+            })
+        }
+
+        discoverComponents(cb) {
+            if (this.isV3) {
+                document.querySelectorAll('[x-data]').forEach(cb)
+            } else {
+                Alpine.discoverComponents(cb)
+            }
+        }
+
+        handleSetComponentData(componentId, attributeSequence, attributeValue) {
+            devtoolsBackend.runWithMutationPaused(() => {
+                this.discoverComponents((component) => {
+                    if (component.__alpineDevtool.id === componentId) {
+                        set(this.getAlpineDataInstance(component), attributeSequence, attributeValue)
                     }
                 })
             })
@@ -353,9 +394,9 @@ function init() {
             }
             case PANEL_TO_BACKEND_MESSAGES.HOVER_COMPONENT: {
                 devtoolsBackend.runWithMutationPaused(() => {
-                    Alpine.discoverComponents((component) => {
+                    devtoolsBackend.discoverComponents((component) => {
                         if (component.__alpineDevtool && component.__alpineDevtool.id === e.data.payload.componentId) {
-                            devtoolsBackend.addHoverElement(component.__x.$el)
+                            devtoolsBackend.addHoverElement(component)
                         }
                     })
                 })
@@ -363,7 +404,7 @@ function init() {
             }
             case PANEL_TO_BACKEND_MESSAGES.HIDE_HOVER: {
                 devtoolsBackend.runWithMutationPaused(() => {
-                    Alpine.discoverComponents((component) => {
+                    devtoolsBackend.discoverComponents((component) => {
                         if (component.__alpineDevtool && component.__alpineDevtool.id === e.data.payload.componentId) {
                             devtoolsBackend.cleanupHoverElement()
                         }
@@ -372,14 +413,11 @@ function init() {
                 break
             }
             case PANEL_TO_BACKEND_MESSAGES.EDIT_ATTRIBUTE: {
-                devtoolsBackend.runWithMutationPaused(() => {
-                    Alpine.discoverComponents((component) => {
-                        if (component.__alpineDevtool.id === e.data.payload.componentId) {
-                            const { attributeSequence, attributeValue } = e.data.payload
-                            set(component.__x.$data, attributeSequence, attributeValue)
-                        }
-                    })
-                })
+                devtoolsBackend.handleSetComponentData(
+                    e.data.payload.componentId,
+                    e.data.payload.attributeSequence,
+                    e.data.payload.attributeValue,
+                )
                 break
             }
             case PANEL_TO_BACKEND_MESSAGES.GET_DATA: {
