@@ -1,4 +1,4 @@
-it('should display read-only function/HTMLElement attributes + allow editing of booleans, numbers and strings', () => {
+it('v2 - should display read-only function/HTMLElement attributes + allow editing of booleans, numbers and strings', () => {
     cy.visit('/').get('[data-testid=component-name]').should('be.visible')
 
     cy.get('[data-testid=component-container]').first().click()
@@ -73,7 +73,7 @@ it('should display read-only function/HTMLElement attributes + allow editing of 
     cy.iframe('#target').contains('Str, type: "string", value: "devtools"')
 })
 
-it('should display nested arrays/object attributes and support editing', () => {
+it('v2 - should display nested arrays/object attributes and support editing', () => {
     cy.visit('/').get('[data-testid=component-name]').should('be.visible')
 
     cy.get('[data-testid=component-name]').first().click().trigger('mouseleave')
@@ -127,7 +127,7 @@ it('should display nested arrays/object attributes and support editing', () => {
     cy.get('[data-testid=data-property-name-0]').click()
 })
 
-it('should support x-model updates and editing values', () => {
+it('v2 - should support x-model updates and editing values', () => {
     cy.visit('/').get('[data-testid=component-name]').should('be.visible')
 
     cy.get('[data-testid=component-name]').contains('model-no-render').click().trigger('mouseleave')
@@ -168,7 +168,7 @@ it('should support x-model updates and editing values', () => {
     cy.iframe('#target').find('[data-testid=nested-model-no-render]').should('have.value', 'nested-from-devtools')
 })
 
-it('should reset component selection when changing page', () => {
+it('v2 - should reset component selection when changing page', () => {
     cy.visit('/')
 
     cy.get('[data-testid=component-name]').first().click()
