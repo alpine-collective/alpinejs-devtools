@@ -45,9 +45,14 @@ function init() {
 
             this._stopMutationObserver = false
             this._lastComponentCrawl = Date.now()
+        }
 
-            this.alpineVersion = window.Alpine.version
-            this.isV3 = isRequiredVersion('3.0.0', this.alpineVersion)
+        get alpineVersion() {
+            return window?.Alpine?.version || ''
+        }
+
+        get isV3() {
+            return isRequiredVersion('3.0.0', this.alpineVersion)
         }
 
         runWithMutationPaused(cb) {
@@ -105,6 +110,7 @@ function init() {
                 return
             }
             if (isRequiredVersion('2.8.1', this.alpineVersion)) {
+                console.log('aaa')
                 window.addEventListener('error', (errorEvent) => {
                     if (errorEvent.error && errorEvent.error.el && errorEvent.error.expression) {
                         const { el, expression } = errorEvent.error
