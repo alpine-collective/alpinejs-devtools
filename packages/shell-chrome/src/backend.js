@@ -110,7 +110,6 @@ function init() {
                 return
             }
             if (isRequiredVersion('2.8.1', this.alpineVersion)) {
-                console.log('aaa')
                 window.addEventListener('error', (errorEvent) => {
                     if (errorEvent.error && errorEvent.error.el && errorEvent.error.expression) {
                         const { el, expression } = errorEvent.error
