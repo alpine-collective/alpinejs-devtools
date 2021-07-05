@@ -31,7 +31,7 @@
         "cypress-iframe": "^1.0.1",
         "edge.js": "^5.2.1",
         "esm": "^3.2.25",
-        "husky": "^5.2.0",
+        "husky": "^7.0.0",
         "linkedom": "^0.9.7",
         "lint-staged": "^11.0.0",
         "prettier": "^2.3.2",
