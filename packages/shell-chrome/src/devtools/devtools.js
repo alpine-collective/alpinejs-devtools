@@ -19,7 +19,10 @@ const themes = {
     },
 }
 
-const breakpoint = 640
+const breakpoints = {
+    md: 640,
+    lg: 960,
+}
 
 let width = window.innerWidth
 const isLargerThanBreakpoint = (minWidth) => {
@@ -30,7 +33,18 @@ const isLargerThanBreakpoint = (minWidth) => {
     return width > minWidth
 }
 
-const getOrientation = () => (isLargerThanBreakpoint(breakpoint) ? 'landscape' : 'portrait')
+const getOrientation = () => (isLargerThanBreakpoint(breakpoints.lg) ? 'landscape' : 'portrait')
+const getBreakpoint = () => {
+    if (isLargerThanBreakpoint(breakpoints.lg)) {
+        return 'lg'
+    }
+
+    if (isLargerThanBreakpoint(breakpoints.md)) {
+        return 'md'
+    }
+
+    return 'sm'
+}
 
 export default function devtools() {
     return {
@@ -46,6 +60,7 @@ export default function devtools() {
         loadingText: 'Alpine.js tools loading',
 
         orientation: getOrientation(),
+        breakpoint: getBreakpoint(),
         split: null,
 
         themes: themes,
@@ -125,7 +140,7 @@ export default function devtools() {
             })
 
             this.$watch('orientation', () => {
-                this.initSplitPanes()
+                this.$nextTick(this.initSplitPanes())
             })
         },
 
@@ -140,7 +155,7 @@ export default function devtools() {
                 minSize: this.isLandscape ? 250 : 150,
                 snapOffset: 0,
             }
-            const key = this.isLandscape ? 'columnGutters' : 'rowGutters'
+            const key = this.breakpoint !== 'sm' ? 'columnGutters' : 'rowGutters'
 
             this.$nextTick(() => {
                 splitOptions[key] = [
@@ -158,6 +173,7 @@ export default function devtools() {
             return {
                 ['@resize.window.debounce.100']() {
                     this.orientation = getOrientation()
+                    this.breakpoint = getBreakpoint()
                 },
             }
         },

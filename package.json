@@ -44,7 +44,6 @@
         "tailwindcss": "^2.1.4",
         "uvu": "^0.5.1"
     },
-    "dependencies": {},
     "husky": {
         "hooks": {
             "pre-commit": "lint-staged"

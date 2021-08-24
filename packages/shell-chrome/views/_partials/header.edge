@@ -2,11 +2,22 @@
     :class="{
         'bg-gray-100': !showTools,
         [theme['bg-header']]: showTools,
+        'flex-col w-48 min-h-0 overflow-y-auto': orientation === 'landscape',
+        'flex-row items-center pl-3 pr-1 xs:pr-3': orientation === 'portrait',
     }"
-    class="{{ devOnly ? '' : 'py-2' }} flex items-center h-15 pl-3 pr-1 xs:pr-3 text-base tracking-tight font-bold text-white border-b border-gray-300 transition duration-700 transition-colors ease-in-out"
+    class="flex h-15 py-px text-base tracking-tight font-bold text-white border-b border-gray-300 transition duration-700 transition-colors ease-in-out"
 >
-    <div class="flex-1">
-        <div class="flex items-center">
+    <div 
+        :class="{
+            'flex-1': orientation === 'portrait',
+        }"
+    >
+        <div
+        :class="{
+            'flex-col px-3 py-2': orientation === 'landscape',
+            'items-center': orientation === 'portrait',
+        }"
+        class="flex">
             <svg
                 class="w-10 h-10 mr-3"
                 xmlns="http://www.w3.org/2000/svg"
@@ -56,10 +67,11 @@
 
     <div
         :class="{
-        'opacity-0': !showTools,
-    }"
-        class="flex items-center text-sm text-ice-500 xs:space-x-3 pb-px transition"
-        style="line-height: 3.25rem"
+            'opacity-0': !showTools,
+            'flex-col pr-px leading-[3rem]': orientation === 'landscape',
+            'flex-row items-center pb-px leading-[3.25rem] xs:space-x-3': orientation === 'portrait',
+        }"
+        class="flex text-sm text-ice-500 transition"
     >
         @set('iconClasses', 'inline-block w-6 h-6 xs:w-5 xs:h-5 xs:mr-0.5 xs:opacity-50')
         @component('_components/tab-link', { tab: 'components' })
