@@ -17,23 +17,29 @@
 
         <div id="app" class="h-full" x-cloak x-data="devtools()" x-init="init()" x-spread="devtoolsRootDirectives()">
             <div class="bg-white flex flex-col relative h-full w-full mx-auto">
-                @include('_partials/header')
+                <div
+                    :class="{
+                        'flex-col': orientation === 'portrait',
+                    }"
+                    class="flex-1 min-h-0 flex"
+                >
+                    @include('_partials/header')
 
-                <div x-show="activeTab === 'components'" class="flex-1 overflow-hidden">
-                    @include('_partials/tabs/components')
-                </div>
-
-                @if(devOnly)
-                    <div x-show="activeTab === 'events'" class="flex-1">
-                        <div class="flex h-full items-center justify-center text-gray-400 uppercase bg-gray-50">
-                            Events Tab
-                        </div>
+                    <div x-show="activeTab === 'components'" class="flex-1 overflow-hidden">
+                        @include('_partials/tabs/components')
                     </div>
 
-                @endif
+                    @if(devOnly)
+                        <div x-show="activeTab === 'events'" class="flex-1">
+                            <div class="flex h-full items-center justify-center text-gray-400 uppercase bg-gray-50">
+                                Events Tab
+                            </div>
+                        </div>
+                    @endif
 
-                <div x-show="activeTab === 'warnings'" class="flex-1 overflow-hidden">
-                    @include('_partials/tabs/warnings')
+                    <div x-show="activeTab === 'warnings'" class="flex-1 overflow-hidden">
+                        @include('_partials/tabs/warnings')
+                    </div>
                 </div>
 
                 @include('_partials/footer')
