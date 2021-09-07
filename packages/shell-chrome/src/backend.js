@@ -70,13 +70,19 @@ function init() {
 
         getAlpineDataInstance(node) {
             if (this.isV3) {
-                return node._x_dataStack[0]
+                return node._x_dataStack?.[0]
             }
             return node.__x
         }
 
         getReadOnlyAlpineData(node) {
             const alpineDataInstance = this.getAlpineDataInstance(node)
+            if (!alpineDataInstance) {
+                if (process.env.NODE_ENV !== 'production') {
+                    console.warn('element has no dataStack', node)
+                }
+                return
+            }
             if (this.isV3) {
                 // in v3 magics are registered on the data stack
                 return Object.fromEntries(Object.entries(alpineDataInstance).filter(([key]) => !key.startsWith('$')))
@@ -276,11 +282,15 @@ function init() {
 
         sendComponentData(componentId, componentRoot) {
             const componentData = this.getReadOnlyAlpineData(componentRoot)
+
+            if (!componentData) return
+
             const data = Object.entries(componentData).reduce((acc, [key, value]) => {
                 acc[key] = serializeDataProperty(value)
 
                 return acc
             }, {})
+
             this._postMessage({
                 type: BACKEND_TO_PANEL_MESSAGES.SET_DATA,
                 componentId,
