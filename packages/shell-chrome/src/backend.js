@@ -77,7 +77,12 @@ function init() {
 
         getReadOnlyAlpineData(node) {
             const alpineDataInstance = this.getAlpineDataInstance(node)
-            if (!alpineDataInstance) return
+            if (!alpineDataInstance) {
+                if (process.env.NODE_ENV !== 'production') {
+                    console.warn('element has no dataStack', node)
+                }
+                return
+            }
             if (this.isV3) {
                 // in v3 magics are registered on the data stack
                 return Object.fromEntries(Object.entries(alpineDataInstance).filter(([key]) => !key.startsWith('$')))

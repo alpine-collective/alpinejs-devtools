@@ -121,5 +121,17 @@
         <div>
             <a data-testid="navigation-target" href="/navigation-target.html">Go to next page</a>
         </div>
+
+        <h3>Manual test</h3>
+        <p>
+            Can't reproduce
+            <a href="https://github.com/alpinejs/alpine/discussions/1952"
+                >https://github.com/alpinejs/alpine/discussions/1952</a
+            >
+        </p>
+        <div x-data @focus-input.window="$refs.searchInput.focus()">
+            <input x-ref="searchInput" />
+        </div>
+        <button onclick="document.dispatchEvent(new CustomEvent('focus-input'))">Click</button>
     </body>
 </html>
