@@ -34,7 +34,7 @@
         "husky": "^5.2.0",
         "linkedom": "^0.11.2",
         "lint-staged": "^11.1.2",
-        "prettier": "^2.3.2",
+        "prettier": "^2.4.0",
         "rollup": "^2.56.3",
         "rollup-plugin-copy": "^3.4.0",
         "rollup-plugin-filesize": "^9.1.1",
