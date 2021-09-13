@@ -6,6 +6,10 @@ on:
     branches:
       - master
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 jobs:
   build:
 
@@ -13,17 +17,13 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [22.x]
 
     env:
       CI: true
 
     steps:
-    - name: Cancel Previous Runs
-      uses: styfle/cancel-workflow-action@0.6.0
-      with:
-        access_token: ${{ github.token }}
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
@@ -35,7 +35,7 @@ jobs:
     - name: build
       run: npm run package
     - name: Archive production artifacts
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v4
       with:
         name: alpine-devtools
         path: dist
@@ -44,7 +44,7 @@ jobs:
     - name: check formatting
       run: npm run format
     - name: Commit changes
-      uses: stefanzweifel/git-auto-commit-action@v4
+      uses: stefanzweifel/git-auto-commit-action@v5
       with:
         commit_message: Apply formatting changes
     # see https://github.com/bahmutov/cypress-gh-action-split-install
@@ -53,13 +53,13 @@ jobs:
     # see https://github.com/actions/cache
     - name: Cache Cypress
       id: cache-cypress
-      uses: actions/cache@v1
+      uses: actions/cache@v4
       with:
         path: ~/.cache/Cypress
         key: cypress-cache-v1-${{ runner.os }}-${{ hashFiles('**/package.json') }}
     # install Cypress binary
     - run: npx cypress install && npx cypress cache list
-    - uses: cypress-io/github-action@v2
+    - uses: cypress-io/github-action@v6
       with:
         start: npm run start:ci
         command: npm run cy:run

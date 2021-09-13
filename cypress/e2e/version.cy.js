@@ -1,4 +1,4 @@
-const { AlpineVersion } = require('../support/index')
+const { AlpineVersion } = require('../support/e2e')
 
 function overrideAlpineVersion(win, versionToOverride = undefined) {
     const postMessage = win.postMessage.bind(win)

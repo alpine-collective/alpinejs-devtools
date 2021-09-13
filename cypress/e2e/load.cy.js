@@ -1,4 +1,4 @@
-const { AlpineVersion } = require('../support/index')
+const { AlpineVersion } = require('../support/e2e')
 it('should load devtools', () => {
     cy.visit('/')
         // panel pre-Alpine loaded state
