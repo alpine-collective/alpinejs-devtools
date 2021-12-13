@@ -35,7 +35,7 @@
         "linkedom": "^0.13.0",
         "lint-staged": "^12.1.1",
         "prettier": "^2.4.1",
-        "rollup": "^2.60.0",
+        "rollup": "^2.61.1",
         "rollup-plugin-copy": "^3.4.0",
         "rollup-plugin-filesize": "^9.1.1",
         "rollup-plugin-postcss": "^4.0.1",
