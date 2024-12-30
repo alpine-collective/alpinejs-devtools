@@ -33,7 +33,7 @@
         "esm": "^3.2.25",
         "husky": "^5.2.0",
         "linkedom": "^0.14.4",
-        "lint-staged": "^12.3.5",
+        "lint-staged": "^15.3.0",
         "prettier": "^2.5.1",
         "rollup": "^2.70.0",
         "rollup-plugin-copy": "^3.4.0",
