@@ -15,3 +15,6 @@ updates:
         dependency-type: "production"
     ignore:
       - dependency-name: "alpinejs"
+      - dependency-name: "tailwindcss"
+      - dependency-name: "rollup"
+      - dependency-name: "edge.js"
