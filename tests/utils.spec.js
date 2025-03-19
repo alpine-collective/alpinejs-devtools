@@ -1,16 +1,13 @@
-import { suite } from 'uvu'
-import * as assert from 'uvu/assert'
+import assert from 'node:assert/strict'
+import test from 'node:test'
 import { parseHTML } from 'linkedom'
-import { isRequiredVersion, getComponentName } from '../packages/shell-chrome/src/utils'
+import { isRequiredVersion, getComponentName } from '../packages/shell-chrome/src/utils.js'
 
-const ComponentNameTest = suite('getComponentName')
-
-ComponentNameTest('can handle multiple scenarios to determine component name', async () => {
+test('getComponentName - can handle multiple scenarios to determine component name', async () => {
     const { document, window } = parseHTML(
         `<div x-title="foo" x-id="bar" id="baz" name="qux" aria-label="quux" x-data="myFn(param)" role="quuz"></div>`,
     )
     window.myFn = () => {}
-
     const element = document.querySelector('[x-data]')
 
     assert.equal(getComponentName(element), 'foo')
@@ -30,25 +27,22 @@ ComponentNameTest('can handle multiple scenarios to determine component name', a
     assert.equal(getComponentName(element), 'div')
 })
 
-ComponentNameTest.run()
-
-const RequiredVersionTest = suite('isRequiredVersion')
-
-RequiredVersionTest('works for major', () => {
+test('isRequiredVersion - works for major version', () => {
     assert.equal(isRequiredVersion('1.11.0', '2.1.1'), true)
     assert.equal(isRequiredVersion('2.11.0', '0.1.1'), false)
 })
-RequiredVersionTest('works for minor', () => {
+
+test('isRequiredVersion - works for minor version', () => {
     assert.equal(isRequiredVersion('1.1.1', '1.11.0'), true)
     assert.equal(isRequiredVersion('1.11.0', '1.1.1'), false)
 })
-RequiredVersionTest('works for patch', () => {
+
+test('isRequiredVersion - works for patch version', () => {
     assert.equal(isRequiredVersion('0.11.0', '0.11.1'), true)
     assert.equal(isRequiredVersion('0.1.1', '0.1.0'), false)
 })
-RequiredVersionTest('works for equal', () => {
+
+test('isRequiredVersion - works for equal version', () => {
     assert.equal(isRequiredVersion('2.8.0', '2.8.0'), true)
     assert.equal(isRequiredVersion('1.1.0', '1.1.0'), true)
 })
-
-RequiredVersionTest.run()

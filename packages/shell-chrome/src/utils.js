@@ -1,4 +1,4 @@
-import { ADDED_ATTRIBUTES } from './constants'
+import { ADDED_ATTRIBUTES } from './constants.js'
 
 export function fetchWithTimeout(resource, options) {
     const { timeout = 3000 } = options
