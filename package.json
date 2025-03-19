@@ -23,7 +23,7 @@
     "devDependencies": {
         "@rollup/plugin-node-resolve": "16.0.1",
         "@rollup/plugin-replace": "6.0.2",
-        "@tailwindcss/forms": "^0.3.3",
+        "@tailwindcss/forms": "^0.5.10",
         "@tailwindcss/jit": "^0.1.18",
         "alpinejs": "^2.8.2",
         "cypress": "14.2.0",
