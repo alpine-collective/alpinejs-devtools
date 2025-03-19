@@ -5,7 +5,7 @@ import resolve from '@rollup/plugin-node-resolve'
 import postcss from 'rollup-plugin-postcss'
 import serve from 'rollup-plugin-serve'
 import pkg from './package.json'
-import { dependencies } from './package-lock.json'
+import { packages as dependencies } from './package-lock.json'
 import { renderPanel, watch } from './packages/build/index'
 
 renderPanel()
@@ -46,7 +46,7 @@ export default [
         plugins: [
             replace({
                 preventAssignment: true,
-                __alpine_version__: dependencies.alpinejs.version,
+                __alpine_version__: dependencies['node_modules/alpinejs'].version,
                 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
             }),
             resolve(),
@@ -59,7 +59,7 @@ export default [
         plugins: [
             replace({
                 preventAssignment: true,
-                __alpine_version__: dependencies.alpinejs.version,
+                __alpine_version__: dependencies['node_modules/alpinejs'].version,
                 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
             }),
             resolve(),
