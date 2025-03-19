@@ -13,8 +13,8 @@ Alpine.js devtools is a simple extension to help you debug [Alpine.js](https://g
 
 ## Installation
 
--   [Get the Chrome Extension](https://chrome.google.com/webstore/detail/alpinejs-devtools/fopaemeedckajflibkpifppcankfmbhk)
--   [Get the Firefox Extension](https://addons.mozilla.org/firefox/addon/alpinejs-devtools/)
+- [Get the Chrome Extension](https://chrome.google.com/webstore/detail/alpinejs-devtools/fopaemeedckajflibkpifppcankfmbhk)
+- [Get the Firefox Extension](https://addons.mozilla.org/firefox/addon/alpinejs-devtools/)
 
 **Note:** if you are using Google Chrome, Alpine.js devtools will not work with local files unless you configure the extension to be allowed `Access to File URLs`.
 
@@ -37,8 +37,8 @@ Unlike other frameworks, Alpine does not include named components. Therefore by 
 
 ### Prerequisites
 
--   Node ^14.x
--   npm ^6.x
+- Node ^22.x
+- npm ^10.x
 
 ### Chrome
 
@@ -73,12 +73,12 @@ Note that when using the simulator all Chrome/Firefox devtools/Extension APIs ar
 
 We have 2 levels of tests in the project:
 
--   unit tests in [./tests](./tests), written and run with `node:test`
-    -   The command to run them is `npm test`.
--   E2E tests that run against the devtools simulator, in [./cypress](./cypress), using [Cypress](https://cypress.io).
-    -   The command to run Cypress tests is `npm run cy:run`
-    -   The command to open the Cypress UI is `npm run cy:open`
-    -   **Note** in order to run any Cypress tests, you'll need the simulator running (see [Running the Alpine.js devtools simulator](#running-the-alpinejs-devtools-simulator)).
+- unit tests in [./tests](./tests), written and run with `node:test`
+    - The command to run them is `npm test`.
+- E2E tests that run against the devtools simulator, in [./cypress](./cypress), using [Cypress](https://cypress.io).
+    - The command to run Cypress tests is `npm run cy:run`
+    - The command to open the Cypress UI is `npm run cy:open`
+    - **Note** in order to run any Cypress tests, you'll need the simulator running (see [Running the Alpine.js devtools simulator](#running-the-alpinejs-devtools-simulator)).
 
 ### Formatting/Linting
 
