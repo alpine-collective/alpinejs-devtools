@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
+    // this isn't strictly right, not all the .ts files will have access to Chrome APIs
+    "types": ["vite/client", "@types/chrome"],
+    "noEmit": true,
+    "skipLibCheck": true,
+    "noUnusedLocals": true,
+    "isolatedModules": true,
+    "allowJs": true,
+    "checkJs": false
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "name": "Alpine.js devtools - Early Access",
+  "description": "DevTools extension for debugging Alpine.js applications.",
+  "version": "2.0.0",
+  "manifest_version": 3,
+  "icons": {
+    "16": "icons/16.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  },
+  "permissions": ["scripting"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "devtools_page": "devtools-background.html",
+  "web_accessible_resources": [
+    {
+      "resources": ["index.html", "devtools-background.html", "backend.js", "detector.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "action": {
+    "default_icon": "alpine_extension_grey.png",
+    "default_title": "Alpine.js devtools",
+    "default_popup": "popups/not-found.html"
+  },
+  "host_permissions": ["http://*/*", "https://*/*", "file:///*"]
+}

@@ -12,13 +12,15 @@ export function watch({ assetsDir, viewsDir, outputDir }) {
         }
     })
 
-    fs.watch(viewsDir, { recursive: true }, (_event, filename) => {
-        try {
-            console.info(`View "${filename}" updated. Rendering panel to ${outputDir}`)
+    if (viewsDir) {
+        fs.watch(viewsDir, { recursive: true }, (_event, filename) => {
+            try {
+                console.info(`View "${filename}" updated. Rendering panel to ${outputDir}`)
 
-            renderPanel()
-        } catch (e) {
-            console.error(e)
-        }
-    })
+                renderPanel()
+            } catch (e) {
+                console.error(e)
+            }
+        })
+    }
 }

@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- configured in rollup.config.js -->
+    <link rel="stylesheet" href="./styles.css" />
+    <style>
+      /* use a style on #app so that it's applied in the extension but not when using the simulator */
+      #app {
+        height: 100vh;
+      }
+    </style>
+  </head>
+
+  <body class="antialiased">
+    <div id="app" class="h-full">Devtools loading...</div>
+    <script src="./panel.js"></script>
+  </body>
+</html>
