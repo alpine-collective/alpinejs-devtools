@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <!-- configured in rollup.config.js -->
+        <link rel="stylesheet" href="./styles.css" />
+        <style>
+            /* use a style on #app so that it's applied in the extension but not when using the simulator */
+            #app {
+                height: 100vh;
+            }
+        </style>
+    </head>
+
+    <body class="antialiased">
+        <!-- <div x-data x-show="false" class="preload">Devtools loading...</div> -->
+
+        <div id="app" class="h-full" x-data="devtools()" x-init="init()" x-spread="devtoolsRootDirectives()">
+            Devtools loading...
+            <div class="bg-white flex flex-col relative h-full w-full mx-auto">
+                <div
+                    :class="{
+                        'flex-col': orientation === 'portrait',
+                    }"
+                    class="flex-1 min-h-0 flex"
+                >
+                    @include('_partials/header')
+
+                    <div x-show="activeTab === 'components'" class="flex-1 overflow-hidden">
+                        @include('_partials/tabs/components')
+                    </div>
+
+                    @if(devOnly)
+                        <div x-show="activeTab === 'events'" class="flex-1">
+                            <div class="flex h-full items-center justify-center text-gray-400 uppercase bg-gray-50">
+                                Events Tab
+                            </div>
+                        </div>
+                    @endif
+
+                    <div x-show="activeTab === 'warnings'" class="flex-1 overflow-hidden">
+                        @include('_partials/tabs/warnings')
+                    </div>
+                </div>
+
+                @include('_partials/footer')
+
+                @include('_partials/settings')
+            </div>
+        </div>
+        <script src="./panel.js"></script>
+        <!-- <script src="./alpine.js"></script> -->
+    </body>
+</html>
