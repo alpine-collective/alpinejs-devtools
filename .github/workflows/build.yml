@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - master
+      - devtools-early-access
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -29,10 +30,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - name: install
-      run: npm ci
+      run: npm ci && npm --prefix=packages/shell-chrome-v3 ci
       env:
         CYPRESS_INSTALL_BINARY: "0"
     - name: build
+      # need npm run because we have shell commands inside this script
       run: npm run package
     - name: Archive production artifacts
       uses: actions/upload-artifact@v4
@@ -40,9 +42,11 @@ jobs:
         name: alpine-devtools
         path: dist
     - name: unit tests
-      run: npm t
+      run: node --run test
+    - name: typecheck
+      run: node --run typecheck
     - name: check formatting
-      run: npm run format
+      run: node --run format
     - name: Commit changes
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
@@ -59,8 +63,16 @@ jobs:
         key: cypress-cache-v1-${{ runner.os }}-${{ hashFiles('**/package.json') }}
     # install Cypress binary
     - run: npx cypress install && npx cypress cache list
-    - uses: cypress-io/github-action@v6
+    # - name: Devtools@v2 E2E
+    #   uses: cypress-io/github-action@v6
+    #   with:
+    #     start: node --run start
+    #     command: node --run cy:run
+    #     working-directory: packages/shell-chrome-v3
+    #     install: false
+    - name: Devtools@v1 E2E
+      uses: cypress-io/github-action@v6
       with:
-        start: npm run start:ci
-        command: npm run cy:run
+        start: node --run start:ci
+        command: node --run cy:run
         install: false

@@ -5,19 +5,22 @@
     "description": "DevTools extension for debugging Alpine.js applications.",
     "homepage": "https://github.com/alpine-collective/alpinejs-devtools",
     "scripts": {
+        "bootstrap": "npm i && npm --prefix=packages/shell-chrome-v3 i",
         "start": "rollup -c -w",
         "dev": "npm start",
         "start:ci": "ROLLUP_SERVE=true rollup -c",
         "build:dev": "rollup -c",
-        "build": "NODE_ENV=production rollup -c",
+        "build": "NODE_ENV=production rollup -c && npm --prefix packages/shell-chrome-v3 run build",
         "watch": "npm start",
         "test": "node --test tests/*",
         "cy:run": "cypress run",
         "cy:open": "cypress open",
-        "format": "prettier './{packages/**/,cypress/**/*,lib/}*.{js,html,css}' --write",
-        "check:format": "prettier './{packages/**/,cypress/**/*,}*.{js,html,css}' -c",
+        "format": "prettier './{packages/**/,cypress/**/*,lib/}*.{js,ts,tsx,html,css}' --write",
+        "check:format": "prettier './{packages/**/,cypress/**/*,}*.{js,ts,tsx,html,css}' -c",
+        "typecheck": "npm --prefix packages/shell-chrome-v3 run typecheck",
         "prepackage": "npm run build",
-        "package": "cd ./dist/chrome && zip -r ../alpine-devtools-$npm_package_version.zip . && rm -rf ../chrome"
+        "package": "cd ./dist/chrome && zip -r ../alpine-devtools-$npm_package_version.zip .",
+        "postpackage": "cd ./dist/shell-chrome-v3 && zip -r ../alpine-devtools-v2.zip ."
     },
     "license": "MIT",
     "devDependencies": {
@@ -26,12 +29,12 @@
         "@tailwindcss/forms": "^0.3.3",
         "@tailwindcss/jit": "^0.1.18",
         "alpinejs": "^2.8.2",
-        "cypress": "14.2.1",
+        "cypress": "14.3.2",
         "cypress-iframe": "^1.0.1",
         "edge.js": "^5.3.3",
         "husky": "9.1.7",
-        "linkedom": "0.18.9",
-        "lint-staged": "15.5.0",
+        "linkedom": "0.18.10",
+        "lint-staged": "15.5.1",
         "prettier": "3.5.3",
         "rollup": "^2.70.0",
         "rollup-plugin-copy": "3.5.0",
@@ -47,6 +50,6 @@
         }
     },
     "lint-staged": {
-        "*.{js,css,md,html}": "prettier --write"
+        "*.{js,ts,tsx,css,md,html,json}": "prettier --write"
     }
 }
