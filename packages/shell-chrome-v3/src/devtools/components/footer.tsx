@@ -1,9 +1,10 @@
 import { createSignal } from 'solid-js';
-import { componentsValue, state } from '../state';
+import { componentsValue, state, storesValue } from '../state';
 
-export function Footer() {
-  const [_activeTab, setActiveTab] = createSignal('components');
-
+interface FooterProps {
+  setActiveTab: Function;
+}
+export function Footer({ setActiveTab }: FooterProps) {
   const [settingsPanelEnabled, _setSettingsPanelEnabled] = createSignal(false);
   const [_settingsPanelOpen, setSettingsPanelOpen] = createSignal(false);
 
@@ -24,18 +25,29 @@ export function Footer() {
               >
                 {componentsValue().length} {componentsValue().length !== 1 ? 'components' : 'component'}
               </a>
+              ,&nbsp;
+              <a
+                href="#"
+                data-testid="footer-stores-link"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setActiveTab('stores');
+                }}
+              >
+                {storesValue().length} {storesValue().length !== 1 ? 'stores' : 'component'}
+              </a>
               {/* ,&nbsp;
-                            <a
-                                href="#"
-                                data-testid="footer-warnings-link"
-                                onClick={(e) => {
-                                    e.preventDefault()
-                                    setActiveTab('warnings')
-                                }}
-                                class={errors().length > 0 ? 'text-red-400' : ''}
-                            >
-                                {errors().length} {errors().length !== 1 ? 'warnings' : 'warning'}
-                            </a> */}
+                <a
+                    href="#"
+                    data-testid="footer-warnings-link"
+                    onClick={(e) => {
+                        e.preventDefault()
+                        setActiveTab('warnings')
+                    }}
+                    class={errors().length > 0 ? 'text-red-400' : ''}
+                >
+                    {errors().length} {errors().length !== 1 ? 'warnings' : 'warning'}
+                </a> */}
             </div>
           </div>
 

@@ -40,16 +40,18 @@ function serializeDataProperty(value) {
   };
 }
 
-function init() {
+export function init(forceStart = false) {
   class AlpineDevtoolsBackend {
     constructor() {
       this.components = [];
+      this.stores = [];
       this.uuid = 1;
       this.hoverElement = null;
       this.observer = null;
       this.errorElements = [];
       this.errorSourceId = 1;
       this.selectedComponentId = null;
+      this.selectedStoreName = null;
 
       this._stopMutationObserver = false;
       this._lastComponentCrawl = Date.now();
@@ -61,6 +63,14 @@ function init() {
 
     get isV3() {
       return isRequiredVersion('3.0.0', this.alpineVersion);
+    }
+
+    /**
+     * Can we use `Alpine.$data($rootEl)`?
+     * Introduced in 3.8.0
+     */
+    get hasAlpineDataFn() {
+      return isRequiredVersion('3.8.0', this.alpineVersion);
     }
 
     runWithMutationPaused(cb) {
@@ -94,8 +104,9 @@ function init() {
       if (this.isV3) {
         // in v3 magics are registered on the data stack
         return Object.fromEntries(Object.entries(alpineDataInstance).filter(([key]) => !key.startsWith('$')));
+      } else {
+        return alpineDataInstance?.getUnobservedData();
       }
-      return alpineDataInstance && alpineDataInstance.getUnobservedData();
     }
 
     getWriteableAlpineData(node) {
@@ -264,11 +275,31 @@ function init() {
         });
       });
 
+      this.stores = Object.keys(this.alpineStoreMagic);
+
+      if (this.hasAlpineDataFn) {
+        Alpine.effect(() => {
+          Object.keys(this.alpineStoreMagic).forEach((storeName) => {
+            if (storeName === this.selectedStoreName) {
+              this.sendStoreData(this.selectedStoreName || storeName, this.alpineStoreMagic);
+            }
+          });
+        });
+      }
+
       this._postMessage({
         components: this.components,
+        stores: this.stores,
         url: btoa(window.location.href),
-        type: BACKEND_TO_PANEL_MESSAGES.SET_COMPONENTS,
+        type: BACKEND_TO_PANEL_MESSAGES.SET_COMPONENT_AND_STORES,
       });
+    }
+
+    get alpineStoreMagic() {
+      if (this.hasAlpineDataFn) {
+        return Alpine.$data(document.querySelector('[x-data]')).$store;
+      }
+      return {};
     }
 
     getAlpineVersion() {
@@ -306,6 +337,23 @@ function init() {
       });
     }
 
+    sendStoreData(selectedStoreName, $store) {
+      const store = $store[selectedStoreName];
+      const storeData =
+        typeof store === 'object'
+          ? Object.entries(store).reduce((acc, [key, value]) => {
+              acc[key] = serializeDataProperty(value);
+
+              return acc;
+            }, {})
+          : { __root_value: serializeDataProperty(store) };
+      this._postMessage({
+        type: BACKEND_TO_PANEL_MESSAGES.SET_STORE_DATA,
+        storeName: selectedStoreName,
+        storeData: JSON.stringify(storeData),
+      });
+    }
+
     handleGetComponentData(componentId) {
       if (this.selectedComponentId === componentId) {
         // component already loaded
@@ -320,6 +368,18 @@ function init() {
           }
         });
       });
+    }
+
+    handleGetStoreData(storeName) {
+      if (this.selectedStoreName === storeName) {
+        // store data already loaded
+        // any changes to the store's data will be picked up by the mutation observer
+        return;
+      }
+      this.selectedStoreName = storeName;
+      if (this.hasAlpineDataFn) {
+        this.sendStoreData(storeName, this.alpineStoreMagic);
+      }
     }
 
     discoverComponents(cb) {
@@ -338,6 +398,15 @@ function init() {
           }
         });
       });
+    }
+    handleSetStoreData(storeName, attributeSequence, attributeValue) {
+      if (this.hasAlpineDataFn) {
+        if (typeof this.alpineStoreMagic[storeName] === 'object') {
+          set(this.alpineStoreMagic[storeName], attributeSequence, attributeValue);
+        } else {
+          this.alpineStoreMagic[storeName] = attributeValue;
+        }
+      }
     }
 
     observeNode(node) {
@@ -394,6 +463,11 @@ function init() {
   }
   // using a function scope to avoid running into issues on re-injection
   const devtoolsBackend = new AlpineDevtoolsBackend();
+  if (forceStart) {
+    waitForAlpine(() => {
+      devtoolsBackend.start();
+    });
+  }
   window.addEventListener('message', handshake);
 
   function handshake(e) {
@@ -462,8 +536,22 @@ function init() {
         );
         break;
       }
+
+      case PANEL_TO_BACKEND_MESSAGES.EDIT_STORE_ATTRIBUTE: {
+        devtoolsBackend.handleSetStoreData(
+          e.data.payload.storeName,
+          e.data.payload.attributeSequence,
+          e.data.payload.attributeValue,
+        );
+        break;
+      }
       case PANEL_TO_BACKEND_MESSAGES.GET_DATA: {
         devtoolsBackend.handleGetComponentData(e.data.payload.componentId);
+        break;
+      }
+
+      case PANEL_TO_BACKEND_MESSAGES.GET_STORE_DATA: {
+        devtoolsBackend.handleGetStoreData(e.data.payload.storeName);
         break;
       }
     }

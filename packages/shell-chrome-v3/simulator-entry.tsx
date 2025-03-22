@@ -58,7 +58,7 @@ async function main() {
   // 1. load user app
   const targetPath = new URL(window.location.href).searchParams.get('target');
   // @ts-expect-error
-  target.src = targetPath || './example.html';
+  target.src = targetPath || './v3.html';
   // @ts-expect-error
   target.onload = () => {
     // 1. inject backend script to "target" iframe

@@ -22,7 +22,7 @@ const resetPortsForTab = (tabId: number) => {
 chrome.runtime.onConnect.addListener(async (port) => {
   let tabId;
   if (port.name === CONTENT) {
-    console.log('Content script requested connection');
+    console.log('[alpine-devtools] content script requested connection');
 
     let disconnected = false;
     const contentTabId = port.sender?.tab?.id;
@@ -30,7 +30,7 @@ chrome.runtime.onConnect.addListener(async (port) => {
       if (disconnected) {
         return;
       }
-      console.log(`(${port.name}, tabId: ${contentTabId}) -> background: `, message);
+      console.log(`[alpine-devtools] (${port.name}, tabId: ${contentTabId}) -> background: `, message);
       if (message.type === CONTENT_TO_BACKGROUND_MESSAGES.ALPINE_DETECTED && message.alpineDetected && contentTabId) {
         chrome.action.setIcon({
           tabId: contentTabId,
@@ -42,7 +42,7 @@ chrome.runtime.onConnect.addListener(async (port) => {
         });
         chrome.action.setPopup({
           tabId: contentTabId,
-          popup: `popups/enabled.html`,
+          popup: 'popups/enabled.html',
         });
       }
     }
@@ -56,7 +56,7 @@ chrome.runtime.onConnect.addListener(async (port) => {
   if (isInspector(port)) {
     // this is a devtools tab creating a connection
     tabId = inspectorPortNameToTabId(port.name);
-    console.log(`Injecting proxy for tabId ${tabId}`);
+    console.log(`[alpine-devtools] injecting proxy for tabId "${tabId}"`);
     await chrome.scripting.executeScript({
       target: { tabId: tabId },
       files: ['./proxy.js'],
@@ -66,7 +66,12 @@ chrome.runtime.onConnect.addListener(async (port) => {
   } else {
     tabId = port.sender?.tab?.id;
     if (port.name !== PROXY) {
-      console.warn('Received onConnect from ', port.name, ' not initialising a devtools <-> backend, tabId: ', tabId);
+      console.warn(
+        '[alpine-devtools] Received onConnect from ',
+        port.name,
+        ' not initialising a devtools <-> backend, tabId: ',
+        tabId,
+      );
       return;
     }
     if (tabId) {
@@ -74,7 +79,7 @@ chrome.runtime.onConnect.addListener(async (port) => {
       initPortsForTab(tabId);
       ports[tabId].backend = port;
     } else {
-      console.warn('Sender not defined, not initialising port ', port.name);
+      console.warn('[alpine-devtools] sender not defined, not initialising port ', port.name);
     }
   }
   if (tabId && ports[tabId].devtools && ports[tabId].backend) {
@@ -87,25 +92,19 @@ chrome.runtime.onConnect.addListener(async (port) => {
  * For each tab, 2-way forward messages, devtools <-> backend.
  */
 function doublePipe(tabId: number, devtools: chrome.runtime.Port, backend: chrome.runtime.Port) {
-  console.log(devtools.name, backend.name);
+  console.log('[alpine-devtools] starting double pipe, devtools:', devtools.name, 'backend: ', backend.name);
   devtools.onMessage.addListener(lOne);
   function lOne(message: any) {
-    if (message.event === 'log') {
-      return console.log(`tab ${tabId}`, message.payload);
-    }
-    console.log('devtools -> backend', message);
+    console.log('[alpine-devtools] devtools -> backend', message);
     backend.postMessage(message);
   }
   backend.onMessage.addListener(lTwo);
   function lTwo(message: any) {
-    if (message.event === 'log') {
-      return console.log(`tab ${tabId}`, message.payload);
-    }
-    console.log(`${tabId} backend -> devtools`, message);
+    console.log(`[alpine-devtools] "${tabId}" backend -> devtools`, message);
     devtools.postMessage(message);
   }
   function shutdown() {
-    console.log(`tab ${tabId} disconnected.`);
+    console.log(`[alpine-devtools] tab "${tabId}" disconnected.`);
     devtools.onMessage.removeListener(lOne);
     backend.onMessage.removeListener(lTwo);
     devtools.disconnect();
@@ -114,5 +113,5 @@ function doublePipe(tabId: number, devtools: chrome.runtime.Port, backend: chrom
   }
   devtools.onDisconnect.addListener(shutdown);
   backend.onDisconnect.addListener(shutdown);
-  console.log(`tab ${tabId} connected.`);
+  console.log(`[alpine-devtools] tab "${tabId}" connected.`);
 }

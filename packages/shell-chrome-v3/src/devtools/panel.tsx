@@ -1,11 +1,16 @@
 /* @refresh reload */
 import { renderApp } from './App';
 import { inspectorPortName } from './ports';
-import { handleBackendToPanelMessage } from './messaging';
+import { handleBackendToPanelMessage, unsetPort } from './messaging';
 
+let dispose: () => void;
 /* Entrypoint for Extension panel, integrates with Devtools/extension APIs, initialises the solidJS app, see also index.html */
 function connect() {
-  renderApp(document.getElementById('root')!);
+  if (dispose) {
+    console.log('unmounting solid app');
+    dispose();
+  }
+  dispose = renderApp(document.getElementById('root')!);
 
   // There's probably a better way than injecting backend.js from here
   // eg. watching the active tab in content.ts or background.ts
@@ -28,14 +33,23 @@ function connect() {
     let disconnected = false;
 
     port.onDisconnect.addListener(() => {
+      console.log('[alpine-devtools] panel.tsx disconnecting');
       disconnected = true;
+      unsetPort();
+      port.onMessage.removeListener(panelToBackendMessageHandler);
     });
 
-    port.onMessage.addListener(function (message) {
-      // ignore further messages
-      if (disconnected) return;
+    function panelToBackendMessageHandler(message: any) {
+      // ignore further messages, might not be needed since
+      // we're removing the listener
+      if (disconnected) {
+        unsetPort();
+        return;
+      }
       handleBackendToPanelMessage(message, port);
-    });
+    }
+
+    port.onMessage.addListener(panelToBackendMessageHandler);
   });
 }
 
@@ -47,22 +61,25 @@ function onReload(reloadFn: () => void) {
  * Inject a globally evaluated script, in the same context with the actual
  * user app.
  *
- * @param {String} scriptName
+ * @param {String} scriptSrc
  * @param {Function} cb
  */
 
-function injectScript(scriptName: string, cb: Function) {
+function injectScript(scriptSrc: string, cb: Function) {
   const src = `
     (function() {
       var script = document.constructor.prototype.createElement.call(document, 'script');
-      script.src = "${scriptName}";
+      script.src = "${scriptSrc}";
       document.documentElement.appendChild(script);
       script.parentNode.removeChild(script);
     })()
   `;
-  chrome.devtools.inspectedWindow.eval(src, function (res, err) {
+  chrome.devtools.inspectedWindow.eval(src, (_res, err) => {
     if (err) {
-      console.log(err);
+      console.warn('[alpine-devtools] error injecting script, retrying in 300ms', err);
+      setTimeout(() => {
+        injectScript(scriptSrc, cb);
+      }, 300);
     }
     cb();
   });

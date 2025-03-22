@@ -1,4 +1,4 @@
-import { onCleanup, onMount, Show, type Component } from 'solid-js';
+import { createSignal, onCleanup, onMount, Show, type Component } from 'solid-js';
 import '../../../../dist/chrome/styles.css';
 
 import { Header } from './components/header';
@@ -6,6 +6,8 @@ import { ComponentGrid } from './components/component-grid';
 import { Footer } from './components/footer';
 import { render } from 'solid-js/web';
 import { handleResize, orientation } from './theme';
+import { StoreGrid } from './components/store-grid';
+import { TabValues } from './types';
 
 const App: Component = () => {
   onMount(() => {
@@ -15,6 +17,7 @@ const App: Component = () => {
     window.removeEventListener('resize', handleResize);
   });
   const showTools = true;
+  const [activeTab, setActiveTab] = createSignal<TabValues>('components');
   return (
     <div class="h-full">
       <div class="bg-white flex flex-col relative h-full w-full mx-auto">
@@ -24,14 +27,18 @@ const App: Component = () => {
             'flex-col': orientation() === 'portrait',
           }}
         >
-          <Header showTools={showTools} />
+          <Header showTools={showTools} activeTab={activeTab} setActiveTab={setActiveTab} />
           <div class="flex-1 overflow-hidden">
-            <ComponentGrid showTools={showTools} />
-            {/* TODO: add more tabs here, control activeTab too */}
+            <Show when={activeTab() === 'components'}>
+              <ComponentGrid showTools={showTools} />
+            </Show>
+            <Show when={activeTab() === 'stores'}>
+              <StoreGrid />
+            </Show>
           </div>
         </div>
         <Show when={showTools}>
-          <Footer />
+          <Footer setActiveTab={setActiveTab} />
         </Show>
       </div>
     </div>
@@ -41,5 +48,5 @@ const App: Component = () => {
 export default App;
 
 export function renderApp(root: HTMLElement) {
-  render(() => <App />, root);
+  return render(() => <App />, root);
 }

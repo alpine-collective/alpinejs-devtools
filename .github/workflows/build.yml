@@ -76,3 +76,9 @@ jobs:
         start: node --run start:ci
         command: node --run cy:run
         install: false
+    - uses: cypress-io/github-action@v6
+      with:
+        start: npm start
+        command: npm run cy:run
+        working-directory: packages/shell-chrome-v3
+        install: false

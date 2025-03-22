@@ -14,7 +14,15 @@ interface State {
   components: Record<number, Component>;
   selectedComponentId?: number;
   preloadedComponentData: Record<number, Array<FlattenedComponentData>>;
+  stores: Record<string, Store>;
+  selectedStoreName?: string;
+  preloadedStoreData: Record<string, Array<FlattenedStoreData>>;
   errors: any[];
+}
+export type FlattenedStoreData = Omit<FlattenedComponentData, 'parentComponentId'> & { parentStoreName: string };
+export interface Store {
+  name: string;
+  isOpen: boolean;
 }
 
 export interface FlattenedComponentData {
@@ -48,6 +56,8 @@ export const [state, setState] = createStore<State>({
   errors: [],
   components: {},
   preloadedComponentData: {},
+  stores: {},
+  preloadedStoreData: {},
 });
 
 export const setAlpineVersionFromBackend = (version: string) => {
@@ -59,8 +69,6 @@ export const setAlpineVersionFromBackend = (version: string) => {
 };
 
 export const setComponentsList = (components: Array<Component>, appUrl: string) => {
-  console.log('setComponentsList', appUrl, components);
-
   // TODO: check for removed components
   const newComponents = { ...state.components };
   components.forEach((component, index) => {
@@ -82,9 +90,22 @@ export const setComponentsList = (components: Array<Component>, appUrl: string) 
   }
 };
 
-export const setComponentData = (componentId: string, componentData: string) => {
-  console.log('setComponentData', componentId, componentData);
-  // preloadedComponentData = flattendedData
+export const setStoresFromList = (stores: Array<string>) => {
+  setState({
+    stores: stores.reduce(
+      (acc, curr) => {
+        acc[curr] = {
+          name: curr,
+          isOpen: false,
+        };
+        return acc;
+      },
+      {} as State['stores'],
+    ),
+  });
+};
+
+export const setComponentData = (componentId: string, componentData: any) => {
   const flattenedData = flattenData(componentData).map<FlattenedComponentData>((d) => {
     const prevDataAttributeState: Record<
       string,
@@ -137,6 +158,14 @@ export const setComponentData = (componentId: string, componentData: string) => 
 
   setComponentFlattenedData(componentId, flattenedData);
 };
+export const setStoreData = (storeName: string, storeData: any) => {
+  const flattenedData = flattenData(storeData).map(({ parentComponentId, ...el }) => ({
+    ...el,
+    parentStoreName: storeName,
+  }));
+
+  setStoreFlattenedData(storeName, flattenedData);
+};
 
 // TODO: rename this to `setAdditionalError`
 export const renderError = (error: any) => {
@@ -168,7 +197,21 @@ export function selectComponent(component: Component) {
   }
 }
 
-export function toggleDataAttributeOpen(attribute: FlattenedComponentData) {
+export function selectStore(storeName: Store['name']) {
+  setState({
+    selectedStoreName: storeName,
+  });
+  if (!state.preloadedStoreData[storeName]) {
+    panelPostMessage({
+      storeName,
+      action: PANEL_TO_BACKEND_MESSAGES.GET_STORE_DATA,
+      source: ALPINE_DEVTOOLS_PANEL_SOURCE,
+    });
+  }
+}
+
+export function toggleDataAttributeOpen(attribute: FlattenedComponentData | FlattenedStoreData) {
+  const isStore = 'parentStoreName' in attribute;
   if (attribute.hasArrow) {
     const childrenIdLength = attribute.id.split('.').length + 1;
 
@@ -183,7 +226,9 @@ export function toggleDataAttributeOpen(attribute: FlattenedComponentData) {
 
     const closeRegex = new RegExp(closeRegexStr);
 
-    const childrenAttributesIds = selectedComponentFlattenedData()
+    const flattenedData = isStore ? selectedStoreFlattenedData() : selectedComponentFlattenedData();
+
+    const childrenAttributesIds = flattenedData
       .filter((attr) => {
         const { id } = attr;
         if (attribute.isArrowDown) {
@@ -193,7 +238,7 @@ export function toggleDataAttributeOpen(attribute: FlattenedComponentData) {
       })
       .map((attr) => attr.id);
 
-    const newSelectedComponentFlattenedData = selectedComponentFlattenedData()
+    const newSelectedFlattenedData = flattenedData
       .map((d) => {
         if (childrenAttributesIds.includes(d.id)) {
           const newData = {
@@ -217,11 +262,17 @@ export function toggleDataAttributeOpen(attribute: FlattenedComponentData) {
         return d;
       });
 
-    setComponentFlattenedData(String(state.selectedComponentId), newSelectedComponentFlattenedData);
+    if (isStore) {
+      // @ts-expect-error
+      setStoreFlattenedData(state.selectedStoreName!, newSelectedFlattenedData);
+    } else {
+      // @ts-expect-error
+      setComponentFlattenedData(String(state.selectedComponentId), newSelectedFlattenedData);
+    }
   }
 }
 
-export function saveAttributeEdit(editedAttr: FlattenedComponentData) {
+export function saveComponentAttributeEdit(editedAttr: FlattenedComponentData) {
   if (!window.__alpineDevtool.port) return;
   const newAttr = { ...editedAttr };
   newAttr.attributeValue = convertInputDataToType(editedAttr.inputType, editedAttr.editAttributeValue);
@@ -241,11 +292,36 @@ export function saveAttributeEdit(editedAttr: FlattenedComponentData) {
   });
 }
 
+export function saveStoreAttributeEdit(editedAttr: FlattenedStoreData) {
+  if (!window.__alpineDevtool.port) return;
+  const newAttr = { ...editedAttr };
+  newAttr.attributeValue = convertInputDataToType(editedAttr.inputType, editedAttr.editAttributeValue);
+  newAttr.inEditingMode = false;
+
+  setStoreFlattenedData(
+    editedAttr.parentStoreName,
+    selectedStoreFlattenedData().map((el) => (el.id === newAttr.id ? newAttr : el)),
+  );
+
+  panelPostMessage({
+    storeName: newAttr.parentStoreName,
+    attributeSequence: newAttr.id,
+    attributeValue: newAttr.attributeValue,
+    action: PANEL_TO_BACKEND_MESSAGES.EDIT_STORE_ATTRIBUTE,
+    source: ALPINE_DEVTOOLS_PANEL_SOURCE,
+  });
+}
+
 // ported from state.updateDevtoolsXData
 export const componentsValue = createMemo(() => Object.values(state.components).sort((a, b) => a.index - b.index));
+export const storesValue = createMemo(() => Object.values(state.stores));
 
 export const openComponentValue = createMemo(() =>
   state.selectedComponentId ? state.components[state.selectedComponentId] : null,
+);
+
+export const openStoreValue = createMemo(() =>
+  state.selectedStoreName ? state.stores[state.selectedStoreName] : null,
 );
 
 export const selectedComponentFlattenedData = createMemo(() => {
@@ -260,6 +336,19 @@ const setComponentFlattenedData = (
     preloadedComponentData: {
       ...state.preloadedComponentData,
       [selectedComponentId]: newSelectedComponentFlattenedData,
+    },
+  });
+};
+
+export const selectedStoreFlattenedData = createMemo(() => {
+  return (state.selectedStoreName && state.preloadedStoreData[state.selectedStoreName]) || [];
+});
+
+const setStoreFlattenedData = (storeName: string, newSelectedComponentFlattenedData: FlattenedStoreData[]) => {
+  setState({
+    preloadedStoreData: {
+      ...state.preloadedStoreData,
+      [storeName]: newSelectedComponentFlattenedData,
     },
   });
 };

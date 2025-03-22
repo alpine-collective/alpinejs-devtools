@@ -15,7 +15,7 @@ function proxy() {
 
   sendMessageToBackend('init');
 
-  function sendMessageToBackend(payload) {
+  function sendMessageToBackend(payload: any) {
     window.postMessage(
       {
         source: ALPINE_DEVTOOLS_PROXY_SOURCE,
@@ -25,11 +25,11 @@ function proxy() {
     );
   }
 
-  function sendMessageToDevtools(e) {
+  function sendMessageToDevtools(e: any) {
     if (e.data && e.data.source === ALPINE_DEVTOOLS_BACKEND_SOURCE) {
       proxyPort.postMessage(e.data.payload);
     } else {
-      console.warn('Not forwarding message', e);
+      console.log('[alpine-devtools] PROXY, Not forwarding message', e);
     }
   }
 

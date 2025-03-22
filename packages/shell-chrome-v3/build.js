@@ -9,22 +9,24 @@ const entryPoints = (await fs.readdir(fileURLToPath(new URL('./src/scripts', imp
 async function buildAll() {
   try {
     // for production output
-    const out = await build({
+    const buildOutput = await build({
       entryPoints,
       outdir: fileURLToPath(new URL('../../dist/shell-chrome-v3', import.meta.url)),
       bundle: true,
-      // minify: true,
       sourcemap: true,
       target: 'esnext',
       platform: 'browser',
+
+      define: {
+        'import.meta.env.DEV': JSON.stringify(process.env.NODE_ENV !== 'production'),
+      },
     });
 
     // for simulator to access
-    const out2 = await build({
+    const simulatorBuildOutput = await build({
       entryPoints,
       outdir: fileURLToPath(new URL('./dist', import.meta.url)),
       bundle: true,
-      // minify: true,
       sourcemap: true,
       target: 'esnext',
       platform: 'browser',
@@ -35,7 +37,26 @@ async function buildAll() {
       fileURLToPath(new URL('./dist/alpine.js', import.meta.url)),
     );
 
-    console.log('Build successful!', out);
+    console.log('Build successful!', buildOutput);
+
+    const { default: manifestJson } = await import('./manifest.json', { with: { type: 'json' } });
+    const { default: pkgJson } = await import('./package.json', { with: { type: 'json' } });
+
+    let newManifestJson = { ...manifestJson };
+    newManifestJson.version = pkgJson.version;
+    await fs.writeFile(
+      fileURLToPath(new URL('./manifest.json', import.meta.url)),
+      JSON.stringify(newManifestJson, null, 2),
+    );
+    if (process.env.VITE_MAINLINE_PUBLISH === 'true') {
+      newManifestJson.name = 'Alpine.js devtools';
+    }
+    await fs.writeFile(
+      fileURLToPath(new URL('../../dist/shell-chrome-v3/manifest.json', import.meta.url)),
+      JSON.stringify(newManifestJson, null, 2),
+    );
+
+    console.log('manifest.json updates successful');
   } catch (error) {
     console.error('Build failed:', error);
     process.exit(1);

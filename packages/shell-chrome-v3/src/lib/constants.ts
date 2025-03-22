@@ -4,8 +4,9 @@ export const ADDED_ATTRIBUTES = [DEVTOOLS_RENDER_ATTR_NAME, DEVTOOLS_RENDER_BIND
 
 export const BACKEND_TO_PANEL_MESSAGES = {
   SET_VERSION: 'set-version',
-  SET_COMPONENTS: 'set-components',
+  SET_COMPONENT_AND_STORES: 'set-components-and-stores',
   SET_DATA: 'set-data',
+  SET_STORE_DATA: 'set-store-data',
   ADD_ERROR: 'add-error',
 } as const;
 
@@ -14,11 +15,13 @@ export const PANEL_TO_BACKEND_MESSAGES = {
   SHUTDOWN: 'shutdown',
   // all other messages are triggered from devtools/state.js
   GET_DATA: 'get-data',
+  GET_STORE_DATA: 'get-store-data',
   SHOW_ERROR_SOURCE: 'show-error-source',
   HIDE_ERROR_SOURCE: 'hide-error-source',
   HOVER_COMPONENT: 'hover',
   HIDE_HOVER: 'hide-hover',
   EDIT_ATTRIBUTE: 'edit-attribute',
+  EDIT_STORE_ATTRIBUTE: 'edit-store-attribute',
 } as const;
 
 export const CONTENT_TO_BACKGROUND_MESSAGES = {

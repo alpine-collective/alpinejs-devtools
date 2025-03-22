@@ -1,9 +1,15 @@
 import { createMemo, createSignal, Show } from 'solid-js';
-import { FlattenedComponentData, saveAttributeEdit, toggleDataAttributeOpen } from '../state';
+import {
+  FlattenedComponentData,
+  FlattenedStoreData,
+  saveComponentAttributeEdit,
+  saveStoreAttributeEdit,
+  toggleDataAttributeOpen,
+} from '../state';
 import { effect } from 'solid-js/web';
 
 interface DataDisplayProps {
-  attributeData: FlattenedComponentData;
+  attributeData: FlattenedComponentData | FlattenedStoreData;
 }
 
 export function DataAttributeDisplay(props: DataDisplayProps) {
@@ -22,15 +28,15 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
   });
   const saveEditing = (newValue?: boolean) => {
     setInEditingMode(false);
-    if (typeof newValue === 'undefined') {
-      saveAttributeEdit({
+    if ('parentStoreName' in props.attributeData) {
+      saveStoreAttributeEdit({
         ...props.attributeData,
-        editAttributeValue: attrDirtyValue(),
+        editAttributeValue: typeof newValue === 'undefined' ? attrDirtyValue() : newValue,
       });
     } else {
-      saveAttributeEdit({
+      saveComponentAttributeEdit({
         ...props.attributeData,
-        editAttributeValue: newValue,
+        editAttributeValue: typeof newValue === 'undefined' ? attrDirtyValue() : newValue,
       });
     }
   };
@@ -63,6 +69,8 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
             </div>
 
             <span class="text-purple" data-testid={`data-property-name-${props.attributeData.attributeName}`}>
+              {/* TODO: do something about __root_value */}
+              {/* {props.attributeData.attributeName === '__root_value' ? '' : props.attributeData.attributeName} */}
               {props.attributeData.attributeName}
             </span>
 
@@ -104,6 +112,7 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
                       ? 'Click to report this unserializable value'
                       : undefined
                   }
+                  data-testid={'attr-value' + props.attributeData.attributeName}
                 >
                   {props.attributeData.attributeValue}
                 </a>
@@ -130,6 +139,7 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
           <Show when={inEditingMode() && props.attributeData.dataType !== 'boolean'}>
             <div class="flex flex-row items-center">
               <input
+                data-testid={`input-${props.attributeData.attributeName}`}
                 type={props.attributeData.inputType}
                 class="flex text-gray-700 leading-tight focus:outline-none focus:ring w-2/3 shadow appearance-none border rounded py-1 px-1"
                 // does having booleans cause issues?

@@ -10,12 +10,15 @@ Todo:
 - [x] detector -> content
   - [x] content -> background (service_worker)
   - [x] panel -> background connection
-- [ ] select 1 Cypress scenario and get it working
+- [x] select ~~1~~ 12 Cypress scenario and get it working
   - content runs on page and has access to Chrome Ext APIs, it injects detector
   - background = service worker
 - [x] detection popup
-- [ ] disable things that aren't implemented (eg. warnings tab, "latest version" loading)
-- [ ] Tab links/switching between tabs (components vs warnings, stores)
+- [x] disable things that aren't implemented (eg. warnings tab, "latest version" loading)
+- [x] tab links/switching between tabs (components vs warnings, stores)
+- [x] stores
+- [ ] reinstate warnings
+- [ ] look into component refresh issues (find a repro)
 
 Using [Solid](https://solidjs.com) since Alpine.js is disallowed (unsafe eval is not allowed in panels in Manifest v3).
 
@@ -36,4 +39,4 @@ The page will reload if you make edits.<br>
 
 ### `npm run build`
 
-Builds the app for production to the roo `dist` folder.
+Builds the app for production to the root `dist` folder.
