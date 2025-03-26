@@ -3,6 +3,19 @@
 ![Mozilla Add-on](https://img.shields.io/amo/v/alpinejs-devtools?label=firefox%20add-on)
 ![Mozilla Add-on](https://img.shields.io/amo/users/alpinejs-devtools?label=firefox%20users%20%28daily%29)
 
+## 🚨 Chrome Web Store Notice - Rewrite in Progress
+
+⚠️ **The published extension is currently unavailable** due to Chrome's Manifest v3 requirements ([more info](https://github.com/alpine-collective/alpinejs-devtools/issues/419))
+
+**Good news!** An Early Access Chrome-compatible version is ready through our [**Paid Early Access Program**](https://github.com/sponsors/HugoDF/)
+
+**Immediate Access Includes**:
+
+- ✅ Component State Inspection/Editing
+- ⚙️ Store State Tools (_Next Release_)
+
+**Multiple Tiers Available** 👉 [Explore Options](https://github.com/sponsors/HugoDF)
+
 # Alpine.js devtools
 
 ![Screenshot of Alpine.js devtools](docs/devtools-only.png)

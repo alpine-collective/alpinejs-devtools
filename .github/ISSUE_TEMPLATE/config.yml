@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: State of the project
+    url: https://github.com/alpine-collective/alpinejs-devtools/issues/431
+    about: Update on Alpine Devtools
+  - name: Questions
+    url: https://github.com/alpine-collective/alpinejs-devtools/discussions/new/choose
+    about: Ask the community & maintainers for help.
+  - name: Feature Request (Sponsors only)
+    url: https://github.com/sponsors/HugoDF
+    about: Pro and Company sponsors can get features prioritised
