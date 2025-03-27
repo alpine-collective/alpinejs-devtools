@@ -2,9 +2,9 @@ import { build } from 'esbuild';
 import fs, { copyFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 
-const entryPoints = (await fs.readdir(fileURLToPath(new URL('./src/scripts', import.meta.url)))).map(
-  (el) => `src/scripts/${el}`,
-);
+const entryPoints = (
+  await fs.readdir(fileURLToPath(new URL('./src/scripts', import.meta.url)))
+).map((el) => `src/scripts/${el}`);
 
 async function buildAll() {
   try {

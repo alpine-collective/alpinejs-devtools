@@ -19,7 +19,9 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
   const toggleDataAttributeOpened = () => {
     toggleDataAttributeOpen(props.attributeData);
   };
-  const [attrDirtyValue, setDirtyEditAttributeValue] = createSignal<string | boolean | undefined>(editAttributeValue());
+  const [attrDirtyValue, setDirtyEditAttributeValue] = createSignal<string | boolean | undefined>(
+    editAttributeValue(),
+  );
 
   effect(() => {
     if (inEditingMode()) {
@@ -68,7 +70,10 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
               </Show>
             </div>
 
-            <span class="text-purple" data-testid={`data-property-name-${props.attributeData.attributeName}`}>
+            <span
+              class="text-purple"
+              data-testid={`data-property-name-${props.attributeData.attributeName}`}
+            >
               {/* TODO: do something about __root_value */}
               {/* {props.attributeData.attributeName === '__root_value' ? '' : props.attributeData.attributeName} */}
               {props.attributeData.attributeName}
@@ -76,7 +81,10 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
 
             <span class="text-black">:</span>
 
-            <div data-testid={`data-property-value-${props.attributeData.attributeName}`} class="text-black ml-1">
+            <div
+              data-testid={`data-property-value-${props.attributeData.attributeName}`}
+              class="text-black ml-1"
+            >
               <Show when={!inEditingMode() && props.attributeData.dataType === 'string'}>
                 <div>
                   "<span class="text-red-700">{props.attributeData.attributeValue}</span>"
@@ -100,11 +108,15 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
                   />
                 </div>
               </Show>
-              <Show when={!inEditingMode() && !['string', 'boolean'].includes(props.attributeData.dataType)}>
+              <Show
+                when={
+                  !inEditingMode() && !['string', 'boolean'].includes(props.attributeData.dataType)
+                }
+              >
                 <a
                   href={
                     props.attributeData.attributeValue === 'Unserializable Value'
-                      ? 'https://github.com/alpine-collective/alpinejs-devtools/discussions/new'
+                      ? 'https://github.com/alpine-collective/alpinejs-devtools/issues/new/'
                       : undefined
                   }
                   title={
@@ -122,7 +134,13 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
         </a>
       </Show>
 
-      <Show when={!props.attributeData.hasArrow && !props.attributeData.readOnly && props.attributeData.isOpened}>
+      <Show
+        when={
+          !props.attributeData.hasArrow &&
+          !props.attributeData.readOnly &&
+          props.attributeData.isOpened
+        }
+      >
         <div class="flex flex-col">
           <Show when={!inEditingMode() && props.attributeData.dataType !== 'boolean'}>
             <svg

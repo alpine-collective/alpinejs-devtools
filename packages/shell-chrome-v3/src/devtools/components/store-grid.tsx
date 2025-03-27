@@ -4,10 +4,11 @@ import { StoreListItem } from './store-list-item';
 import { DataAttributeDisplay } from './data-attribute-display';
 import { SplitPane } from './split-pane';
 import { EarlyAccessNotice } from './early-access';
+import { isEarlyAccess } from '../../lib/isEarlyAccess';
 
 export function StoreGrid() {
-  if (import.meta.env.VITE_MAINLINE_PUBLISH) {
-    return <EarlyAccessNotice />;
+  if (!isEarlyAccess()) {
+    return <EarlyAccessNotice feature="Stores" />;
   }
 
   if (state.version.detected && !isRequiredVersion('3.8.0', state.version.detected)) {
@@ -16,7 +17,8 @@ export function StoreGrid() {
         data-testid="stores-unavailable-message"
         class="flex flex-1 h-full w-full items-center justify-center p-4 text-gray-400 text-sm"
       >
-        Devtools can only inspect stores from Alpine.js v3.8.0 onwards, detected v{state.version.detected}
+        Devtools can only inspect stores from Alpine.js v3.8.0 onwards, detected v
+        {state.version.detected}
       </div>
     );
   }
@@ -68,7 +70,9 @@ export function StoreGrid() {
             <div class="font-mono">
               <div class="leading-6 text-gray-300">{'{'}</div>
               {selectedStoreFlattenedData().length > 0 &&
-                selectedStoreFlattenedData().map((data) => <DataAttributeDisplay attributeData={data} />)}
+                selectedStoreFlattenedData().map((data) => (
+                  <DataAttributeDisplay attributeData={data} />
+                ))}
               <div class="leading-7 text-gray-300">{'}'}</div>
             </div>
           </div>

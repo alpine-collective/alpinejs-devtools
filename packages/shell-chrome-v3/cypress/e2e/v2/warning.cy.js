@@ -1,7 +1,11 @@
 it.skip('v2 - should catch component initialisation errors', () => {
-  cy.visit('/simulator?target=example.html').get('[data-testid=component-name]').should('have.length.above', 0);
+  cy.visit('/simulator?target=example.html')
+    .get('[data-testid=component-name]')
+    .should('have.length.above', 0);
   cy.get('[data-testid=tab-link-warnings').should('be.visible').click();
-  cy.get('[data-testid=warnings-tab-content]').should('be.visible').should('contain.text', 'No warnings found');
+  cy.get('[data-testid=warnings-tab-content]')
+    .should('be.visible')
+    .should('contain.text', 'No warnings found');
 
   cy.iframe('#target').find('[data-testid=inject-broken]').click();
 
@@ -9,7 +13,9 @@ it.skip('v2 - should catch component initialisation errors', () => {
     expect($el.text()).to.contain('1 warning');
   });
 
-  cy.get('[data-testid=warnings-tab-content]').should('be.visible').should('not.contain.text', 'No warnings found');
+  cy.get('[data-testid=warnings-tab-content]')
+    .should('be.visible')
+    .should('not.contain.text', 'No warnings found');
 
   cy.get('[data-testid=eval-error-div]')
     .should('have.length', 1)
@@ -29,7 +35,9 @@ it.skip('v2 - should catch x-on errors', () => {
     expect($el.text()).to.contain('2 warnings');
   });
 
-  cy.get('[data-testid=warnings-tab-content]').should('be.visible').should('not.contain.text', 'No warnings found');
+  cy.get('[data-testid=warnings-tab-content]')
+    .should('be.visible')
+    .should('not.contain.text', 'No warnings found');
 
   cy.get('[data-testid=eval-error-button]').should(($el) => {
     const text = $el.text().replace(/\n/g, '');

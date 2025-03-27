@@ -3,7 +3,7 @@ import {
   setAlpineVersionFromBackend,
   setComponentsList,
   setComponentData,
-  renderError,
+  setAdditionalError,
   setStoresFromList,
   setStoreData,
 } from './state';
@@ -28,7 +28,10 @@ export function panelPostMessage(message: PanelToBackendMessage) {
   }
 }
 /** browser/backend.ts -> panel messages */
-export function handleBackendToPanelMessage(message: BackendToPanelMessage, port: chrome.runtime.Port) {
+export function handleBackendToPanelMessage(
+  message: BackendToPanelMessage,
+  port: chrome.runtime.Port,
+) {
   switch (message.type) {
     case BACKEND_TO_PANEL_MESSAGES.SET_VERSION: {
       setAlpineVersionFromBackend(message.version);
@@ -52,7 +55,7 @@ export function handleBackendToPanelMessage(message: BackendToPanelMessage, port
       break;
     }
     case BACKEND_TO_PANEL_MESSAGES.ADD_ERROR: {
-      renderError(message.error);
+      setAdditionalError(message.error);
       setPort(port);
       break;
     }

@@ -1,18 +1,5 @@
 import { ADDED_ATTRIBUTES } from './constants';
 
-export function fetchWithTimeout(resource, options) {
-  const { timeout = 3000 } = options;
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeout);
-  return fetch(resource, { ...options, signal: controller.signal }).then((res) => {
-    clearTimeout(timer);
-    if (!res.ok) {
-      throw new Error('Request not ok');
-    }
-    return res.json();
-  });
-}
-
 /**
  * Semver version check
  *
@@ -63,7 +50,10 @@ export function set(object, path, value) {
 
 // with default options, will run 3 attempts, 1 at 0s, 1 at 500ms, 1 at 1000ms
 // so should hook into Alpine.js if it loads within 1s of the script triggering
-export function waitForAlpine(cb, { maxAttempts = 3, interval = 500, delayFirstAttempt = false } = {}) {
+export function waitForAlpine(
+  cb,
+  { maxAttempts = 3, interval = 500, delayFirstAttempt = false } = {},
+) {
   let attempts = delayFirstAttempt ? 0 : 1;
   if (!delayFirstAttempt && window.Alpine) {
     if (process.env.NODE_ENV !== 'production') {

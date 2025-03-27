@@ -23,11 +23,15 @@
                 nestedObjArr: { array: [ { nested: 'property' }] },
             }"
     >
-      <div>Bool, type: "<span x-text="typeof bool"></span>", value: "<span x-text="bool"></span>"</div>
+      <div>
+        Bool, type: "<span x-text="typeof bool"></span>", value: "<span x-text="bool"></span>"
+      </div>
       <div>Num, type: "<span x-text="typeof num"></span>", value: "<span x-text="num"></span>"</div>
       <div>Str, type: "<span x-text="typeof str"></span>", value: "<span x-text="str"></span>"</div>
       <div>
-        Arr, type: "<span x-text="typeof arr"></span>", value (stringified): "<span x-text="JSON.stringify(arr)"></span
+        Arr, type: "<span x-text="typeof arr"></span>", value (stringified): "<span
+          x-text="JSON.stringify(arr)"
+        ></span
         >"
       </div>
       <div>
@@ -59,7 +63,10 @@
         <div x-data x-title="nested2">Nesting 2</div>
       </div>
     </div>
-    <div x-title="model-no-render" x-data="{ text: 'initial', model: { nested: 'nested-initial' } }">
+    <div
+      x-title="model-no-render"
+      x-data="{ text: 'initial', model: { nested: 'nested-initial' } }"
+    >
       <label>
         Doesn't re-render but has x-model
         <input type="text" x-model="text" data-testid="model-no-render" />
@@ -106,7 +113,9 @@
         };
       }
     </script>
-    <button data-testid="inject-broken" onclick="injectBroken(event.target)">Inject broken component</button>
+    <button data-testid="inject-broken" onclick="injectBroken(event.target)">
+      Inject broken component
+    </button>
 
     <script>
       function injectBroken(target) {

@@ -136,12 +136,18 @@ it('v3 -  should support selecting/unselecting a component', () => {
   cy.visit('/simulator?target=v3.html');
 
   cy.get('[data-testid=component-container]').last().click();
-  cy.get('[data-testid=component-container]').last().should('have.class', 'text-white bg-alpine-300');
+  cy.get('[data-testid=component-container]')
+    .last()
+    .should('have.class', 'text-white bg-alpine-300');
 
   cy.get('[data-testid=component-container]').first().click();
 
-  cy.get('[data-testid=component-container]').first().should('have.class', 'text-white bg-alpine-300');
-  cy.get('[data-testid=component-container]').last().should('not.have.class', 'text-white bg-alpine-300');
+  cy.get('[data-testid=component-container]')
+    .first()
+    .should('have.class', 'text-white bg-alpine-300');
+  cy.get('[data-testid=component-container]')
+    .last()
+    .should('not.have.class', 'text-white bg-alpine-300');
 });
 
 it('v3 -  should display message with number of components watched', () => {
@@ -151,7 +157,9 @@ it('v3 -  should display message with number of components watched', () => {
     .then((components) => {
       cy.get('[data-testid=footer-line]').then(($el) => {
         expect($el.text()).to.contain('Watching');
-        expect($el.text()).to.contain(`${components.length} ${components.length > 1 ? 'components' : 'component'}`);
+        expect($el.text()).to.contain(
+          `${components.length} ${components.length > 1 ? 'components' : 'component'}`,
+        );
       });
     });
 });

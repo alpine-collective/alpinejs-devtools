@@ -30,8 +30,15 @@ chrome.runtime.onConnect.addListener(async (port) => {
       if (disconnected) {
         return;
       }
-      console.log(`[alpine-devtools] (${port.name}, tabId: ${contentTabId}) -> background: `, message);
-      if (message.type === CONTENT_TO_BACKGROUND_MESSAGES.ALPINE_DETECTED && message.alpineDetected && contentTabId) {
+      console.log(
+        `[alpine-devtools] (${port.name}, tabId: ${contentTabId}) -> background: `,
+        message,
+      );
+      if (
+        message.type === CONTENT_TO_BACKGROUND_MESSAGES.ALPINE_DETECTED &&
+        message.alpineDetected &&
+        contentTabId
+      ) {
         chrome.action.setIcon({
           tabId: contentTabId,
           path: {
@@ -92,7 +99,12 @@ chrome.runtime.onConnect.addListener(async (port) => {
  * For each tab, 2-way forward messages, devtools <-> backend.
  */
 function doublePipe(tabId: number, devtools: chrome.runtime.Port, backend: chrome.runtime.Port) {
-  console.log('[alpine-devtools] starting double pipe, devtools:', devtools.name, 'backend: ', backend.name);
+  console.log(
+    '[alpine-devtools] starting double pipe, devtools:',
+    devtools.name,
+    'backend: ',
+    backend.name,
+  );
   devtools.onMessage.addListener(lOne);
   function lOne(message: any) {
     console.log('[alpine-devtools] devtools -> backend', message);

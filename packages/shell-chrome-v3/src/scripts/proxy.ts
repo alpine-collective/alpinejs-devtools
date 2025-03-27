@@ -2,7 +2,11 @@
 // activated. Because it is not injected using eval, it has full privilege
 // to the chrome runtime API. It serves as a proxy between the injected
 // backend and the Alpine.js devtools panel.
-import { ALPINE_DEVTOOLS_BACKEND_SOURCE, ALPINE_DEVTOOLS_PROXY_SOURCE, PROXY } from '../devtools/ports';
+import {
+  ALPINE_DEVTOOLS_BACKEND_SOURCE,
+  ALPINE_DEVTOOLS_PROXY_SOURCE,
+  PROXY,
+} from '../devtools/ports';
 
 function proxy() {
   const proxyPort = chrome.runtime.connect({

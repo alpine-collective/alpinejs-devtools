@@ -21,8 +21,8 @@ Todo:
   - fixed issue with port disconnection
   - fixed issue with backend.js re-injection
     - 1. open page 2. open devtools 3. **dont select a component** 4. reload page (with devtools still open) 4. select a component -> didn't load data, now fixed
-- [ ] reinstate warnings
-- [ ] display v3 warnings
+- [x] go to elements tab at root element from component
+- [ ] reinstate warnings (display v3 warnings works v3.5.0 onwards)
 
 Using [Solid](https://solidjs.com) since Alpine.js is disallowed (unsafe eval is not allowed in panels in Manifest v3).
 

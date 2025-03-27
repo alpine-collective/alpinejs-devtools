@@ -56,7 +56,9 @@ export function ComponentGrid({ showTools }: { showTools: boolean }) {
             <div class="font-mono">
               <div class="leading-6 text-gray-300">x-data: {'{'}</div>
               {selectedComponentFlattenedData().length > 0 &&
-                selectedComponentFlattenedData().map((data) => <DataAttributeDisplay attributeData={data} />)}
+                selectedComponentFlattenedData().map((data) => (
+                  <DataAttributeDisplay attributeData={data} />
+                ))}
               <div class="leading-7 text-gray-300">{'}'}</div>
             </div>
           </div>

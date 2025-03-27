@@ -17,7 +17,10 @@ it('should load devtools', () => {
   // cy.get('[data-testid=version-line]').should('have.attr', 'title', 'Latest Version').contains(`v${AlpineVersion}`)
 
   cy.get('[data-testid=component-name]').should('have.length.above', 0);
-  cy.get('[data-testid=select-component-message]').should('have.text', 'Select a component to view');
+  cy.get('[data-testid=select-component-message]').should(
+    'have.text',
+    'Select a component to view',
+  );
   cy.get('[data-testid=no-components-message]').should('not.exist');
 });
 
@@ -39,6 +42,11 @@ it('should load devtools when no components found', () => {
   // cy.get('[data-testid=version-line]').should('have.attr', 'title', 'Latest Version').contains(`v${AlpineVersion}`)
 
   cy.get('[data-testid=component-name]').should('have.length', 0);
-  cy.get('[data-testid=no-components-message]').should('be.visible').should('contain.text', 'No components found');
-  cy.get('[data-testid=select-component-message]').should('not.contain.text', 'Select a component to view');
+  cy.get('[data-testid=no-components-message]')
+    .should('be.visible')
+    .should('contain.text', 'No components found');
+  cy.get('[data-testid=select-component-message]').should(
+    'not.contain.text',
+    'Select a component to view',
+  );
 });

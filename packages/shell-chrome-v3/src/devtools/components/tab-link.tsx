@@ -2,7 +2,7 @@ import type { Accessor, JSX } from 'solid-js';
 import { orientation } from '../theme';
 import { TabValues } from '../types';
 
-export interface TabLinkProps {
+interface TabLinkProps {
   label?: string;
   tab: string;
   activeTab: Accessor<TabValues>;

@@ -72,7 +72,8 @@ export function Header({ showTools, activeTab, setActiveTab }: HeaderProps) {
             classList={{
               'opacity-0': !showTools,
               'flex-col pr-px leading-[3rem]': orientation() === 'landscape',
-              'flex-row items-center pb-px leading-[3.25rem] xs:space-x-3': orientation() === 'portrait',
+              'flex-row items-center pb-px leading-[3.25rem] xs:space-x-3':
+                orientation() === 'portrait',
             }}
             class="flex text-sm text-ice-500 transition"
           >

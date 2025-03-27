@@ -1,6 +1,12 @@
 import { selectStore } from '../state';
 
-export function StoreListItem({ idx, storeName, isOpen }: { idx: number; storeName: string; isOpen: boolean }) {
+interface StoreListItemProps {
+  idx: number;
+  storeName: string;
+  isOpen: boolean;
+}
+
+export function StoreListItem({ idx, storeName, isOpen }: StoreListItemProps) {
   return (
     <a
       classList={{
@@ -19,7 +25,11 @@ export function StoreListItem({ idx, storeName, isOpen }: { idx: number; storeNa
           {storeName}
         </span>
         <span class="opacity-25">{"']"}</span>
-        <div data-testid="console-global" class="text-gray pl-2 text-xs" title={`Available as $s${idx} in the console`}>
+        <div
+          data-testid="console-global"
+          class="text-gray pl-2 text-xs"
+          title={`Available as $s${idx} in the console`}
+        >
           = <span>{`$s${idx}`}</span>
         </div>
       </h5>

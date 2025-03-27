@@ -1,5 +1,7 @@
 it('v2 - should display read-only function/HTMLElement attributes + allow editing of booleans, numbers and strings', () => {
-  cy.visit('/simulator?target=example.html').get('[data-testid=component-name]').should('be.visible');
+  cy.visit('/simulator?target=example.html')
+    .get('[data-testid=component-name]')
+    .should('be.visible');
 
   cy.get('[data-testid=component-container]').first().click();
 
@@ -9,7 +11,10 @@ it('v2 - should display read-only function/HTMLElement attributes + allow editin
 
   cy.get('[data-testid=data-property-name-el]').contains('el');
 
-  cy.get('[data-testid=data-property-value-el]').should('contain.text', 'HTMLElement').as('elValue').click();
+  cy.get('[data-testid=data-property-value-el]')
+    .should('contain.text', 'HTMLElement')
+    .as('elValue')
+    .click();
 
   // check nested attributes
   cy.get('[data-testid=data-property-name-name]').contains('name').should('be.visible');
@@ -74,7 +79,9 @@ it('v2 - should display read-only function/HTMLElement attributes + allow editin
 });
 
 it('v2 - should display nested arrays/object attributes and support editing', () => {
-  cy.visit('/simulator?target=example.html').get('[data-testid=component-name]').should('be.visible');
+  cy.visit('/simulator?target=example.html')
+    .get('[data-testid=component-name]')
+    .should('be.visible');
 
   cy.get('[data-testid=component-name]').first().click();
   // .trigger('mouseleave')
@@ -130,7 +137,9 @@ it('v2 - should display nested arrays/object attributes and support editing', ()
 
 // broken on v2, not going to support it unless requested/reported
 it.skip('v2 - should support x-model updates and editing values', () => {
-  cy.visit('/simulator?target=example.html').get('[data-testid=component-name]').should('be.visible');
+  cy.visit('/simulator?target=example.html')
+    .get('[data-testid=component-name]')
+    .should('be.visible');
 
   cy.get('[data-testid=component-name]').contains('model-no-render').click();
   // .trigger('mouseleave')
@@ -141,7 +150,11 @@ it.skip('v2 - should support x-model updates and editing values', () => {
 
   cy.get('[data-testid=data-property-name-text]').should('be.visible').contains('text');
   cy.get('[data-testid=data-property-value-text]').should('be.visible').contains('initial');
-  cy.iframe('#target').find('[data-testid=model-no-render]').should('be.visible').clear().type('updated');
+  cy.iframe('#target')
+    .find('[data-testid=model-no-render]')
+    .should('be.visible')
+    .clear()
+    .type('updated');
   cy.get('[data-testid=data-property-value-text]').should('be.visible').contains('updated');
 
   cy.get('[data-testid=edit-icon-text]').click({ force: true });
@@ -169,19 +182,25 @@ it.skip('v2 - should support x-model updates and editing values', () => {
     .siblings('[data-testid=save-icon]')
     .click({ force: true });
 
-  cy.iframe('#target').find('[data-testid=nested-model-no-render]').should('have.value', 'nested-from-devtools');
+  cy.iframe('#target')
+    .find('[data-testid=nested-model-no-render]')
+    .should('have.value', 'nested-from-devtools');
 });
 
 it.skip('v2 - should reset component selection when changing page', () => {
   cy.visit('/simulator?target=example.html');
 
   cy.get('[data-testid=component-name]').first().click();
-  cy.get('[data-testid=component-container]').first().should('have.class', 'text-white bg-alpine-300');
+  cy.get('[data-testid=component-container]')
+    .first()
+    .should('have.class', 'text-white bg-alpine-300');
 
   cy.get('[data-testid=data-property-name-myFunction]').should('be.visible').contains('myFunction');
 
   cy.iframe('#target').find('[data-testid=navigation-target]').click();
 
-  cy.get('[data-testid=component-container]').first().should('not.have.class', 'text-white bg-alpine-300');
+  cy.get('[data-testid=component-container]')
+    .first()
+    .should('not.have.class', 'text-white bg-alpine-300');
   cy.get('[data-testid=data-property-name-myFunction]').should('not.exist');
 });

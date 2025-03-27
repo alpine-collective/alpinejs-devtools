@@ -8,7 +8,6 @@ import { convertInputDataToType, flattenData } from '../lib/utils';
 interface State {
   version: {
     detected?: string;
-    latest?: string;
   };
   appUrl?: string;
   components: Record<number, Component>;
@@ -19,7 +18,9 @@ interface State {
   preloadedStoreData: Record<string, Array<FlattenedStoreData>>;
   errors: any[];
 }
-export type FlattenedStoreData = Omit<FlattenedComponentData, 'parentComponentId'> & { parentStoreName: string };
+export type FlattenedStoreData = Omit<FlattenedComponentData, 'parentComponentId'> & {
+  parentStoreName: string;
+};
 export interface Store {
   name: string;
   isOpen: boolean;
@@ -167,16 +168,23 @@ export const setStoreData = (storeName: string, storeData: any) => {
   setStoreFlattenedData(storeName, flattenedData);
 };
 
-// TODO: rename this to `setAdditionalError`
-export const renderError = (error: any) => {
+// renamed from `renderError`
+export const setAdditionalError = (error: any) => {
   setState({
     errors: [...state.errors, error],
   });
 };
 
-function withAllClosedComponents(components: State['components']) {
-  // TODO set isOpened = false to all components
-  return { ...components };
+function withAllClosedComponents(components: State['components']): State['components'] {
+  return Object.fromEntries(
+    Object.entries(components).map(([k, v]) => [
+      k,
+      {
+        ...v,
+        isOpened: false,
+      },
+    ]),
+  );
 }
 
 export function selectComponent(component: Component) {
@@ -306,7 +314,10 @@ export function toggleDataAttributeOpen(attribute: FlattenedComponentData | Flat
 export function saveComponentAttributeEdit(editedAttr: FlattenedComponentData) {
   if (!window.__alpineDevtool.port) return;
   const newAttr = { ...editedAttr };
-  newAttr.attributeValue = convertInputDataToType(editedAttr.inputType, editedAttr.editAttributeValue);
+  newAttr.attributeValue = convertInputDataToType(
+    editedAttr.inputType,
+    editedAttr.editAttributeValue,
+  );
   newAttr.inEditingMode = false;
 
   setComponentFlattenedData(
@@ -324,9 +335,14 @@ export function saveComponentAttributeEdit(editedAttr: FlattenedComponentData) {
 }
 
 export function saveStoreAttributeEdit(editedAttr: FlattenedStoreData) {
-  if (!window.__alpineDevtool.port) return;
+  if (!window.__alpineDevtool.port) {
+    return;
+  }
   const newAttr = { ...editedAttr };
-  newAttr.attributeValue = convertInputDataToType(editedAttr.inputType, editedAttr.editAttributeValue);
+  newAttr.attributeValue = convertInputDataToType(
+    editedAttr.inputType,
+    editedAttr.editAttributeValue,
+  );
   newAttr.inEditingMode = false;
 
   setStoreFlattenedData(
@@ -344,7 +360,9 @@ export function saveStoreAttributeEdit(editedAttr: FlattenedStoreData) {
 }
 
 // ported from state.updateDevtoolsXData
-export const componentsValue = createMemo(() => Object.values(state.components).sort((a, b) => a.index - b.index));
+export const componentsValue = createMemo(() =>
+  Object.values(state.components).sort((a, b) => a.index - b.index),
+);
 export const storesValue = createMemo(() => Object.values(state.stores));
 
 export const openComponentValue = createMemo(() =>
@@ -356,7 +374,9 @@ export const openStoreValue = createMemo(() =>
 );
 
 export const selectedComponentFlattenedData = createMemo(() => {
-  return (state.selectedComponentId && state.preloadedComponentData[state.selectedComponentId]) || [];
+  return (
+    (state.selectedComponentId && state.preloadedComponentData[state.selectedComponentId]) || []
+  );
 });
 
 const setComponentFlattenedData = (
@@ -375,7 +395,10 @@ export const selectedStoreFlattenedData = createMemo(() => {
   return (state.selectedStoreName && state.preloadedStoreData[state.selectedStoreName]) || [];
 });
 
-const setStoreFlattenedData = (storeName: string, newSelectedComponentFlattenedData: FlattenedStoreData[]) => {
+const setStoreFlattenedData = (
+  storeName: string,
+  newSelectedComponentFlattenedData: FlattenedStoreData[],
+) => {
   setState({
     preloadedStoreData: {
       ...state.preloadedStoreData,

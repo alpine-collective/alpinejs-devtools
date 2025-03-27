@@ -10,7 +10,9 @@ it('v2 - should get names of components', () => {
 });
 
 it('v2 - should create globals + add annotation for each component', () => {
-  cy.visit('/simulator?target=example.html').get('[data-testid=component-name]').should('be.visible');
+  cy.visit('/simulator?target=example.html')
+    .get('[data-testid=component-name]')
+    .should('be.visible');
 
   let win;
   cy.frameLoaded('#target').then(() => {
@@ -141,8 +143,12 @@ it('v2 - should support selecting/unselecting a component', () => {
 
   cy.get('[data-testid=component-container]').first().click();
 
-  cy.get('[data-testid=component-container]').first().should('have.class', 'text-white bg-alpine-300');
-  cy.get('[data-testid=component-container]').last().should('not.have.class', 'text-white bg-alpine-300');
+  cy.get('[data-testid=component-container]')
+    .first()
+    .should('have.class', 'text-white bg-alpine-300');
+  cy.get('[data-testid=component-container]')
+    .last()
+    .should('not.have.class', 'text-white bg-alpine-300');
 });
 
 it('v2 - should display message with number of components watched', () => {
@@ -152,7 +158,9 @@ it('v2 - should display message with number of components watched', () => {
     .then((components) => {
       cy.get('[data-testid=footer-line]').then(($el) => {
         expect($el.text()).to.contain('Watching');
-        expect($el.text()).to.contain(`${components.length} ${components.length > 1 ? 'components' : 'component'}`);
+        expect($el.text()).to.contain(
+          `${components.length} ${components.length > 1 ? 'components' : 'component'}`,
+        );
       });
     });
 });
