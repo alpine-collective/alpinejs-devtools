@@ -182,18 +182,49 @@ function withAllClosedComponents(components: State['components']) {
 export function selectComponent(component: Component) {
   const selectedComponentId = component.id;
   const newComponents = withAllClosedComponents(state.components);
-  newComponents[component.id].isOpened = true;
+  newComponents[component.id] = {
+    ...newComponents[component.id],
+    isOpened: true,
+  };
 
   setState({
     selectedComponentId,
     components: newComponents,
   });
   if (!state.preloadedComponentData[component.id]) {
-    panelPostMessage({
-      componentId: selectedComponentId,
-      action: PANEL_TO_BACKEND_MESSAGES.GET_DATA,
-      source: ALPINE_DEVTOOLS_PANEL_SOURCE,
-    });
+    triggerComponentDataLoad(selectedComponentId);
+  }
+}
+
+function triggerComponentDataLoad(componentId: number) {
+  panelPostMessage({
+    componentId: componentId,
+    action: PANEL_TO_BACKEND_MESSAGES.GET_DATA,
+    source: ALPINE_DEVTOOLS_PANEL_SOURCE,
+  });
+}
+
+export function hoverOnComponent(component: Component) {
+  panelPostMessage({
+    componentId: component.id,
+    action: PANEL_TO_BACKEND_MESSAGES.HOVER_COMPONENT,
+    source: ALPINE_DEVTOOLS_PANEL_SOURCE,
+  });
+
+  // pre-load component
+  triggerComponentDataLoad(component.id);
+}
+
+export function hoverLeftComponent(component: Component) {
+  panelPostMessage({
+    componentId: component.id,
+    action: PANEL_TO_BACKEND_MESSAGES.HIDE_HOVER,
+    source: ALPINE_DEVTOOLS_PANEL_SOURCE,
+  });
+
+  if (state.selectedComponentId && component.id !== state.selectedComponentId) {
+    // undo component preload when hovering away without clicking
+    triggerComponentDataLoad(state.selectedComponentId);
   }
 }
 

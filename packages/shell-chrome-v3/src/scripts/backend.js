@@ -232,7 +232,8 @@ export function init(forceStart = false) {
           window[`$x${rootEl.__alpineDevtool.id - 1}`] = this.getAlpineDataInstance(rootEl);
         }
 
-        if (rootEl.__alpineDevtool.id === this.selectedComponentId) {
+        // fix eqeqeq
+        if (rootEl.__alpineDevtool.id == this.selectedComponentId) {
           this.sendComponentData(this.selectedComponentId, rootEl);
         }
 
@@ -243,7 +244,8 @@ export function init(forceStart = false) {
               // since effects track which dependencies are accessed,
               // run a fake component data access so that the effect runs
               void componentData[key];
-              if (rootEl.__alpineDevtool.id === this.selectedComponentId) {
+              // TODO: fix the fact we have one string, one number eqeqeq
+              if (rootEl.__alpineDevtool.id == this.selectedComponentId) {
                 // this re-computes the whole component data
                 // with effect we could send only the key-value of the field that's changed
                 this.sendComponentData(this.selectedComponentId, rootEl);
@@ -276,6 +278,10 @@ export function init(forceStart = false) {
       });
 
       this.stores = Object.keys(this.alpineStoreMagic);
+
+      this.stores.forEach((storeName, i) => {
+        window[`$s${i}`] = this.alpineStoreMagic[storeName];
+      });
 
       if (this.hasAlpineDataFn) {
         Alpine.effect(() => {
@@ -355,7 +361,8 @@ export function init(forceStart = false) {
     }
 
     handleGetComponentData(componentId) {
-      if (this.selectedComponentId === componentId) {
+      // fix eqeqeq
+      if (this.selectedComponentId == componentId) {
         // component already loaded
         // any changes to the component's data will be picked up by the mutation observer
         return;
@@ -363,7 +370,8 @@ export function init(forceStart = false) {
       this.selectedComponentId = componentId;
       this.runWithMutationPaused(() => {
         this.discoverComponents((component) => {
-          if (component.__alpineDevtool.id === componentId) {
+          // fix eqeqeq
+          if (component.__alpineDevtool.id == componentId) {
             this.sendComponentData(componentId, component);
           }
         });
@@ -393,7 +401,8 @@ export function init(forceStart = false) {
     handleSetComponentData(componentId, attributeSequence, attributeValue) {
       devtoolsBackend.runWithMutationPaused(() => {
         this.discoverComponents((component) => {
-          if (component.__alpineDevtool.id === componentId) {
+          // fix eqeqeq
+          if (component.__alpineDevtool.id == componentId) {
             set(this.getWriteableAlpineData(component), attributeSequence, attributeValue);
           }
         });
@@ -511,7 +520,8 @@ export function init(forceStart = false) {
       case PANEL_TO_BACKEND_MESSAGES.HOVER_COMPONENT: {
         devtoolsBackend.runWithMutationPaused(() => {
           devtoolsBackend.discoverComponents((component) => {
-            if (component.__alpineDevtool && component.__alpineDevtool.id === e.data.payload.componentId) {
+            // fix number vs string eqeqeq
+            if (component.__alpineDevtool && component.__alpineDevtool.id == e.data.payload.componentId) {
               devtoolsBackend.addHoverElement(component);
             }
           });
@@ -521,7 +531,8 @@ export function init(forceStart = false) {
       case PANEL_TO_BACKEND_MESSAGES.HIDE_HOVER: {
         devtoolsBackend.runWithMutationPaused(() => {
           devtoolsBackend.discoverComponents((component) => {
-            if (component.__alpineDevtool && component.__alpineDevtool.id === e.data.payload.componentId) {
+            // fix number vs string eqeqeq
+            if (component.__alpineDevtool && component.__alpineDevtool.id == e.data.payload.componentId) {
               devtoolsBackend.cleanupHoverElement();
             }
           });

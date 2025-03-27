@@ -1,17 +1,20 @@
-import { Component, openComponentValue, selectComponent } from '../state';
+import { Component, hoverLeftComponent, hoverOnComponent, openComponentValue, selectComponent } from '../state';
 
 export function ComponentListItem({ component }: { component: Component }) {
   return (
     <a
       classList={{
-        'text-white bg-alpine-300': !!openComponentValue() && component.isOpened,
-        'text-gray-600 hover:bg-blue-200': !openComponentValue() || !component.isOpened,
+        'text-white bg-alpine-300': openComponentValue()?.id === component.id && openComponentValue()?.isOpened,
+        'text-gray-600 hover:bg-blue-200': openComponentValue()?.id !== component.id || !openComponentValue()?.isOpened,
       }}
       class="block cursor-pointer rounded"
       style={`padding-left: ${component.depth * 20}px;`}
-      // TODO: component hover
-      // @mouseenter="alpineState.hoverOnComponent(component)"
-      // @mouseleave="alpineState.hoverLeftComponent(component)"
+      onMouseEnter={(_e) => {
+        hoverOnComponent(component);
+      }}
+      onMouseLeave={(_e) => {
+        hoverLeftComponent(component);
+      }}
       onClick={(_e) => {
         selectComponent(component);
       }}
@@ -23,14 +26,13 @@ export function ComponentListItem({ component }: { component: Component }) {
           {component.name}
         </span>
         <span class="opacity-25">&gt;</span>
-        {/* TODO: console global feature */}
-        {/* <div
-                    data-testid="console-global"
-                    class="text-white pl-2 text-xs"
-                    title={`Available as $x${component.id - 1} in the console`}
-                >
-                    = <span>{`$x${component.id - 1}`}</span>
-                </div> */}
+        <div
+          data-testid="console-global"
+          class="text-gray pl-2 text-xs"
+          title={`Available as $x${component.id - 1} in the console`}
+        >
+          = <span>{`$x${component.id - 1}`}</span>
+        </div>
       </h5>
     </a>
   );

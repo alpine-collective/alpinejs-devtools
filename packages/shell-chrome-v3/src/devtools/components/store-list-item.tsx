@@ -1,6 +1,6 @@
 import { selectStore } from '../state';
 
-export function StoreListItem({ storeName, isOpen }: { storeName: string; isOpen: boolean }) {
+export function StoreListItem({ idx, storeName, isOpen }: { idx: number; storeName: string; isOpen: boolean }) {
   return (
     <a
       classList={{
@@ -19,6 +19,9 @@ export function StoreListItem({ storeName, isOpen }: { storeName: string; isOpen
           {storeName}
         </span>
         <span class="opacity-25">{"']"}</span>
+        <div data-testid="console-global" class="text-gray pl-2 text-xs" title={`Available as $s${idx} in the console`}>
+          = <span>{`$s${idx}`}</span>
+        </div>
       </h5>
     </a>
   );

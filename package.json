@@ -11,7 +11,7 @@
         "start:ci": "ROLLUP_SERVE=true rollup -c",
         "build:dev": "rollup -c",
         "build": "NODE_ENV=production rollup -c && VITE_MAINLINE_PUBLISH=true npm --prefix packages/shell-chrome-v3 run build",
-        "early-access": "NODE_ENV=production rollup -c && npm --prefix packages/shell-chrome-v3 run build && npm run postpackage",
+        "early-access": "rm -rf dist && NODE_ENV=production rollup -c && npm --prefix packages/shell-chrome-v3 run build && npm run postpackage",
         "ea": "npm run early-access",
         "watch": "npm start",
         "test": "node --test tests/*",
@@ -20,7 +20,7 @@
         "format": "prettier './{packages/**/,cypress/**/*,lib/}*.{js,ts,tsx,html,css}' --write",
         "check:format": "prettier './{packages/**/,cypress/**/*,}*.{js,ts,tsx,html,css}' -c",
         "typecheck": "npm --prefix packages/shell-chrome-v3 run typecheck",
-        "prepackage": "npm run build",
+        "prepackage": "rm -rf dist && npm run build",
         "package": "cd ./dist/chrome && zip -r ../alpine-devtools-$npm_package_version.zip .",
         "postpackage": "cd ./dist/shell-chrome-v3 && zip -r ../alpine-devtools-v2.zip ."
     },

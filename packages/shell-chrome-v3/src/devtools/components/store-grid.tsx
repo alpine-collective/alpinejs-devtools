@@ -35,8 +35,8 @@ export function StoreGrid() {
             </div>
           ) : (
             <div class="absolute min-w-full min-h-full p-2">
-              {storesValue().map((s) => (
-                <StoreListItem storeName={s.name} isOpen={s.isOpen} />
+              {storesValue().map((s, i) => (
+                <StoreListItem idx={i} storeName={s.name} isOpen={s.isOpen} />
               ))}
             </div>
           )}

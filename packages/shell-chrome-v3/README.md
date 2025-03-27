@@ -10,15 +10,19 @@ Todo:
 - [x] detector -> content
   - [x] content -> background (service_worker)
   - [x] panel -> background connection
-- [x] select ~~1~~ 12 Cypress scenario and get it working
+- [x] select ~~1~~ ~~12~~ 17 Cypress scenarios and get them working
   - content runs on page and has access to Chrome Ext APIs, it injects detector
   - background = service worker
 - [x] detection popup
 - [x] disable things that aren't implemented (eg. warnings tab, "latest version" loading)
 - [x] tab links/switching between tabs (components vs warnings, stores)
 - [x] stores
+- [x] look into component refresh issues (find a repro)
+  - fixed issue with port disconnection
+  - fixed issue with backend.js re-injection
+    - 1. open page 2. open devtools 3. **dont select a component** 4. reload page (with devtools still open) 4. select a component -> didn't load data, now fixed
 - [ ] reinstate warnings
-- [ ] look into component refresh issues (find a repro)
+- [ ] display v3 warnings
 
 Using [Solid](https://solidjs.com) since Alpine.js is disallowed (unsafe eval is not allowed in panels in Manifest v3).
 

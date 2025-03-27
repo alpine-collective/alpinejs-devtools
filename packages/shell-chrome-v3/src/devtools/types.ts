@@ -1,4 +1,5 @@
 import type { BACKEND_TO_PANEL_MESSAGES, PANEL_TO_BACKEND_MESSAGES } from '../lib/constants';
+import type { ALPINE_DEVTOOLS_PANEL_SOURCE, ALPINE_DEVTOOLS_PROXY_SOURCE } from './ports';
 
 export type TabValues = 'components' | 'stores';
 
@@ -14,4 +15,5 @@ export type BackendToPanelMessage = {
 export type PanelToBackendMessage = {
   [key: string]: any;
   action: PanelToBackendMessageType;
+  source: typeof ALPINE_DEVTOOLS_PANEL_SOURCE | typeof ALPINE_DEVTOOLS_PROXY_SOURCE;
 };

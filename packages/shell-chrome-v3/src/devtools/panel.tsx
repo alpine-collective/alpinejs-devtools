@@ -65,6 +65,7 @@ function onReload(reloadFn: () => void) {
  * @param {Function} cb
  */
 
+let injectionAttempts = 0;
 function injectScript(scriptSrc: string, cb: Function) {
   const src = `
     (function() {
@@ -76,10 +77,15 @@ function injectScript(scriptSrc: string, cb: Function) {
   `;
   chrome.devtools.inspectedWindow.eval(src, (_res, err) => {
     if (err) {
-      console.warn('[alpine-devtools] error injecting script, retrying in 300ms', err);
-      setTimeout(() => {
-        injectScript(scriptSrc, cb);
-      }, 300);
+      if (injectionAttempts < 5) {
+        console.warn('[alpine-devtools] error injecting script, retrying in 300ms', err);
+        injectionAttempts += 1;
+        setTimeout(() => {
+          injectScript(scriptSrc, cb);
+        }, 300);
+      } else {
+        console.error('[alpine-devtools] error injecting script, stopping retries', err);
+      }
     }
     cb();
   });
