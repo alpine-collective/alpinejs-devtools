@@ -56,7 +56,7 @@ export function waitForAlpine(
 ) {
   let attempts = delayFirstAttempt ? 0 : 1;
   if (!delayFirstAttempt && window.Alpine) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (import.meta.env.DEV) {
       console.info(`waitForAlpine, attempts: ${attempts}/${maxAttempts}`);
     }
     cb();
@@ -66,7 +66,7 @@ export function waitForAlpine(
   const timer = setInterval(wait, interval);
   function wait() {
     attempts++;
-    if (process.env.NODE_ENV !== 'production') {
+    if (import.meta.env.DEV) {
       console.info(`waitForAlpine, attempts: ${attempts}/${maxAttempts}`);
     }
     if (attempts >= maxAttempts || window.Alpine) {

@@ -33,7 +33,9 @@ port.onDisconnect.addListener((e) => {
 
 function forwardWindowMessageListener(e: any) {
   if (!disconnected) {
-    console.log('[alpine-devtools] detector -> content message', e);
+    if (import.meta.env.DEV) {
+      console.log('[alpine-devtools] detector -> content message', e);
+    }
     port.postMessage(e.data);
   } else {
     console.warn('[alpine-devtools] CONTENT port disconnected, skipping message send', e);

@@ -57,6 +57,7 @@ function onReload(reloadFn: () => void) {
   chrome.devtools.network.onNavigated.addListener(reloadFn);
 }
 
+let injectionAttempts = 0;
 /**
  * Inject a globally evaluated script, in the same context with the actual
  * user app.
@@ -64,8 +65,6 @@ function onReload(reloadFn: () => void) {
  * @param {String} scriptSrc
  * @param {Function} cb
  */
-
-let injectionAttempts = 0;
 function injectScript(scriptSrc: string, cb: Function) {
   const src = `
     (function() {

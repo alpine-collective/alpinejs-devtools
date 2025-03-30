@@ -254,14 +254,14 @@ export function toggleDataAttributeOpen(attribute: FlattenedComponentData | Flat
   if (attribute.hasArrow) {
     const childrenIdLength = attribute.id.split('.').length + 1;
 
-    // this code generate something like that \\w+\\.\\w+\\.\\w+$
+    // this code generates something like: \\w+\\.\\w+\\.\\w+$
     let closeRegexStr = '';
 
     for (let i = 0; i < childrenIdLength - 1; i++) {
-      closeRegexStr += String.raw`\w+\.`;
+      closeRegexStr += String.raw`[^.]+\.`;
     }
 
-    closeRegexStr += String.raw`\w+$`;
+    closeRegexStr += String.raw`[^.]+$`;
 
     const closeRegex = new RegExp(closeRegexStr);
 

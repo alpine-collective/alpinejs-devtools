@@ -96,7 +96,7 @@ export function init(forceStart = false) {
     getReadOnlyAlpineData(node) {
       const alpineDataInstance = this.getAlpineDataInstance(node);
       if (!alpineDataInstance) {
-        if (process.env.NODE_ENV !== 'production') {
+        if (import.meta.env.DEV) {
           console.warn('element has no dataStack', node);
         }
         return;
