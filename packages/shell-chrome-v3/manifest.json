@@ -1,7 +1,7 @@
 {
   "name": "Alpine.js devtools - Early Access",
   "description": "DevTools extension for debugging Alpine.js applications.",
-  "version": "2.1.4",
+  "version": "2.2.0",
   "manifest_version": 3,
   "icons": {
     "16": "icons/16.png",

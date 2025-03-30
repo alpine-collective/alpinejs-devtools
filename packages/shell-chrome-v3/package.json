@@ -1,7 +1,7 @@
 {
   "name": "shell-chrome-v3",
   "private": true,
-  "version": "2.1.4",
+  "version": "2.2.0",
   "description": "Alpine.js devtools with Chrome manifest v3 compatibility",
   "type": "module",
   "scripts": {
@@ -14,7 +14,7 @@
     "esbuild": "node build.js && prettier -w manifest.json",
     "serve": "vite preview",
     "cy:run": "cypress run",
-    "cy:open": "cypress open"
+    "cy:open": "cypress open --e2e --browser=electron"
   },
   "license": "MIT",
   "devDependencies": {

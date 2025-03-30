@@ -2,6 +2,8 @@
 import { renderApp } from './App';
 import { inspectorPortName } from './ports';
 import { handleBackendToPanelMessage, unsetPort } from './messaging';
+import { state } from './state';
+import { DEVTOOLS_INITIAL_STATE_GLOBAL } from '../lib/constants';
 
 let dispose: () => void;
 /* Entrypoint for Extension panel, integrates with Devtools/extension APIs, initialises the solidJS app, see also index.html */
@@ -25,32 +27,40 @@ function connect() {
   // What that means is that messages go:
   // - panel/devtools -(port)-> background -(port)-> proxy -(window)-> backend
   // - backend -(window)-> proxy -(port)-> background -(port)-> panel/devtools
-  injectScript(chrome.runtime.getURL('./backend.js'), () => {
-    const port = chrome.runtime.connect({
-      name: inspectorPortName(chrome.devtools.inspectedWindow.tabId),
-    });
-
-    let disconnected = false;
-
-    port.onDisconnect.addListener(() => {
-      console.log('[alpine-devtools] panel.tsx disconnecting');
-      disconnected = true;
-      unsetPort();
-      port.onMessage.removeListener(panelToBackendMessageHandler);
-    });
-
-    function panelToBackendMessageHandler(message: any) {
-      // ignore further messages, might not be needed since
-      // we're removing the listener
-      if (disconnected) {
-        unsetPort();
-        return;
-      }
-      handleBackendToPanelMessage(message, port);
-    }
-
-    port.onMessage.addListener(panelToBackendMessageHandler);
+  console.log({
+    selectedComponentId: state.selectedComponentId,
+    selectedStoreName: state.selectedStoreName,
   });
+  injectScript(
+    chrome.runtime.getURL('./backend.js'),
+    { selectedComponentId: state.selectedComponentId, selectedStoreName: state.selectedStoreName },
+    () => {
+      const port = chrome.runtime.connect({
+        name: inspectorPortName(chrome.devtools.inspectedWindow.tabId),
+      });
+
+      let disconnected = false;
+
+      port.onDisconnect.addListener(() => {
+        console.log('[alpine-devtools] panel.tsx disconnecting');
+        disconnected = true;
+        unsetPort();
+        port.onMessage.removeListener(panelToBackendMessageHandler);
+      });
+
+      function panelToBackendMessageHandler(message: any) {
+        // ignore further messages, might not be needed since
+        // we're removing the listener
+        if (disconnected) {
+          unsetPort();
+          return;
+        }
+        handleBackendToPanelMessage(message, port);
+      }
+
+      port.onMessage.addListener(panelToBackendMessageHandler);
+    },
+  );
 }
 
 function onReload(reloadFn: () => void) {
@@ -61,17 +71,15 @@ let injectionAttempts = 0;
 /**
  * Inject a globally evaluated script, in the same context with the actual
  * user app.
- *
- * @param {String} scriptSrc
- * @param {Function} cb
  */
-function injectScript(scriptSrc: string, cb: Function) {
+function injectScript(scriptSrc: string, globals: any, cb: Function) {
   const src = `
     (function() {
       var script = document.constructor.prototype.createElement.call(document, 'script');
       script.src = "${scriptSrc}";
       document.documentElement.appendChild(script);
       script.parentNode.removeChild(script);
+      window.${DEVTOOLS_INITIAL_STATE_GLOBAL} = ${JSON.stringify(globals)};
     })()
   `;
   chrome.devtools.inspectedWindow.eval(src, (_res, err) => {
@@ -80,7 +88,7 @@ function injectScript(scriptSrc: string, cb: Function) {
         console.warn('[alpine-devtools] error injecting script, retrying in 300ms', err);
         injectionAttempts += 1;
         setTimeout(() => {
-          injectScript(scriptSrc, cb);
+          injectScript(scriptSrc, globals, cb);
         }, 300);
       } else {
         console.error('[alpine-devtools] error injecting script, stopping retries', err);

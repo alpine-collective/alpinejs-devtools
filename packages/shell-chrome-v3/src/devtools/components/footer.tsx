@@ -1,5 +1,5 @@
 import { createSignal } from 'solid-js';
-import { componentsValue, state, storesValue } from '../state';
+import { componentsValue, errors, state, storesValue } from '../state';
 
 interface FooterProps {
   setActiveTab: Function;
@@ -35,20 +35,20 @@ export function Footer({ setActiveTab }: FooterProps) {
                   setActiveTab('stores');
                 }}
               >
-                {storesValue().length} {storesValue().length !== 1 ? 'stores' : 'component'}
+                {storesValue().length} {storesValue().length !== 1 ? 'stores' : 'store'}
               </a>
-              {/* ,&nbsp;
-                <a
-                    href="#"
-                    data-testid="footer-warnings-link"
-                    onClick={(e) => {
-                        e.preventDefault()
-                        setActiveTab('warnings')
-                    }}
-                    class={errors().length > 0 ? 'text-red-400' : ''}
-                >
-                    {errors().length} {errors().length !== 1 ? 'warnings' : 'warning'}
-                </a> */}
+              ,&nbsp;
+              <a
+                href="#"
+                data-testid="footer-warnings-link"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setActiveTab('warnings');
+                }}
+                class={errors().length > 0 ? 'text-red-400' : ''}
+              >
+                {errors().length} {errors().length !== 1 ? 'warnings' : 'warning'}
+              </a>
             </div>
           </div>
 

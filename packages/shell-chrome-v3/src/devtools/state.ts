@@ -1,5 +1,5 @@
 import { createMemo } from 'solid-js';
-import { createStore } from 'solid-js/store';
+import { createStore, reconcile } from 'solid-js/store';
 import { PANEL_TO_BACKEND_MESSAGES } from '../lib/constants';
 import { panelPostMessage } from './messaging';
 import { ALPINE_DEVTOOLS_PANEL_SOURCE } from './ports';
@@ -18,12 +18,26 @@ interface State {
   preloadedStoreData: Record<string, Array<FlattenedStoreData>>;
   errors: any[];
 }
-export type FlattenedStoreData = Omit<FlattenedComponentData, 'parentComponentId'> & {
-  parentStoreName: string;
-};
+export interface Component {
+  depth: number;
+  id: number;
+  index: number;
+  name: string;
+  // TODO: this is only on output type and are not nullable
+  isOpened?: boolean;
+}
+
 export interface Store {
   name: string;
   isOpen: boolean;
+}
+
+export interface EvalError {
+  type: 'eval';
+  message: string;
+  expression?: string;
+  source: { name: string; attributes?: Array<string>; children?: Array<string> };
+  errorId: number;
 }
 
 export interface FlattenedComponentData {
@@ -43,14 +57,9 @@ export interface FlattenedComponentData {
   readOnly: boolean;
 }
 
-export interface Component {
-  depth: number;
-  id: number;
-  index: number;
-  name: string;
-  // TODO: this is only on output type and are not nullable
-  isOpened?: boolean;
-}
+export type FlattenedStoreData = Omit<FlattenedComponentData, 'parentComponentId'> & {
+  parentStoreName: string;
+};
 
 export const [state, setState] = createStore<State>({
   version: {},
@@ -62,10 +71,8 @@ export const [state, setState] = createStore<State>({
 });
 
 export const setAlpineVersionFromBackend = (version: string) => {
-  setState({
-    version: {
-      detected: version,
-    },
+  setState('version', {
+    detected: version,
   });
 };
 
@@ -78,9 +85,7 @@ export const setComponentsList = (components: Array<Component>, appUrl: string) 
     newComponents[component.id] = component;
   });
 
-  setState({
-    components: newComponents,
-  });
+  setState('components', reconcile(newComponents));
 
   if (appUrl !== state.appUrl || !components.find((c) => c.id === state.selectedComponentId)) {
     setState({
@@ -92,39 +97,42 @@ export const setComponentsList = (components: Array<Component>, appUrl: string) 
 };
 
 export const setStoresFromList = (stores: Array<string>) => {
-  setState({
-    stores: stores.reduce(
-      (acc, curr) => {
-        acc[curr] = {
-          name: curr,
-          isOpen: false,
-        };
-        return acc;
-      },
-      {} as State['stores'],
+  setState(
+    'stores',
+    reconcile(
+      stores.reduce(
+        (acc, curr) => {
+          acc[curr] = {
+            name: curr,
+            isOpen: false,
+          };
+          return acc;
+        },
+        {} as State['stores'],
+      ),
     ),
-  });
+  );
 };
 
 export const setComponentData = (componentId: string, componentData: any) => {
-  const flattenedData = flattenData(componentData).map<FlattenedComponentData>((d) => {
-    const prevDataAttributeState: Record<
-      string,
-      Record<number, FlattenedComponentData>
-    > = selectedComponentFlattenedData()
-      ? selectedComponentFlattenedData().reduce((acc, curr) => {
-          // string and number keys are interchangeable?
+  const prevDataAttributeState: Record<
+    string,
+    Record<number, FlattenedComponentData>
+  > = selectedComponentFlattenedData()
+    ? selectedComponentFlattenedData().reduce((acc, curr) => {
+        // string and number keys are interchangeable?
+        // @ts-expect-error
+        if (!acc[curr.parentComponentId]) {
           // @ts-expect-error
-          if (!acc[curr.parentComponentId]) {
-            // @ts-expect-error
-            acc[curr.parentComponentId] = {};
-          }
-          // @ts-expect-error
-          acc[curr.parentComponentId][curr.id] = curr;
-          return acc;
-        }, {})
-      : {};
+          acc[curr.parentComponentId] = {};
+        }
+        // @ts-expect-error
+        acc[curr.parentComponentId][curr.id] = curr;
+        return acc;
+      }, {})
+    : {};
 
+  const flattenedData = flattenData(componentData).map<FlattenedComponentData>((d) => {
     // top-level attributes should be open
     let isOpened = d.depth === 0;
     if (
@@ -156,7 +164,6 @@ export const setComponentData = (componentId: string, componentData: any) => {
       parentComponentId: componentId,
     };
   });
-
   setComponentFlattenedData(componentId, flattenedData);
 };
 export const setStoreData = (storeName: string, storeData: any) => {
@@ -168,12 +175,36 @@ export const setStoreData = (storeName: string, storeData: any) => {
   setStoreFlattenedData(storeName, flattenedData);
 };
 
+/**
+ * ERRORS
+ */
+
 // renamed from `renderError`
 export const setAdditionalError = (error: any) => {
-  setState({
-    errors: [...state.errors, error],
+  setState('errors', reconcile([...state.errors, error]));
+};
+
+export const errors = createMemo(() => state.errors);
+
+export const showErrorSource = (errorId: string) => {
+  panelPostMessage({
+    errorId,
+    action: PANEL_TO_BACKEND_MESSAGES.SHOW_ERROR_SOURCE,
+    source: ALPINE_DEVTOOLS_PANEL_SOURCE,
   });
 };
+
+export const hideErrorSource = (errorId: string) => {
+  panelPostMessage({
+    errorId,
+    action: PANEL_TO_BACKEND_MESSAGES.HIDE_ERROR_SOURCE,
+    source: ALPINE_DEVTOOLS_PANEL_SOURCE,
+  });
+};
+
+/**
+ * END ERRORS
+ */
 
 function withAllClosedComponents(components: State['components']): State['components'] {
   return Object.fromEntries(
@@ -195,10 +226,9 @@ export function selectComponent(component: Component) {
     isOpened: true,
   };
 
-  setState({
-    selectedComponentId,
-    components: newComponents,
-  });
+  setState('selectedComponentId', selectedComponentId);
+  setState('components', reconcile(newComponents));
+
   if (!state.preloadedComponentData[component.id]) {
     triggerComponentDataLoad(selectedComponentId);
   }
@@ -219,8 +249,10 @@ export function hoverOnComponent(component: Component) {
     source: ALPINE_DEVTOOLS_PANEL_SOURCE,
   });
 
-  // pre-load component
-  triggerComponentDataLoad(component.id);
+  // pre-load component if not already selected
+  if (state.selectedComponentId === component.id) {
+    triggerComponentDataLoad(component.id);
+  }
 }
 
 export function hoverLeftComponent(component: Component) {
@@ -237,9 +269,7 @@ export function hoverLeftComponent(component: Component) {
 }
 
 export function selectStore(storeName: Store['name']) {
-  setState({
-    selectedStoreName: storeName,
-  });
+  setState('selectedStoreName', storeName);
   if (!state.preloadedStoreData[storeName]) {
     panelPostMessage({
       storeName,
@@ -383,12 +413,13 @@ const setComponentFlattenedData = (
   selectedComponentId: string,
   newSelectedComponentFlattenedData: Array<FlattenedComponentData>,
 ) => {
-  setState({
-    preloadedComponentData: {
+  setState(
+    'preloadedComponentData',
+    reconcile({
       ...state.preloadedComponentData,
       [selectedComponentId]: newSelectedComponentFlattenedData,
-    },
-  });
+    }),
+  );
 };
 
 export const selectedStoreFlattenedData = createMemo(() => {
@@ -399,10 +430,11 @@ const setStoreFlattenedData = (
   storeName: string,
   newSelectedComponentFlattenedData: FlattenedStoreData[],
 ) => {
-  setState({
-    preloadedStoreData: {
+  setState(
+    'preloadedStoreData',
+    reconcile({
       ...state.preloadedStoreData,
       [storeName]: newSelectedComponentFlattenedData,
-    },
-  });
+    }),
+  );
 };

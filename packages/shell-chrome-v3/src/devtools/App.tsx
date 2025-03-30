@@ -8,6 +8,7 @@ import { render } from 'solid-js/web';
 import { handleResize, orientation } from './theme';
 import { StoreGrid } from './components/store-grid';
 import { TabValues } from './types';
+import { Warnings } from './components/warnings';
 
 const App: Component = () => {
   onMount(() => {
@@ -16,7 +17,6 @@ const App: Component = () => {
   onCleanup(() => {
     window.removeEventListener('resize', handleResize);
   });
-  const showTools = true;
   const [activeTab, setActiveTab] = createSignal<TabValues>('components');
   return (
     <div class="h-full">
@@ -27,19 +27,20 @@ const App: Component = () => {
             'flex-col': orientation() === 'portrait',
           }}
         >
-          <Header showTools={showTools} activeTab={activeTab} setActiveTab={setActiveTab} />
+          <Header activeTab={activeTab} setActiveTab={setActiveTab} />
           <div class="flex-1 overflow-hidden">
             <Show when={activeTab() === 'components'}>
-              <ComponentGrid showTools={showTools} />
+              <ComponentGrid />
+            </Show>
+            <Show when={activeTab() === 'warnings'}>
+              <Warnings />
             </Show>
             <Show when={activeTab() === 'stores'}>
               <StoreGrid />
             </Show>
           </div>
         </div>
-        <Show when={showTools}>
-          <Footer setActiveTab={setActiveTab} />
-        </Show>
+        <Footer setActiveTab={setActiveTab} />
       </div>
     </div>
   );

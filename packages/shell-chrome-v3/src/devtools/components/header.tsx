@@ -4,16 +4,14 @@ import { TabValues } from '../types';
 import { TabLink } from './tab-link';
 
 interface HeaderProps {
-  showTools: boolean;
   activeTab: Accessor<TabValues>;
   setActiveTab: Function;
 }
-export function Header({ showTools, activeTab, setActiveTab }: HeaderProps) {
+export function Header({ activeTab, setActiveTab }: HeaderProps) {
   return (
     <div
       classList={{
-        'bg-gray-100': !showTools,
-        [theme['bg-header']]: showTools,
+        [theme['bg-header']]: true,
         'flex-col w-48 min-h-0 overflow-y-auto': orientation() === 'landscape',
         'flex-row items-center pl-3 pr-1 xs:pr-3': orientation() === 'portrait',
       }}
@@ -40,37 +38,19 @@ export function Header({ showTools, activeTab, setActiveTab }: HeaderProps) {
             stroke="none"
           >
             <polygon
-              classList={{ 'text-gray-600': !showTools, [theme['bg-logo-dark']]: showTools }}
+              classList={{ [theme['bg-logo-dark']]: true }}
               class="transform transition-colors duration-700"
               points="50,230 140,140 320,320 140,320"
             />
             <polygon
-              classList={{ 'text-gray-400': !showTools, [theme['bg-logo-light']]: showTools }}
+              classList={{ [theme['bg-logo-light']]: true }}
               class="transform transition-colors duration-700"
               points="320,140 410,230 320,320 230,230"
             />
           </svg>
 
           <div
-            data-testid="status-line"
             classList={{
-              hidden: showTools,
-            }}
-            class="flex items-center px-1 py-0.5 rounded text-xs text-gray-600 font-medium leading-4 bg-gray-300 bg-opacity-50 animate-pulse-fast transition transition-colors duration-700 ease-in-out"
-            // :title="isLatest? 'Latest Version' : `Latest Version: ${latest}`"
-          >
-            <svg
-              class="mr-1.5 h-2 w-2 text-gray-400 transition transition-colors duration-700 ease-in-out"
-              fill="currentColor"
-              viewBox="0 0 8 8"
-            >
-              <circle cx="4" cy="4" r="3" />
-            </svg>
-            <span>Alpine.js tools loading</span>
-          </div>
-          <div
-            classList={{
-              'opacity-0': !showTools,
               'flex-col pr-px leading-[3rem]': orientation() === 'landscape',
               'flex-row items-center pb-px leading-[3.25rem] xs:space-x-3':
                 orientation() === 'portrait',
@@ -114,6 +94,24 @@ export function Header({ showTools, activeTab, setActiveTab }: HeaderProps) {
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"
+                />
+              </svg>
+            </TabLink>
+            <TabLink activeTab={activeTab} setActiveTab={setActiveTab} tab="warnings">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                classList={{
+                  'xs:mr-1': orientation() === 'landscape',
+                  'xs:mr-0.5': orientation() === 'portrait',
+                }}
+                class="inline-block w-6 h-6 xs:w-5 xs:h-5 xs:opacity-50"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
                 />
               </svg>
             </TabLink>

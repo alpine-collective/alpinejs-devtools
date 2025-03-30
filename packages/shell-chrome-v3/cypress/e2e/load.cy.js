@@ -6,7 +6,7 @@ it('should load devtools', () => {
   // .contains('Devtools loading...')
   // // Devtools initialising
   // .get('#devtools-container .preload')
-  // .should('not.be.visible')
+  // .should('not.exist')
   // .get('[data-testid=status-line]')
   // .contains('Alpine.js tools loading')
   // .window()
@@ -31,7 +31,7 @@ it('should load devtools when no components found', () => {
   // .contains('Devtools loading...')
   // // Devtools initialising
   // .get('#devtools-container .preload')
-  // .should('not.be.visible')
+  // .should('not.exist')
   // .get('[data-testid=status-line]')
   // .contains('Alpine.js tools loading')
   // .window()

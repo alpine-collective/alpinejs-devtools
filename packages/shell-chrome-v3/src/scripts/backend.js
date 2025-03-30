@@ -4,7 +4,12 @@ import {
   DEVTOOLS_RENDER_ATTR_NAME,
   DEVTOOLS_RENDER_BINDING_ATTR_NAME,
   PANEL_TO_BACKEND_MESSAGES,
+  ALPINE_ERRORS_GLOBAL,
+  INIT_MESSAGE,
+  DEVTOOLS_INITIAL_STATE_GLOBAL,
 } from '../lib/constants';
+import { debounce } from '../lib/debounce';
+// import { isEarlyAccess } from '../lib/isEarlyAccess';
 import {
   getComponentName,
   isSerializable,
@@ -50,9 +55,14 @@ export function init(forceStart = false) {
       this.observer = null;
       this.errorElements = [];
       this.errorSourceId = 1;
+      /** @type {number | undefined | null} */
       this.selectedComponentId = null;
+      /** @type {string | undefined | null} */
       this.selectedStoreName = null;
 
+      this.debouncedSetComponentData = debounce((...args) => {
+        this.sendComponentData(...args);
+      }, 5);
       this._stopMutationObserver = false;
       this._lastComponentCrawl = Date.now();
     }
@@ -117,6 +127,11 @@ export function init(forceStart = false) {
     }
 
     start() {
+      const { selectedComponentId, selectedStoreName } =
+        window[DEVTOOLS_INITIAL_STATE_GLOBAL] ?? {};
+      this.selectedComponentId = selectedComponentId;
+      this.selectedStoreName = selectedStoreName;
+
       this.initAlpineErrorCollection();
       this.getAlpineVersion();
       this.watchComponents();
@@ -130,10 +145,36 @@ export function init(forceStart = false) {
       this.disconnectObserver();
 
       window.console.warn = this._realLogWarn;
+      delete window[ALPINE_ERRORS_GLOBAL];
     }
 
     initAlpineErrorCollection() {
-      if (!isRequiredVersion('2.8.0', this.alpineVersion) || !this.alpineVersion) {
+      if (!isRequiredVersion('2.8.1', this.alpineVersion) || !this.alpineVersion) {
+        return;
+      }
+      // if (isEarlyAccess() && this.isV3 && isRequiredVersion('3.5.0', this.alpineVersion)) {
+      if (this.isV3 && isRequiredVersion('3.5.0', this.alpineVersion)) {
+        this._realLogWarn = console.warn.bind(console);
+        const instrumentedWarn = (...args) => {
+          const [maybeMessage] = args;
+          if (maybeMessage?.length && maybeMessage.includes('Alpine Expression Error:')) {
+            const [maybeAlpineExpressionErrorMsg = '', maybeExpression = ''] = maybeMessage
+              .split('\n')
+              .filter(Boolean);
+            const errorMessage = maybeAlpineExpressionErrorMsg
+              .replace('Alpine Expression Error:', ' ')
+              .trim();
+            const [expression] = maybeExpression.match(/(?<=Expression: ").*(?=")/) || [];
+            const element = args.find((el) => el instanceof HTMLElement);
+            this._handleAlpineError(element, expression, errorMessage);
+            console.info(
+              'Alpine Devtools intercepted an Alpine Expression Error, see it in the "Alpine.js" tab',
+            );
+            return;
+          }
+          this._realLogWarn(...args);
+        };
+        window.console.warn = instrumentedWarn;
         return;
       }
       if (isRequiredVersion('2.8.1', this.alpineVersion)) {
@@ -155,29 +196,19 @@ export function init(forceStart = false) {
         });
         return;
       }
-
-      this._realLogWarn = console.warn;
-
-      const instrumentedWarn = (...args) => {
-        const argsString = args.join(' ');
-        if (argsString.includes('Alpine Error:')) {
-          const [errorMessage] = argsString.match(/(?<=Alpine Error: ").*(?=")/);
-          const [expression] = argsString.match(/(?<=Expression: ").*(?=")/);
-          const element = args.find((el) => el instanceof HTMLElement);
-          this._handleAlpineError(element, expression, errorMessage);
-        }
-        this._realLogWarn(...args);
-      };
-
-      window.console.warn = instrumentedWarn;
     }
 
     _handleAlpineError(element, expression, errorMessage) {
       if (!element.__alpineErrorSourceId) {
         element.__alpineErrorSourceId = this.errorSourceId++;
+        window[ALPINE_ERRORS_GLOBAL] = {
+          ...(window[ALPINE_ERRORS_GLOBAL] || {}),
+          [element.__alpineErrorSourceId]: element,
+        };
       }
       this.errorElements.push(element);
 
+      /** @type {import('../devtools/state').EvalError} */
       const alpineError = {
         type: 'eval',
         message: errorMessage,
@@ -238,8 +269,7 @@ export function init(forceStart = false) {
           window[`$x${rootEl.__alpineDevtool.id - 1}`] = this.getAlpineDataInstance(rootEl);
         }
 
-        // fix eqeqeq
-        if (rootEl.__alpineDevtool.id == this.selectedComponentId) {
+        if (rootEl.__alpineDevtool.id === this.selectedComponentId) {
           this.sendComponentData(this.selectedComponentId, rootEl);
         }
 
@@ -247,14 +277,32 @@ export function init(forceStart = false) {
           const componentData = this.getAlpineDataInstance(rootEl);
           Alpine.effect(() => {
             Object.keys(componentData).forEach((key) => {
-              // since effects track which dependencies are accessed,
-              // run a fake component data access so that the effect runs
-              void componentData[key];
-              // TODO: fix the fact we have one string, one number eqeqeq
-              if (rootEl.__alpineDevtool.id == this.selectedComponentId) {
+              let recursionDepth = 0;
+              function visit(componentData, key) {
+                recursionDepth += 1;
+                // since effects track which dependencies are accessed,
+                // run a fake component data access so that the effect runs
+                void componentData[key];
+                if (recursionDepth >= 10) {
+                  return;
+                }
+                if (
+                  componentData[key] &&
+                  typeof componentData[key] === 'object' &&
+                  !Array.isArray(componentData[key])
+                ) {
+                  Object.keys(componentData[key])
+                    .filter((k) => !k.startsWith('$') && !k.startsWith('_x'))
+                    .forEach((k) => {
+                      visit(componentData[key], k);
+                    });
+                }
+              }
+              visit(componentData, key);
+              if (rootEl.__alpineDevtool.id === this.selectedComponentId) {
                 // this re-computes the whole component data
                 // with effect we could send only the key-value of the field that's changed
-                this.sendComponentData(this.selectedComponentId, rootEl);
+                this.debouncedSetComponentData(this.selectedComponentId, rootEl);
               }
             });
           });
@@ -292,6 +340,28 @@ export function init(forceStart = false) {
       if (this.hasAlpineDataFn) {
         Alpine.effect(() => {
           Object.keys(this.alpineStoreMagic).forEach((storeName) => {
+            let recursionDepth = 0;
+            function visit(componentData, key) {
+              recursionDepth += 1;
+              // since effects track which dependencies are accessed,
+              // run a fake component data access so that the effect runs
+              void componentData[key];
+              if (recursionDepth >= 10) {
+                return;
+              }
+              if (
+                componentData[key] &&
+                typeof componentData[key] === 'object' &&
+                !Array.isArray(componentData[key])
+              ) {
+                Object.keys(componentData[key])
+                  .filter((k) => !k.startsWith('$') && !k.startsWith('_x'))
+                  .forEach((k) => {
+                    visit(componentData[key], k);
+                  });
+              }
+            }
+            visit(this.alpineStoreMagic, storeName);
             if (storeName === this.selectedStoreName) {
               this.sendStoreData(this.selectedStoreName || storeName, this.alpineStoreMagic);
             }
@@ -367,8 +437,7 @@ export function init(forceStart = false) {
     }
 
     handleGetComponentData(componentId) {
-      // fix eqeqeq
-      if (this.selectedComponentId == componentId) {
+      if (this.selectedComponentId === componentId) {
         // component already loaded
         // any changes to the component's data will be picked up by the mutation observer
         return;
@@ -376,8 +445,7 @@ export function init(forceStart = false) {
       this.selectedComponentId = componentId;
       this.runWithMutationPaused(() => {
         this.discoverComponents((component) => {
-          // fix eqeqeq
-          if (component.__alpineDevtool.id == componentId) {
+          if (component.__alpineDevtool.id === componentId) {
             this.sendComponentData(componentId, component);
           }
         });
@@ -449,6 +517,9 @@ export function init(forceStart = false) {
 
     addHoverElement(target) {
       this.cleanupHoverElement();
+      if (!target) {
+        return;
+      }
 
       let hoverElement = document.createElement('div');
       let bounds = target.getBoundingClientRect();
@@ -486,7 +557,7 @@ export function init(forceStart = false) {
   window.addEventListener('message', handshake);
 
   function handshake(e) {
-    if (e.data.source === ALPINE_DEVTOOLS_PROXY_SOURCE && e.data.payload === 'init') {
+    if (e.data.source === ALPINE_DEVTOOLS_PROXY_SOURCE && e.data.payload === INIT_MESSAGE) {
       window.removeEventListener('message', handshake);
       window.addEventListener('message', handleMessages);
 

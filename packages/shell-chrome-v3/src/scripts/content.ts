@@ -34,14 +34,14 @@ port.onDisconnect.addListener((e) => {
 function forwardWindowMessageListener(e: any) {
   if (!disconnected) {
     if (import.meta.env.DEV) {
-      console.log('[alpine-devtools] detector -> content message', e);
+      console.log('[alpine-devtools] detector/backend -> content message', e?.data);
     }
     port.postMessage(e.data);
   } else {
     console.warn('[alpine-devtools] CONTENT port disconnected, skipping message send', e);
   }
 }
-// window is shared with detector.ts
+// window is shared with detector.ts/backend.js
 window.addEventListener('message', forwardWindowMessageListener);
 
 loadScriptInRealWorld('./detector.js');

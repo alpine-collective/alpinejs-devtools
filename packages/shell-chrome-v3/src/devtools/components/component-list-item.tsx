@@ -7,6 +7,7 @@ import {
   selectComponent,
 } from '../state';
 import { isEarlyAccess } from '../../lib/isEarlyAccess';
+import { inspectUserGlobal } from '../inspect';
 
 export function ComponentListItem({ component }: { component: Component }) {
   return (
@@ -56,7 +57,7 @@ export function ComponentListItem({ component }: { component: Component }) {
                 // Guard against errors in simulator,
                 // TODO: we should fake the API in the simulator instead
                 if (typeof chrome !== 'undefined') {
-                  chrome.devtools.inspectedWindow.eval(`inspect($x${component.id - 1}.$el)`);
+                  inspectUserGlobal(`$x${component.id - 1}.$el`);
                 }
               }
             }}

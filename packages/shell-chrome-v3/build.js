@@ -19,6 +19,9 @@ async function buildAll() {
 
       define: {
         'import.meta.env.DEV': JSON.stringify(process.env.NODE_ENV !== 'production'),
+        'import.meta.env.VITE_MAINLINE_PUBLISH': JSON.stringify(
+          JSON.stringify(process.env.VITE_MAINLINE_PUBLISH === 'true'),
+        ),
       },
     });
 

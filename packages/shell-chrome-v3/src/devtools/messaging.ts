@@ -45,8 +45,11 @@ export function handleBackendToPanelMessage(
       break;
     }
     case BACKEND_TO_PANEL_MESSAGES.SET_DATA: {
-      setComponentData(message.componentId, JSON.parse(message.data));
+      console.time('BACKEND_TO_PANEL_MESSAGES.SET_DATA');
+      const comps = JSON.parse(message.data);
+      setComponentData(message.componentId, comps);
       setPort(port);
+      console.timeEnd('BACKEND_TO_PANEL_MESSAGES.SET_DATA');
       break;
     }
     case BACKEND_TO_PANEL_MESSAGES.SET_STORE_DATA: {

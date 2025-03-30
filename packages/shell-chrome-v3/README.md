@@ -10,7 +10,7 @@ Todo:
 - [x] detector -> content
   - [x] content -> background (service_worker)
   - [x] panel -> background connection
-- [x] select ~~1~~ ~~12~~ 17 Cypress scenarios and get them working
+- [x] select ~~1~~ ~~12~~ ~~17~~ ~~25~~ 29 Cypress scenarios and get them working
   - content runs on page and has access to Chrome Ext APIs, it injects detector
   - background = service worker
 - [x] detection popup
@@ -22,7 +22,8 @@ Todo:
   - fixed issue with backend.js re-injection
     - 1. open page 2. open devtools 3. **dont select a component** 4. reload page (with devtools still open) 4. select a component -> didn't load data, now fixed
 - [x] go to elements tab at root element from component
-- [ ] reinstate warnings (display v3 warnings works v3.5.0 onwards)
+- [x] reinstate warnings (display v3 warnings works v3.5.0 onwards)
+- [x] fix performance issue with large $data (eg. nested object yielding 11k data properties)
 
 Using [Solid](https://solidjs.com) since Alpine.js is disallowed (unsafe eval is not allowed in panels in Manifest v3).
 

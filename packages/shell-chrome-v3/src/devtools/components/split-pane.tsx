@@ -3,11 +3,9 @@ import Split, { SplitInstance } from 'split-grid';
 import { orientation, breakpoint } from '../theme';
 
 export function SplitPane({
-  showTools,
   leftPaneContent,
   rightPaneContent,
 }: {
-  showTools: boolean;
   leftPaneContent: JSXElement;
   rightPaneContent: JSXElement;
 }) {
@@ -36,7 +34,6 @@ export function SplitPane({
     <div
       ref={panesRef}
       classList={{
-        'opacity-75': !showTools,
         'grid-cols-panes': breakpoint() !== 'sm',
         'grid-rows-panes': breakpoint() === 'sm',
       }}

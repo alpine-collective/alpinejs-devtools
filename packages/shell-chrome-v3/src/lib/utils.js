@@ -56,9 +56,6 @@ export function waitForAlpine(
 ) {
   let attempts = delayFirstAttempt ? 0 : 1;
   if (!delayFirstAttempt && window.Alpine) {
-    if (import.meta.env.DEV) {
-      console.info(`waitForAlpine, attempts: ${attempts}/${maxAttempts}`);
-    }
     cb();
     return;
   }
@@ -66,9 +63,6 @@ export function waitForAlpine(
   const timer = setInterval(wait, interval);
   function wait() {
     attempts++;
-    if (import.meta.env.DEV) {
-      console.info(`waitForAlpine, attempts: ${attempts}/${maxAttempts}`);
-    }
     if (attempts >= maxAttempts || window.Alpine) {
       clearInterval(timer);
     }

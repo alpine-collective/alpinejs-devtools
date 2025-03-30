@@ -5,6 +5,7 @@ import { DataAttributeDisplay } from './data-attribute-display';
 import { SplitPane } from './split-pane';
 import { EarlyAccessNotice } from './early-access';
 import { isEarlyAccess } from '../../lib/isEarlyAccess';
+import { For, Show } from 'solid-js';
 
 export function StoreGrid() {
   if (!isEarlyAccess()) {
@@ -25,7 +26,6 @@ export function StoreGrid() {
 
   return (
     <SplitPane
-      showTools={false}
       leftPaneContent={
         <>
           {storesValue().length === 0 ? (
@@ -69,10 +69,11 @@ export function StoreGrid() {
           >
             <div class="font-mono">
               <div class="leading-6 text-gray-300">{'{'}</div>
-              {selectedStoreFlattenedData().length > 0 &&
-                selectedStoreFlattenedData().map((data) => (
-                  <DataAttributeDisplay attributeData={data} />
-                ))}
+              <Show when={selectedStoreFlattenedData().length > 0}>
+                <For each={selectedStoreFlattenedData()}>
+                  {(data) => <DataAttributeDisplay attributeData={data} />}
+                </For>
+              </Show>
               <div class="leading-7 text-gray-300">{'}'}</div>
             </div>
           </div>

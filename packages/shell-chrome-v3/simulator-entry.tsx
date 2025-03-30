@@ -6,6 +6,7 @@ import {
   ALPINE_DEVTOOLS_BACKEND_SOURCE,
   ALPINE_DEVTOOLS_PROXY_SOURCE,
 } from './src/devtools/ports';
+import { INIT_MESSAGE } from './src/lib/constants';
 
 function inject(src: string, done: Function) {
   if (!src || src === 'false') {
@@ -66,7 +67,7 @@ async function main() {
       // 2. init devtools
       targetWindow.postMessage({
         source: ALPINE_DEVTOOLS_PROXY_SOURCE,
-        payload: 'init',
+        payload: INIT_MESSAGE,
       });
       // 3. proxy messages from backend to `window`
       targetWindow.addEventListener('message', (event: any) => {

@@ -7,6 +7,7 @@ import {
   ALPINE_DEVTOOLS_PROXY_SOURCE,
   PROXY,
 } from '../devtools/ports';
+import { INIT_MESSAGE } from '../lib/constants';
 
 function proxy() {
   const proxyPort = chrome.runtime.connect({
@@ -17,7 +18,7 @@ function proxy() {
   window.addEventListener('message', sendMessageToDevtools);
   proxyPort.onDisconnect.addListener(handleDisconnect);
 
-  sendMessageToBackend('init');
+  sendMessageToBackend(INIT_MESSAGE);
 
   function sendMessageToBackend(payload: any) {
     window.postMessage(
