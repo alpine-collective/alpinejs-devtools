@@ -5,16 +5,22 @@
 
 ## 🚨 Chrome Web Store Notice - Rewrite in Progress
 
-⚠️ **The published extension is currently unavailable** due to Chrome's Manifest v3 requirements ([more info](https://github.com/alpine-collective/alpinejs-devtools/issues/419))
+⚠️ **The published extension is currently unavailable** due to Chrome's Manifest v3 requirements ([more info](https://github.com/alpine-collective/alpinejs-devtools/issues/431))
 
-**Good news!** An Early Access Chrome-compatible version is ready through our [**Paid Early Access Program**](https://github.com/sponsors/HugoDF/)
+**Good news!** An Early Access Chrome-compatible version is ready through our [**Paid Early Access Program**](https://alpinedevtools.com/pricing)
 
-**Immediate Access Includes**:
+**Access Includes**:
 
-- ✅ Component State Inspection/Editing
-- ⚙️ Store State Tools (_Next Release_)
+✅ Component state inspection/editing  
+✅ Store state viewing/editing (🆕)  
+✅ More reliable state updates/sync (🆕)  
+✅ Highlight component in page on hover  
+✅ Component data in console globals  
+✅ Jump to root element in Chrome inspector (🆕)  
+✅ Warnings tab (inc. Alpine v3 support)  
+✅ High performance on nested data objects (🆕️, tested on ~10k data properties)  
 
-**Multiple Tiers Available** 👉 [Explore Options](https://github.com/sponsors/HugoDF)
+**Multiple Tiers Available** 👉 [Explore Options](https://alpinedevtools.com/pricing)
 
 # Alpine.js devtools
 
