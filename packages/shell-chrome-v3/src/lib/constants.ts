@@ -2,7 +2,7 @@ export const DEVTOOLS_RENDER_ATTR_NAME = 'data-devtools-render';
 export const DEVTOOLS_RENDER_BINDING_ATTR_NAME = `:${DEVTOOLS_RENDER_ATTR_NAME}`;
 export const ADDED_ATTRIBUTES = [DEVTOOLS_RENDER_ATTR_NAME, DEVTOOLS_RENDER_BINDING_ATTR_NAME];
 
-export const ALPINE_ERRORS_GLOBAL = '__alpine_error_els';
+export const DEVTOOLS_ERROR_ELS_GLOBAL = '__devtools_error_els';
 export const DEVTOOLS_INITIAL_STATE_GLOBAL = '__devtools_initial_state';
 
 export const INIT_MESSAGE = 'init';

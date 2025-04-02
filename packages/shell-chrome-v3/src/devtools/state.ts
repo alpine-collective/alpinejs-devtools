@@ -3,12 +3,13 @@ import { createStore, reconcile } from 'solid-js/store';
 import { PANEL_TO_BACKEND_MESSAGES } from '../lib/constants';
 import { panelPostMessage } from './messaging';
 import { ALPINE_DEVTOOLS_PANEL_SOURCE } from './ports';
-import { convertInputDataToType, flattenData } from '../lib/utils';
+import { convertInputDataToType, flattenData, mapDataTypeToInputType } from '../lib/utils';
 
 interface State {
   version: {
     detected?: string;
   };
+  pageLoadCompleted: boolean;
   appUrl?: string;
   components: Record<number, Component>;
   selectedComponentId?: number;
@@ -42,15 +43,27 @@ export interface EvalError {
 
 export interface FlattenedComponentData {
   attributeName: string;
-  attributeValue: string;
-  dataType: string; // TODO: narrow this
+  attributeValue: string | boolean | number;
+  // matches output of serializeDataProperty, when that's typed, use ReturnType<typeof serializeDataProperty>
+  dataType: // custom values
+  | 'HTMLElement'
+    | 'Unserializable'
+    // output of `typeof v`
+    | 'function'
+    | 'string'
+    | 'number'
+    | 'bigint'
+    | 'boolean'
+    | 'symbol'
+    | 'undefined'
+    | 'object';
   depth: number;
   directParentId: string;
   editAttributeValue?: string | boolean;
   hasArrow: boolean;
   id: string;
   inEditingMode: boolean;
-  inputType: string; // TODO: narrow this
+  inputType: ReturnType<typeof mapDataTypeToInputType>;
   isArrowDown: boolean;
   isOpened: boolean;
   parentComponentId: number;
@@ -62,6 +75,7 @@ export type FlattenedStoreData = Omit<FlattenedComponentData, 'parentComponentId
 };
 
 export const [state, setState] = createStore<State>({
+  pageLoadCompleted: false,
   version: {},
   errors: [],
   components: {},
@@ -76,9 +90,15 @@ export const setAlpineVersionFromBackend = (version: string) => {
   });
 };
 
+export const setPageLoaded = () => {
+  setState('pageLoadCompleted', true);
+};
+
 export const setComponentsList = (components: Array<Component>, appUrl: string) => {
-  // TODO: check for removed components
-  const newComponents = { ...state.components };
+  const incomingComponentIds = components.map((c) => c.id);
+  const newComponents = Object.fromEntries(
+    Object.entries(state.components).filter(([_k, c]) => incomingComponentIds.includes(c.id)),
+  );
   components.forEach((component, index) => {
     component.index = index;
     component.isOpened = state.selectedComponentId === component.id;

@@ -27,6 +27,9 @@ export function ComponentListItem({ component }: { component: Component }) {
         hoverLeftComponent(component);
       }}
       onClick={(_e) => {
+        if (window.sa_event) {
+          window.sa_event('component_selected');
+        }
         selectComponent(component);
       }}
       data-testid="component-container"
@@ -53,12 +56,11 @@ export function ComponentListItem({ component }: { component: Component }) {
               if (!isEarlyAccess()) {
                 return;
               } else {
-                hoverLeftComponent(component);
-                // Guard against errors in simulator,
-                // TODO: we should fake the API in the simulator instead
-                if (typeof chrome !== 'undefined') {
-                  inspectUserGlobal(`$x${component.id - 1}.$el`);
+                if (window.sa_event) {
+                  window.sa_event('component_root_el_inspected');
                 }
+                hoverLeftComponent(component);
+                inspectUserGlobal(`$x${component.id - 1}.$el`);
               }
             }}
             title={'Inspect Root Element'}

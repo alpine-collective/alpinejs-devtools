@@ -72,7 +72,7 @@ export function waitForAlpine(
   }
 }
 
-function mapDataTypeToInputType(dataType) {
+export function mapDataTypeToInputType(dataType) {
   switch (dataType) {
     case 'boolean':
       return 'checkbox';

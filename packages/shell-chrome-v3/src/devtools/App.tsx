@@ -4,7 +4,7 @@ import '../../../../dist/chrome/styles.css';
 import { Header } from './components/header';
 import { ComponentGrid } from './components/component-grid';
 import { Footer } from './components/footer';
-import { render } from 'solid-js/web';
+import { effect, render } from 'solid-js/web';
 import { handleResize, orientation } from './theme';
 import { StoreGrid } from './components/store-grid';
 import { TabValues } from './types';
@@ -18,6 +18,12 @@ const App: Component = () => {
     window.removeEventListener('resize', handleResize);
   });
   const [activeTab, setActiveTab] = createSignal<TabValues>('components');
+
+  effect(() => {
+    if (activeTab() && window?.sa_pageview) {
+      window.sa_pageview(`/${activeTab()}`);
+    }
+  });
   return (
     <div class="h-full">
       <div class="bg-white flex flex-col relative h-full w-full mx-auto">

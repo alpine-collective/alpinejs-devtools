@@ -1,5 +1,6 @@
 import { createSignal } from 'solid-js';
 import { componentsValue, errors, state, storesValue } from '../state';
+import { effect } from 'solid-js/web';
 
 interface FooterProps {
   setActiveTab: Function;
@@ -7,6 +8,17 @@ interface FooterProps {
 const settingsPanelEnabled = () => false;
 export function Footer({ setActiveTab }: FooterProps) {
   const [_settingsPanelOpen, setSettingsPanelOpen] = createSignal(false);
+
+  effect(() => {
+    if (state.pageLoadCompleted && window.sa_event) {
+      window.sa_event('watching_els', {
+        components: componentsValue().length,
+        stores: storesValue().length,
+        errors: errors().length,
+        version: state.version.detected || '',
+      });
+    }
+  });
 
   return (
     <div class="flex font-bold text-gray-400 border-t border-gray-300 bg-white">
@@ -85,6 +97,13 @@ export function Footer({ setActiveTab }: FooterProps) {
           target="_blank"
           title="Alpine.js Docs"
           class="hover:opacity-75"
+          onClick={() => {
+            if (window.sa_event) {
+              window.sa_event('footer_cta', {
+                target: 'alpinejs_dev',
+              });
+            }
+          }}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -106,6 +125,13 @@ export function Footer({ setActiveTab }: FooterProps) {
           target="_blank"
           title="Alpine Devtools GitHub"
           class="hover:opacity-75"
+          onClick={() => {
+            if (window.sa_event) {
+              window.sa_event('footer_cta', {
+                target: 'alpinejs_devtools_gh',
+              });
+            }
+          }}
         >
           <svg
             class="fill-current w-5 h-5"
@@ -120,6 +146,13 @@ export function Footer({ setActiveTab }: FooterProps) {
           target="_blank"
           title="Devtools Early Access"
           class="hover:opacity-75"
+          onClick={() => {
+            if (window.sa_event) {
+              window.sa_event('footer_cta', {
+                target: 'alpine_devtools_pricing',
+              });
+            }
+          }}
         >
           <svg
             class="fill-current w-5 h-5"

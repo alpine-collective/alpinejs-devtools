@@ -6,6 +6,7 @@ import {
   setAdditionalError,
   setStoresFromList,
   setStoreData,
+  setPageLoaded,
 } from './state';
 import type { BackendToPanelMessage, PanelToBackendMessage } from './types';
 
@@ -41,6 +42,7 @@ export function handleBackendToPanelMessage(
     case BACKEND_TO_PANEL_MESSAGES.SET_COMPONENT_AND_STORES: {
       setComponentsList(message.components, message.url);
       setStoresFromList(message.stores);
+      setPageLoaded();
       setPort(port);
       break;
     }

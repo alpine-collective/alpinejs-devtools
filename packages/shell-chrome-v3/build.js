@@ -8,17 +8,19 @@ const entryPoints = (
 
 async function buildAll() {
   try {
+    const isProd = process.env.NODE_ENV === 'production';
     // for production output
     const buildOutput = await build({
       entryPoints,
       outdir: fileURLToPath(new URL('../../dist/shell-chrome-v3', import.meta.url)),
       bundle: true,
-      sourcemap: true,
+      sourcemap: !isProd,
+      minify: isProd,
       target: 'esnext',
       platform: 'browser',
 
       define: {
-        'import.meta.env.DEV': JSON.stringify(process.env.NODE_ENV !== 'production'),
+        'import.meta.env.DEV': JSON.stringify(!isProd),
         'import.meta.env.VITE_MAINLINE_PUBLISH': JSON.stringify(
           JSON.stringify(process.env.VITE_MAINLINE_PUBLISH === 'true'),
         ),

@@ -9,10 +9,13 @@ import { For, Show } from 'solid-js';
 
 export function StoreGrid() {
   if (!isEarlyAccess()) {
-    return <EarlyAccessNotice feature="Stores" />;
+    return <EarlyAccessNotice feature="Stores" featureCode="stores" />;
   }
 
   if (state.version.detected && !isRequiredVersion('3.8.0', state.version.detected)) {
+    if (window?.sa_event) {
+      window.sa_event('stores_unavailable', { version: state.version.detected });
+    }
     return (
       <div
         data-testid="stores-unavailable-message"

@@ -179,7 +179,7 @@ it('v3 -  should support x-model updates and editing values', () => {
     .should('have.value', 'nested-from-devtools');
 });
 
-it.skip('v3 -  should reset component selection when changing page', () => {
+it('v3 -  should reset component selection when changing page', () => {
   cy.visit('/simulator?target=v3.html');
 
   cy.get('[data-testid=component-name]').first().click();

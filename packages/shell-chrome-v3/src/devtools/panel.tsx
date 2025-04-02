@@ -9,6 +9,9 @@ let dispose: () => void;
 /* Entrypoint for Extension panel, integrates with Devtools/extension APIs, initialises the solidJS app, see also index.html */
 function connect() {
   if (dispose) {
+    if (window.sa_event) {
+      window.sa_event('panel_reinjection');
+    }
     console.log('unmounting solid app');
     dispose();
   }
@@ -27,10 +30,6 @@ function connect() {
   // What that means is that messages go:
   // - panel/devtools -(port)-> background -(port)-> proxy -(window)-> backend
   // - backend -(window)-> proxy -(port)-> background -(port)-> panel/devtools
-  console.log({
-    selectedComponentId: state.selectedComponentId,
-    selectedStoreName: state.selectedStoreName,
-  });
   injectScript(
     chrome.runtime.getURL('./backend.js'),
     { selectedComponentId: state.selectedComponentId, selectedStoreName: state.selectedStoreName },
@@ -73,6 +72,9 @@ let injectionAttempts = 0;
  * user app.
  */
 function injectScript(scriptSrc: string, globals: any, cb: Function) {
+  if (window.sa_event) {
+    window.sa_event('inject_script_start', { scriptSrc });
+  }
   const src = `
     (function() {
       var script = document.constructor.prototype.createElement.call(document, 'script');
@@ -91,8 +93,14 @@ function injectScript(scriptSrc: string, globals: any, cb: Function) {
           injectScript(scriptSrc, globals, cb);
         }, 300);
       } else {
+        if (window.sa_event) {
+          window.sa_event('inject_script_retry_stop');
+        }
         console.error('[alpine-devtools] error injecting script, stopping retries', err);
       }
+    }
+    if (window.sa_event) {
+      window.sa_event('inject_script_success');
     }
     cb();
   });

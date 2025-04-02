@@ -4,7 +4,7 @@ import {
   DEVTOOLS_RENDER_ATTR_NAME,
   DEVTOOLS_RENDER_BINDING_ATTR_NAME,
   PANEL_TO_BACKEND_MESSAGES,
-  ALPINE_ERRORS_GLOBAL,
+  DEVTOOLS_ERROR_ELS_GLOBAL,
   INIT_MESSAGE,
   DEVTOOLS_INITIAL_STATE_GLOBAL,
 } from '../lib/constants';
@@ -53,7 +53,6 @@ export function init(forceStart = false) {
       this.uuid = 1;
       this.hoverElement = null;
       this.observer = null;
-      this.errorElements = [];
       this.errorSourceId = 1;
       /** @type {number | undefined | null} */
       this.selectedComponentId = null;
@@ -145,7 +144,7 @@ export function init(forceStart = false) {
       this.disconnectObserver();
 
       window.console.warn = this._realLogWarn;
-      delete window[ALPINE_ERRORS_GLOBAL];
+      delete window[DEVTOOLS_ERROR_ELS_GLOBAL];
     }
 
     initAlpineErrorCollection() {
@@ -199,14 +198,12 @@ export function init(forceStart = false) {
     }
 
     _handleAlpineError(element, expression, errorMessage) {
-      if (!element.__alpineErrorSourceId) {
-        element.__alpineErrorSourceId = this.errorSourceId++;
-        window[ALPINE_ERRORS_GLOBAL] = {
-          ...(window[ALPINE_ERRORS_GLOBAL] || {}),
-          [element.__alpineErrorSourceId]: element,
-        };
-      }
-      this.errorElements.push(element);
+      // `el.__alpineErrorSourceId` is not used
+      element.__alpineErrorSourceId ??= this.errorSourceId++;
+      window[DEVTOOLS_ERROR_ELS_GLOBAL] = {
+        ...(window[DEVTOOLS_ERROR_ELS_GLOBAL] || {}),
+        [element.__alpineErrorSourceId]: element,
+      };
 
       /** @type {import('../devtools/state').EvalError} */
       const alpineError = {
@@ -401,6 +398,12 @@ export function init(forceStart = false) {
       );
     }
 
+    /**
+     *
+     * @param {number} componentId
+     * @param {HTMLElement} componentRoot
+     * @returns
+     */
     sendComponentData(componentId, componentRoot) {
       const componentData = this.getReadOnlyAlpineData(componentRoot);
 
@@ -419,6 +422,10 @@ export function init(forceStart = false) {
       });
     }
 
+    /**
+     * @param {string} selectedStoreName
+     * @param {any} $store
+     */
     sendStoreData(selectedStoreName, $store) {
       const store = $store[selectedStoreName];
       const storeData =
@@ -436,6 +443,11 @@ export function init(forceStart = false) {
       });
     }
 
+    /**
+     *
+     * @param {number} componentId
+     * @returns
+     */
     handleGetComponentData(componentId) {
       if (this.selectedComponentId === componentId) {
         // component already loaded
@@ -452,6 +464,11 @@ export function init(forceStart = false) {
       });
     }
 
+    /**
+     *
+     * @param {string} storeName
+     * @returns
+     */
     handleGetStoreData(storeName) {
       if (this.selectedStoreName === storeName) {
         // store data already loaded
@@ -464,6 +481,9 @@ export function init(forceStart = false) {
       }
     }
 
+    /**
+     * @param {(el: HTMLElement) => void} cb
+     */
     discoverComponents(cb) {
       if (this.isV3) {
         document.querySelectorAll('[x-data]').forEach(cb);
@@ -472,11 +492,16 @@ export function init(forceStart = false) {
       }
     }
 
+    /**
+     *
+     * @param {number} componentId
+     * @param {string} attributeSequence
+     * @param {string | boolean | number} attributeValue
+     */
     handleSetComponentData(componentId, attributeSequence, attributeValue) {
-      devtoolsBackend.runWithMutationPaused(() => {
+      this.runWithMutationPaused(() => {
         this.discoverComponents((component) => {
-          // fix eqeqeq
-          if (component.__alpineDevtool.id == componentId) {
+          if (component.__alpineDevtool.id === componentId) {
             set(this.getWriteableAlpineData(component), attributeSequence, attributeValue);
           }
         });
@@ -515,18 +540,18 @@ export function init(forceStart = false) {
       }
     }
 
+    /**
+     * @param {HTMLElement} target
+     */
     addHoverElement(target) {
       this.cleanupHoverElement();
-      if (!target) {
-        return;
-      }
 
       let hoverElement = document.createElement('div');
       let bounds = target.getBoundingClientRect();
 
       Object.assign(hoverElement.style, {
         position: 'absolute',
-        top: `${bounds.top}px`,
+        top: `${bounds.top + window.scrollY}px`,
         left: `${bounds.left}px`,
         width: `${bounds.width}px`,
         height: `${bounds.height}px`,
@@ -580,11 +605,10 @@ export function init(forceStart = false) {
     switch (e.data.payload.action) {
       case PANEL_TO_BACKEND_MESSAGES.SHOW_ERROR_SOURCE: {
         devtoolsBackend.runWithMutationPaused(() => {
-          const errorSource = devtoolsBackend.errorElements.find((el) => {
-            return el.__alpineErrorSourceId === e.data.payload.errorId;
-          });
-
-          devtoolsBackend.addHoverElement(errorSource);
+          const errorSource = window[DEVTOOLS_ERROR_ELS_GLOBAL]?.[e.data.payload.errorId];
+          if (errorSource) {
+            devtoolsBackend.addHoverElement(errorSource);
+          }
         });
         break;
       }
@@ -597,11 +621,7 @@ export function init(forceStart = false) {
       case PANEL_TO_BACKEND_MESSAGES.HOVER_COMPONENT: {
         devtoolsBackend.runWithMutationPaused(() => {
           devtoolsBackend.discoverComponents((component) => {
-            // fix number vs string eqeqeq
-            if (
-              component.__alpineDevtool &&
-              component.__alpineDevtool.id == e.data.payload.componentId
-            ) {
+            if (component.__alpineDevtool?.id === e.data.payload.componentId) {
               devtoolsBackend.addHoverElement(component);
             }
           });
@@ -611,11 +631,7 @@ export function init(forceStart = false) {
       case PANEL_TO_BACKEND_MESSAGES.HIDE_HOVER: {
         devtoolsBackend.runWithMutationPaused(() => {
           devtoolsBackend.discoverComponents((component) => {
-            // fix number vs string eqeqeq
-            if (
-              component.__alpineDevtool &&
-              component.__alpineDevtool.id == e.data.payload.componentId
-            ) {
+            if (component.__alpineDevtool?.id === e.data.payload.componentId) {
               devtoolsBackend.cleanupHoverElement();
             }
           });

@@ -1,15 +1,15 @@
-import { Accessor, For, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
 import { isEarlyAccess } from '../../lib/isEarlyAccess';
 import { EarlyAccessNotice } from './early-access';
 import { isRequiredVersion } from '../../lib/utils';
 import { errors, hideErrorSource, showErrorSource, state } from '../state';
 import { inspectUserGlobal } from '../inspect';
-import { ALPINE_ERRORS_GLOBAL } from '../../lib/constants';
+import { DEVTOOLS_ERROR_ELS_GLOBAL } from '../../lib/constants';
 import { effect } from 'solid-js/web';
 
 export function Warnings() {
   if (!isEarlyAccess()) {
-    return <EarlyAccessNotice feature="Warnings and errors" />;
+    return <EarlyAccessNotice feature="Warnings and errors" featureCode="warnings" />;
   }
   let warningsRef!: HTMLDivElement;
   effect(() => {
@@ -66,6 +66,9 @@ export function Warnings() {
                     <div
                       class="flex items-start border-b border-gray-300 p-2 pr-3 bg-red-50 bg-opacity-50 hover:bg-yellow-50"
                       data-testid={`eval-error-${error.source.name}`}
+                      onClick={() => {
+                        inspectUserGlobal(`window.${DEVTOOLS_ERROR_ELS_GLOBAL}[${error.errorId}]`);
+                      }}
                     >
                       <div class="flex justify-center w-5 text-center mr-2">
                         <div class="inline-flex items-center justify-center w-3.5 h-3.5 mt-1 rounded-full text-white font-bold bg-red-500">
@@ -95,7 +98,7 @@ export function Warnings() {
                             class="flex"
                             onClick={() => {
                               inspectUserGlobal(
-                                `window['${ALPINE_ERRORS_GLOBAL}'][${error.errorId}]`,
+                                `window.${DEVTOOLS_ERROR_ELS_GLOBAL}[${error.errorId}]`,
                               );
                             }}
                           >

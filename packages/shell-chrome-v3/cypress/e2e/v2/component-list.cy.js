@@ -40,7 +40,7 @@ it('v2 - should create globals + add annotation for each component', () => {
     });
 });
 
-it.skip('v2 - should handle adding and removing new components', () => {
+it('v2 - should handle adding and removing new components', () => {
   cy.visit('/simulator?target=example.html')
     .get('[data-testid=component-name]')
     .should('have.length.above', 0)
@@ -55,7 +55,7 @@ it.skip('v2 - should handle adding and removing new components', () => {
     });
 });
 
-it.skip('v2 - should handle replacing a component and keep its listed position', () => {
+it('v2 - should handle replacing a component and keep its listed position', () => {
   let currentIndex = -1;
   cy.visit('/simulator?target=example.html')
     .get('[data-testid=component-name]')

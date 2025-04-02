@@ -10,7 +10,7 @@ Todo:
 - [x] detector -> content
   - [x] content -> background (service_worker)
   - [x] panel -> background connection
-- [x] select ~~1~~ ~~12~~ ~~17~~ ~~25~~ 29 Cypress scenarios and get them working
+- [x] select ~~1~~ ~~12~~ ~~17~~ ~~25~~ ~~29~~ 34 (**all**) Cypress scenarios and get them working
   - content runs on page and has access to Chrome Ext APIs, it injects detector
   - background = service worker
 - [x] detection popup
