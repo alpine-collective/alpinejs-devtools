@@ -7,7 +7,7 @@
     }"
     class="flex h-15 py-px text-base tracking-tight font-bold text-white border-b border-gray-300 transition duration-700 transition-colors ease-in-out"
 >
-    <div 
+    <div
         :class="{
             'flex-1': orientation === 'portrait',
         }"
@@ -73,7 +73,6 @@
         }"
         class="flex text-sm text-ice-500 transition"
     >
-        @set('iconClasses', 'inline-block w-6 h-6 xs:w-5 xs:h-5 xs:opacity-50')
         @component('_components/tab-link', { tab: 'components' })
             @slot('body')
             <svg
@@ -82,7 +81,7 @@
                     'xs:mr-1': orientation === 'landscape',
                     'xs:mr-0.5': orientation === 'portrait',
                 }"
-                class="{{ iconClasses }}"
+                class="inline-block w-6 h-6 xs:w-5 xs:h-5 xs:opacity-50"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -107,7 +106,7 @@
                     'xs:mr-1': orientation === 'landscape',
                     'xs:mr-0.5': orientation === 'portrait',
                 }"
-                class="{{ iconClasses }}"
+                class="inline-block w-6 h-6 xs:w-5 xs:h-5 xs:opacity-50"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -131,7 +130,7 @@
                     'xs:mr-1': orientation === 'landscape',
                     'xs:mr-0.5': orientation === 'portrait',
                 }"
-                class="{{ iconClasses }}"
+                class="inline-block w-6 h-6 xs:w-5 xs:h-5 xs:opacity-50"
                 viewBox="0 0 20 20"
                 fill="currentColor"
             >

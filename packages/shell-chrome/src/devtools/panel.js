@@ -27,6 +27,7 @@ function onReload(reloadFn) {
     chrome.devtools.network.onNavigated.addListener(reloadFn)
 }
 
+let injectionAttempts = 0
 /**
  * Inject a globally evaluated script, in the same context with the actual
  * user app.
@@ -34,7 +35,6 @@ function onReload(reloadFn) {
  * @param {String} scriptName
  * @param {Function} cb
  */
-
 function injectScript(scriptName, cb) {
     const src = `
     (function() {
@@ -46,7 +46,15 @@ function injectScript(scriptName, cb) {
   `
     chrome.devtools.inspectedWindow.eval(src, function (res, err) {
         if (err) {
-            console.log(err)
+            if (injectionAttempts < 5) {
+                console.warn('[alpine-devtools] error injecting script, retrying in 300ms', err)
+                injectionAttempts += 1
+                setTimeout(() => {
+                    injectScript(scriptSrc, cb)
+                }, 300)
+            } else {
+                console.error('[alpine-devtools] error injecting script, stopping retries', err)
+            }
         }
         cb()
     })

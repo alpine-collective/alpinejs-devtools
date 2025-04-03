@@ -47,17 +47,17 @@ export default class State {
     }
 
     setComponentData(componentId, data) {
-        const flattenedData = flattenData(data).map((d) => {
-            const prevDataAttributeState = this.selectedComponentFlattenedData
-                ? this.selectedComponentFlattenedData.reduce((acc, curr) => {
-                      if (!acc[curr.parentComponentId]) {
-                          acc[curr.parentComponentId] = {}
-                      }
-                      acc[curr.parentComponentId][curr.id] = curr
-                      return acc
-                  }, {})
-                : {}
+        const prevDataAttributeState = this.selectedComponentFlattenedData
+            ? this.selectedComponentFlattenedData.reduce((acc, curr) => {
+                  if (!acc[curr.parentComponentId]) {
+                      acc[curr.parentComponentId] = {}
+                  }
+                  acc[curr.parentComponentId][curr.id] = curr
+                  return acc
+              }, {})
+            : {}
 
+        const flattenedData = flattenData(data).map((d) => {
             // top-level attributes should be open
             let isOpened = d.depth === 0
             if (
@@ -128,14 +128,14 @@ export default class State {
         if (attribute.hasArrow) {
             const childrenIdLength = attribute.id.split('.').length + 1
 
-            // this code generate something like that \\w+\\.\\w+\\.\\w+$
+            // this code generates something like: \[^.]\\.\[^.]+\\.\[^.]+$
             let closeRegexStr = ''
 
             for (let i = 0; i < childrenIdLength - 1; i++) {
-                closeRegexStr += String.raw`\w+\.`
+                closeRegexStr += String.raw`[^.]+\.`
             }
 
-            closeRegexStr += String.raw`\w+$`
+            closeRegexStr += String.raw`[^.]+$`
 
             const closeRegex = new RegExp(closeRegexStr)
 
