@@ -3,22 +3,24 @@
 ![Mozilla Add-on](https://img.shields.io/amo/v/alpinejs-devtools?label=firefox%20add-on)
 ![Mozilla Add-on](https://img.shields.io/amo/users/alpinejs-devtools?label=firefox%20users%20%28daily%29)
 
-## 🚨 Chrome Web Store Notice - Rewrite in Progress
+## Chrome Web Store Notice
 
-⚠️ **The published extension is currently unavailable** due to Chrome's Manifest v3 requirements ([more info](https://github.com/alpine-collective/alpinejs-devtools/issues/431))
+Due to Chrome's Manifest v3 rollout, the extension had to be rewritten. As part of this we've launched a [**Paid Early Access Program**](https://alpinedevtools.com/pricing).
 
-**Good news!** An Early Access Chrome-compatible version is ready through our [**Paid Early Access Program**](https://alpinedevtools.com/pricing)
+Public Extension includes:
 
-**Access Includes**:
+- ✅ Component state inspection/editing
+- ✅ More reliable state updates/sync (🆕)
+- ✅ Highlight component in page on hover
+- ✅ Component data in console globals
+- ✅ High performance on nested data objects (🆕️, tested on ~10k data properties)
 
-✅ Component state inspection/editing  
-✅ Store state viewing/editing (🆕)  
-✅ More reliable state updates/sync (🆕)  
-✅ Highlight component in page on hover  
-✅ Component data in console globals  
-✅ Jump to root element in Chrome inspector (🆕)  
-✅ Warnings tab (inc. Alpine v3 support)  
-✅ High performance on nested data objects (🆕️, tested on ~10k data properties)  
+**Early Access** includes:
+
+- ✅ Store state viewing/editing (🆕)
+- ✅ Store data in console globals (🆕)
+- ✅ Warnings tab (inc. Alpine v3 support)
+- ✅ Jump to root element in Chrome inspector (🆕)
 
 **Multiple Tiers Available** 👉 [Explore Options](https://alpinedevtools.com/pricing)
 

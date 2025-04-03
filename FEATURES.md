@@ -7,7 +7,7 @@
 - Component data in console globals (component data is available as `$x0`, `$x1` and so on in the browser devtools console).
 - New, [**Early Access feature**](https://alpinedevtools.com/pricing): jump to root element in Chrome inspector
 
-## Improve state synchronisation and performance
+## Improved state synchronisation and performance
 
 In both **Free** and **Early Access** releases.
 
@@ -24,6 +24,7 @@ New, [**Early Access feature**](https://alpinedevtools.com/pricing).
 
 - View stores list
 - View/edit store data
+- Access stores in the console via globals `$s0`, `$s1` ...
 
 ## Warnings
 
