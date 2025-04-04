@@ -20,7 +20,6 @@ const resetPortsForTab = (tabId: number) => {
 };
 
 chrome.runtime.onConnect.addListener(async (port) => {
-  let tabId;
   if (port.name === CONTENT) {
     console.log('[alpine-devtools] content script requested connection');
 
@@ -30,15 +29,15 @@ chrome.runtime.onConnect.addListener(async (port) => {
       if (disconnected) {
         return;
       }
-      console.log(
-        `[alpine-devtools] (${port.name}, tabId: ${contentTabId}) -> background: `,
-        message,
-      );
       if (
         message.type === CONTENT_TO_BACKGROUND_MESSAGES.ALPINE_DETECTED &&
         message.alpineDetected &&
         contentTabId
       ) {
+        console.log(
+          `[alpine-devtools] (${port.name}, tabId: ${contentTabId}) -> background: `,
+          message,
+        );
         chrome.action.setIcon({
           tabId: contentTabId,
           path: {
@@ -59,7 +58,11 @@ chrome.runtime.onConnect.addListener(async (port) => {
       port.onMessage.removeListener(contentListener);
       port.disconnect();
     });
+    // we know this is the content port and not an inspector or proxy/background connection
+    // skip the rest of this handler.
+    return;
   }
+  let tabId: number | undefined;
   if (isInspector(port)) {
     // this is a devtools tab creating a connection
     tabId = inspectorPortNameToTabId(port.name);
@@ -74,10 +77,7 @@ chrome.runtime.onConnect.addListener(async (port) => {
     tabId = port.sender?.tab?.id;
     if (port.name !== PROXY) {
       console.warn(
-        '[alpine-devtools] Received onConnect from ',
-        port.name,
-        ' not initialising a devtools <-> backend, tabId: ',
-        tabId,
+        `[alpine-devtools] Received onConnect from port: "${port.name}" (not proxy), not initialising devtools <-> backend pipe (tabId: ${tabId})`,
       );
       return;
     }

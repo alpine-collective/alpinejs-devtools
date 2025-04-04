@@ -1,4 +1,4 @@
-import { ALPINE_DEVTOOLS_PROXY_SOURCE } from '../devtools/ports';
+import { ALPINE_DEVTOOLS_PROXY_SOURCE, ALPINE_DEVTOOLS_BACKEND_SOURCE } from '../devtools/ports';
 import {
   BACKEND_TO_PANEL_MESSAGES,
   DEVTOOLS_RENDER_ATTR_NAME,
@@ -366,6 +366,9 @@ export function init(forceStart = false) {
         });
       }
 
+      console.info(
+        `Alpine Devtools: detected ${this.components.length} components, ${this.stores.length} stores.`,
+      );
       this._postMessage({
         components: this.components,
         stores: this.stores,
@@ -382,6 +385,7 @@ export function init(forceStart = false) {
     }
 
     getAlpineVersion() {
+      console.info(`Alpine Devtools: detected version ${this.alpineVersion}`);
       this._postMessage({
         version: this.alpineVersion,
         type: BACKEND_TO_PANEL_MESSAGES.SET_VERSION,
@@ -391,7 +395,7 @@ export function init(forceStart = false) {
     _postMessage(payload) {
       window.postMessage(
         {
-          source: 'alpine-devtools-backend',
+          source: ALPINE_DEVTOOLS_BACKEND_SOURCE,
           payload,
         },
         '*',
@@ -579,6 +583,7 @@ export function init(forceStart = false) {
       devtoolsBackend.start();
     });
   }
+  console.info('Alpine Devtools: waiting for init request...');
   window.addEventListener('message', handshake);
 
   function handshake(e) {
@@ -587,6 +592,7 @@ export function init(forceStart = false) {
       window.addEventListener('message', handleMessages);
 
       waitForAlpine(() => {
+        console.info('Alpine Devtools: starting...');
         devtoolsBackend.start();
       });
     }

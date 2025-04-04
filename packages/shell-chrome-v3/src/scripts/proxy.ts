@@ -35,7 +35,7 @@ function proxy() {
       proxyPort.postMessage(e.data.payload);
     } else {
       if (import.meta.env.DEV) {
-        console.log('[alpine-devtools] PROXY, Not forwarding message', e);
+        console.log('[alpine-devtools] PROXY, Not forwarding message', e?.data);
       }
     }
   }

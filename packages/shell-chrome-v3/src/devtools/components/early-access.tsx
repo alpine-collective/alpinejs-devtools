@@ -46,6 +46,7 @@ export function EarlyAccessNotice({
               {feature} are currently part of the{' '}
               <a
                 href={`https://alpinedevtools.com/pricing?utm_source=extension&utm_campaign=${featureCode}_href`}
+                target="_blank"
                 class="underline"
               >
                 Early Access Program
@@ -53,7 +54,7 @@ export function EarlyAccessNotice({
             </p>
             <a
               class="bg-ice-700 hover:bg-ice-900 border-transparent text-white font-bold px-4 py-2 rounded-lg"
-              href={`https://alpinedevtools.com/pricing?utm_source=extension&utm_campaign=${featureCode}_cta`}
+              href={`https://alpinedevtools.com/checkout?utm_source=extension&utm_campaign=${featureCode}_cta`}
               target="_blank"
               onClick={(_e) => {
                 if (window.sa_event) {

@@ -1,6 +1,7 @@
 import { createSignal } from 'solid-js';
 import { componentsValue, errors, state, storesValue } from '../state';
 import { effect } from 'solid-js/web';
+import { bucketCount } from '../metrics';
 
 interface FooterProps {
   setActiveTab: Function;
@@ -12,9 +13,9 @@ export function Footer({ setActiveTab }: FooterProps) {
   effect(() => {
     if (state.pageLoadCompleted && window.sa_event) {
       window.sa_event('watching_els', {
-        components: componentsValue().length,
-        stores: storesValue().length,
-        errors: errors().length,
+        components: bucketCount(componentsValue().length),
+        stores: bucketCount(storesValue().length),
+        errors: bucketCount(errors().length),
         version: state.version.detected || '',
       });
     }
