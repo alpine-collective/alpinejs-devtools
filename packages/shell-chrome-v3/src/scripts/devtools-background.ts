@@ -16,16 +16,19 @@ function createPanelIfHasAlpine() {
     return;
   }
 
-  chrome.devtools.inspectedWindow.eval('!!(window.Alpine)', function (hasAlpine) {
-    if (!hasAlpine || created) {
-      return;
-    }
+  chrome.devtools.inspectedWindow.eval(
+    '!!(window.Alpine || document.querySelector("[x-data]"))',
+    function (hasAlpine) {
+      if (!hasAlpine || created) {
+        return;
+      }
 
-    clearInterval(checkAlpineInterval);
-    created = true;
-    chrome.devtools.panels.create('Alpine.js', 'alpine_extension.png', 'index.html', (panel) => {
-      // panel loaded
-      console.log('panel loaded');
-    });
-  });
+      clearInterval(checkAlpineInterval);
+      created = true;
+      chrome.devtools.panels.create('Alpine.js', 'alpine_extension.png', 'index.html', (panel) => {
+        // panel loaded
+        console.log('panel loaded');
+      });
+    },
+  );
 }
