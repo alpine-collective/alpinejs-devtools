@@ -62,7 +62,7 @@
             <div class="leading-6 text-gray-300">x-data: {</div>
                 <template x-if="selectedComponentFlattenedData">
                     <div>
-                        <template x-for="(singleData, index) in selectedComponentFlattenedData">
+                        <template x-for="(singleData, index) in selectedComponentFlattenedData.filter(el => el.isOpened)">
                             @include('_partials/data/attribute')
                         </template>
                     </div>
