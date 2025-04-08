@@ -1,3 +1,4 @@
+import { metric } from '../metrics';
 import { selectStore } from '../state';
 
 interface StoreListItemProps {
@@ -15,9 +16,7 @@ export function StoreListItem({ idx, storeName, isOpen }: StoreListItemProps) {
       }}
       class="block cursor-pointer rounded"
       onClick={(_e) => {
-        if (window.sa_event) {
-          window.sa_event('store_selected');
-        }
+        metric('store_selected');
         selectStore(storeName);
       }}
       data-testid="store-container"

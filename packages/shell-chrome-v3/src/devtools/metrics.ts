@@ -1,3 +1,6 @@
+import { isEarlyAccess } from '../lib/isEarlyAccess';
+import { version } from '../../package.json';
+
 export function bucketCount(num: number) {
   if (num === 0) return '0';
   if (num === 1) return '1';
@@ -6,4 +9,17 @@ export function bucketCount(num: number) {
   if (num <= 20) return '11-20';
   if (num <= 50) return '21-50';
   return '>=51';
+}
+
+export function metric(
+  name: string,
+  metadata: Record<string, string | number | boolean> = {},
+): void {
+  if (window.sa_event) {
+    window.sa_event(name, {
+      build: isEarlyAccess() ? 'ea' : 'ga',
+      buildNum: version,
+      ...metadata,
+    });
+  }
 }

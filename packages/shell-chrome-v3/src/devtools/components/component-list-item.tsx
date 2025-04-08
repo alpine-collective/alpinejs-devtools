@@ -8,6 +8,7 @@ import {
 } from '../state';
 import { isEarlyAccess } from '../../lib/isEarlyAccess';
 import { inspectUserGlobal } from '../inspect';
+import { metric } from '../metrics';
 
 export function ComponentListItem({ component }: { component: Component }) {
   return (
@@ -27,9 +28,7 @@ export function ComponentListItem({ component }: { component: Component }) {
         hoverLeftComponent(component);
       }}
       onClick={(_e) => {
-        if (window.sa_event) {
-          window.sa_event('component_selected');
-        }
+        metric('component_selected');
         selectComponent(component);
       }}
       data-testid="component-container"
@@ -56,9 +55,7 @@ export function ComponentListItem({ component }: { component: Component }) {
               if (!isEarlyAccess()) {
                 return;
               } else {
-                if (window.sa_event) {
-                  window.sa_event('component_root_el_inspected');
-                }
+                metric('component_root_el_inspected');
                 hoverLeftComponent(component);
                 inspectUserGlobal(`$x${component.id - 1}.$el`);
               }

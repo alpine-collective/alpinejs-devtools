@@ -7,6 +7,7 @@ import {
   toggleDataAttributeOpen,
 } from '../state';
 import { effect } from 'solid-js/web';
+import { metric } from '../metrics';
 
 interface DataDisplayProps {
   attributeData: FlattenedComponentData | FlattenedStoreData;
@@ -17,16 +18,14 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
   const editAttributeValue = createMemo(() => props.attributeData.editAttributeValue);
 
   const toggleDataAttributeOpened = () => {
-    if (window.sa_event) {
-      window.sa_event(
-        'parentStoreName' in props.attributeData
-          ? 'store_data_attr_opened'
-          : 'component_data_attr_opened',
-        {
-          dataType: props.attributeData.dataType,
-        },
-      );
-    }
+    metric(
+      'parentStoreName' in props.attributeData
+        ? 'store_data_attr_opened'
+        : 'component_data_attr_opened',
+      {
+        dataType: props.attributeData.dataType,
+      },
+    );
     toggleDataAttributeOpen(props.attributeData);
   };
   const [attrDirtyValue, setDirtyEditAttributeValue] = createSignal<string | boolean | undefined>(
@@ -51,16 +50,14 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
         editAttributeValue: typeof newValue === 'undefined' ? attrDirtyValue() : newValue,
       });
     }
-    if (window.sa_event) {
-      window.sa_event(
-        'parentStoreName' in props.attributeData
-          ? 'store_data_attr_saved'
-          : 'component_data_attr_saved',
-        {
-          instantToggle: typeof newValue !== 'undefined',
-        },
-      );
-    }
+    metric(
+      'parentStoreName' in props.attributeData
+        ? 'store_data_attr_saved'
+        : 'component_data_attr_saved',
+      {
+        instantToggle: typeof newValue !== 'undefined',
+      },
+    );
   };
 
   const cancelEditing = () => {

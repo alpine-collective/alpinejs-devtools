@@ -6,6 +6,7 @@ import { SplitPane } from './split-pane';
 import { EarlyAccessNotice } from './early-access';
 import { isEarlyAccess } from '../../lib/isEarlyAccess';
 import { For, Show } from 'solid-js';
+import { metric } from '../metrics';
 
 export function StoreGrid() {
   if (!isEarlyAccess()) {
@@ -13,9 +14,7 @@ export function StoreGrid() {
   }
 
   if (state.version.detected && !isRequiredVersion('3.8.0', state.version.detected)) {
-    if (window?.sa_event) {
-      window.sa_event('stores_unavailable', { version: state.version.detected });
-    }
+    metric('stores_unavailable', { version: state.version.detected });
     return (
       <div
         data-testid="stores-unavailable-message"

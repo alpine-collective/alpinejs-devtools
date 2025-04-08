@@ -1,3 +1,5 @@
+import { metric } from '../metrics';
+
 const FEATURE_IMAGE = {
   stores: 'https://alpinedevtools.com/assets/alpine-devtools-stores.png',
   warnings: 'https://alpinedevtools.com/assets/alpine-devtools-warnings.png',
@@ -17,11 +19,9 @@ export function EarlyAccessNotice({
   featureCode: 'stores' | 'warnings';
 }) {
   queueMicrotask(() => {
-    if (window.sa_event) {
-      window.sa_event('early_access_opened', {
-        featureCode,
-      });
-    }
+    metric('early_access_opened', {
+      featureCode,
+    });
   });
   return (
     <div class="grid h-full w-full overflow-hidden">
@@ -35,12 +35,10 @@ export function EarlyAccessNotice({
               href={FEATURE_LINK[featureCode]}
               target="_blank"
               onClick={() => {
-                if (window.sa_event) {
-                  window.sa_event('early_access_image_clicked', { featureCode });
-                }
+                metric('early_access_image_clicked', { featureCode });
               }}
             >
-              <img class="max-w-lg" src={FEATURE_IMAGE[featureCode]} />
+              <img class="max-w-md" src={FEATURE_IMAGE[featureCode]} />
             </a>
             <p class="mt-6 mb-6">
               {feature} are currently part of the{' '}
@@ -48,6 +46,11 @@ export function EarlyAccessNotice({
                 href={`https://alpinedevtools.com/pricing?utm_source=extension&utm_campaign=${featureCode}_href`}
                 target="_blank"
                 class="underline"
+                onClick={(_e) => {
+                  metric('early_access_href_clicked', {
+                    featureCode,
+                  });
+                }}
               >
                 Early Access Program
               </a>
@@ -57,14 +60,13 @@ export function EarlyAccessNotice({
               href={`https://alpinedevtools.com/checkout?utm_source=extension&utm_campaign=${featureCode}_cta`}
               target="_blank"
               onClick={(_e) => {
-                if (window.sa_event) {
-                  window.sa_event('early_access_cta_clicked', {
-                    featureCode,
-                  });
-                }
+                metric('early_access_cta_clicked', {
+                  featureCode,
+                  priceInButton: true,
+                });
               }}
             >
-              Get Access Now
+              Get Access Now (from <s>$99</s>$73)
             </a>
           </div>
         </div>
