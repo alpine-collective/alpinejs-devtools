@@ -6,6 +6,6 @@ contact_links:
   - name: Questions
     url: https://github.com/alpine-collective/alpinejs-devtools/discussions/new/choose
     about: Ask the community & maintainers for help.
-  - name: Feature Request (Sponsors only)
-    url: https://github.com/sponsors/HugoDF
-    about: Pro and Company sponsors can get features prioritised
+  - name: Feature Request (Paid)
+    url: https://alpinedevtools.com/pricing
+    about: To get features prioritised, get in touch.
