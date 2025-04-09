@@ -193,7 +193,7 @@ export function Footer({ setActiveTab }: FooterProps) {
         </a>
         {settingsPanelEnabled() && (
           <button
-            class="hover:opacity-75 focus:outline-none"
+            class="hover:opacity-75 focus:outline-hidden"
             onClick={() => setSettingsPanelOpen(true)}
           >
             <svg

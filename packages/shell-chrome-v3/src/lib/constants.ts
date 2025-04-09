@@ -9,7 +9,7 @@ export const INIT_MESSAGE = 'init';
 
 export const BACKEND_TO_PANEL_MESSAGES = {
   SET_VERSION: 'set-version',
-  SET_COMPONENT_AND_STORES: 'set-components-and-stores',
+  SET_COMPONENTS_AND_STORES: 'set-components-and-stores',
   SET_DATA: 'set-data',
   SET_STORE_DATA: 'set-store-data',
   ADD_ERROR: 'add-error',

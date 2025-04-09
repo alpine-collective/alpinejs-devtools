@@ -4,6 +4,7 @@ import { PANEL_TO_BACKEND_MESSAGES } from '../lib/constants';
 import { panelPostMessage } from './messaging';
 import { ALPINE_DEVTOOLS_PANEL_SOURCE } from './ports';
 import { convertInputDataToType, flattenData, mapDataTypeToInputType } from '../lib/utils';
+import { metric } from './metrics';
 
 interface State {
   version: {
@@ -135,46 +136,33 @@ export const setStoresFromList = (stores: Array<string>) => {
 };
 
 export const setComponentData = (componentId: string, componentData: any) => {
-  const prevDataAttributeState: Record<
-    string,
-    Record<number, FlattenedComponentData>
-  > = selectedComponentFlattenedData()
-    ? selectedComponentFlattenedData().reduce((acc, curr) => {
-        // string and number keys are interchangeable?
-        // @ts-expect-error
-        if (!acc[curr.parentComponentId]) {
-          // @ts-expect-error
-          acc[curr.parentComponentId] = {};
-        }
-        // @ts-expect-error
-        acc[curr.parentComponentId][curr.id] = curr;
-        return acc;
-      }, {})
-    : {};
+  const existingComponentData = state.preloadedComponentData[Number(componentId)];
+  const attrPrevState: Record<string, Record<number, FlattenedComponentData> | undefined> =
+    existingComponentData
+      ? existingComponentData.reduce(
+          (acc, curr) => {
+            acc[curr.parentComponentId] ??= {};
+            acc[curr.parentComponentId]![curr.id] = curr;
+            return acc;
+          },
+          {} as Record<string, Record<string, FlattenedComponentData> | undefined>,
+        )
+      : {};
 
   const flattenedData = flattenData(componentData).map<FlattenedComponentData>((d) => {
     // top-level attributes should be open
     let isOpened = d.depth === 0;
     if (
-      (prevDataAttributeState[componentId] &&
-        prevDataAttributeState[componentId][d.id] &&
-        prevDataAttributeState[componentId][d.id].isOpened) ||
-      (d.directParentId &&
-        prevDataAttributeState[componentId] &&
-        prevDataAttributeState[componentId][d.directParentId] &&
-        prevDataAttributeState[componentId][d.directParentId].isArrowDown)
+      attrPrevState[componentId]?.[d.id]?.isOpened ||
+      (d.directParentId && attrPrevState[componentId]?.[d.directParentId]?.isArrowDown)
     ) {
       // maintain previous open state
       isOpened = true;
     }
 
     let isArrowDown = false;
-    if (
-      prevDataAttributeState[componentId] &&
-      prevDataAttributeState[componentId][d.id] &&
-      prevDataAttributeState[componentId][d.id].hasArrow
-    ) {
-      isArrowDown = prevDataAttributeState[componentId][d.id].isArrowDown;
+    if (attrPrevState[componentId]?.[d.id]?.hasArrow) {
+      isArrowDown = attrPrevState[componentId][d.id].isArrowDown;
     }
 
     return {
@@ -184,8 +172,10 @@ export const setComponentData = (componentId: string, componentData: any) => {
       parentComponentId: componentId,
     };
   });
+
   setComponentFlattenedData(componentId, flattenedData);
 };
+
 export const setStoreData = (storeName: string, storeData: any) => {
   const flattenedData = flattenData(storeData).map(({ parentComponentId, ...el }) => ({
     ...el,
@@ -250,16 +240,16 @@ export function selectComponent(component: Component) {
   setState('components', reconcile(newComponents));
 
   if (!state.preloadedComponentData[component.id]) {
-    triggerComponentDataLoad(selectedComponentId);
+    // This code should basically never run, backend.js
+    // will send the data for each component: on discover and on change
+    console.warn('[alpine-devtools] Loading component data on-demand');
+    metric('component_data_on_demand_loaded');
+    panelPostMessage({
+      componentId: selectedComponentId,
+      action: PANEL_TO_BACKEND_MESSAGES.GET_DATA,
+      source: ALPINE_DEVTOOLS_PANEL_SOURCE,
+    });
   }
-}
-
-function triggerComponentDataLoad(componentId: number) {
-  panelPostMessage({
-    componentId: componentId,
-    action: PANEL_TO_BACKEND_MESSAGES.GET_DATA,
-    source: ALPINE_DEVTOOLS_PANEL_SOURCE,
-  });
 }
 
 export function hoverOnComponent(component: Component) {
@@ -268,11 +258,6 @@ export function hoverOnComponent(component: Component) {
     action: PANEL_TO_BACKEND_MESSAGES.HOVER_COMPONENT,
     source: ALPINE_DEVTOOLS_PANEL_SOURCE,
   });
-
-  // pre-load component if not already selected
-  if (state.selectedComponentId === component.id) {
-    triggerComponentDataLoad(component.id);
-  }
 }
 
 export function hoverLeftComponent(component: Component) {
@@ -281,16 +266,13 @@ export function hoverLeftComponent(component: Component) {
     action: PANEL_TO_BACKEND_MESSAGES.HIDE_HOVER,
     source: ALPINE_DEVTOOLS_PANEL_SOURCE,
   });
-
-  if (state.selectedComponentId && component.id !== state.selectedComponentId) {
-    // undo component preload when hovering away without clicking
-    triggerComponentDataLoad(state.selectedComponentId);
-  }
 }
 
 export function selectStore(storeName: Store['name']) {
   setState('selectedStoreName', storeName);
   if (!state.preloadedStoreData[storeName]) {
+    console.warn('[alpine-devtools] Loading store data on-demand');
+    metric('store_data_on_demand_loaded');
     panelPostMessage({
       storeName,
       action: PANEL_TO_BACKEND_MESSAGES.GET_STORE_DATA,

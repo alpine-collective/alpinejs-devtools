@@ -14,7 +14,7 @@ export function StoreListItem({ idx, storeName, isOpen }: StoreListItemProps) {
         'text-white bg-alpine-300': isOpen,
         'text-gray-600 hover:bg-blue-200': !isOpen,
       }}
-      class="block cursor-pointer rounded"
+      class="block cursor-pointer rounded-sm"
       onClick={(_e) => {
         metric('store_selected');
         selectStore(storeName);

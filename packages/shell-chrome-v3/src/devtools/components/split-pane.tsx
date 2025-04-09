@@ -57,7 +57,7 @@ export function SplitPane({
         ></span>
 
         <div
-          class="flex items-center justify-center text-gray-400 border border-gray-300 bg-gray-200 rounded z-50 group-hover:text-blue-400 group-hover:border-blue-300 group-hover:bg-blue-200"
+          class="flex items-center justify-center text-gray-400 border border-gray-300 bg-gray-200 rounded-sm z-50 group-hover:text-blue-400 group-hover:border-blue-300 group-hover:bg-blue-200"
           classList={{
             'w-3 h-8': breakpoint() !== 'sm',
             'w-8 h-3': breakpoint() === 'sm',

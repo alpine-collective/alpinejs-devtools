@@ -1,4 +1,5 @@
 import { BACKEND_TO_PANEL_MESSAGES } from '../lib/constants';
+import { runWithMeasure } from './metrics';
 import {
   setAlpineVersionFromBackend,
   setComponentsList,
@@ -39,19 +40,25 @@ export function handleBackendToPanelMessage(
       setPort(port);
       break;
     }
-    case BACKEND_TO_PANEL_MESSAGES.SET_COMPONENT_AND_STORES: {
-      setComponentsList(message.components, message.url);
-      setStoresFromList(message.stores);
-      setPageLoaded();
-      setPort(port);
+    case BACKEND_TO_PANEL_MESSAGES.SET_COMPONENTS_AND_STORES: {
+      runWithMeasure('panel_set_components_and_stores', () => {
+        setComponentsList(message.components, message.url);
+        setStoresFromList(message.stores);
+        setPageLoaded();
+        setPort(port);
+      });
       break;
     }
     case BACKEND_TO_PANEL_MESSAGES.SET_DATA: {
-      console.time('BACKEND_TO_PANEL_MESSAGES.SET_DATA');
-      const comps = JSON.parse(message.data);
-      setComponentData(message.componentId, comps);
-      setPort(port);
-      console.timeEnd('BACKEND_TO_PANEL_MESSAGES.SET_DATA');
+      runWithMeasure(
+        'panel_set_data',
+        () => {
+          const comps = JSON.parse(message.data);
+          setComponentData(message.componentId, comps);
+          setPort(port);
+        },
+        { sampled: true },
+      );
       break;
     }
     case BACKEND_TO_PANEL_MESSAGES.SET_STORE_DATA: {

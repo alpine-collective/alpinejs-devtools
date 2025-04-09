@@ -56,4 +56,4 @@ function _handleResize() {
   setOrientation(getOrientation());
   setBreakpoint(getBreakpoint());
 }
-export const handleResize = debounce(_handleResize, 100);
+export const handleResize = debounce(_handleResize, () => '_resize', 100);

@@ -19,7 +19,7 @@ export function TabLink({ label, tab, children, activeTab, setActiveTab }: TabLi
         'text-white border-ice-500 cursor-default': activeTab() === tab,
         'border-transparent hover:text-white hover:border-ice-700': activeTab() !== tab,
         'px-5 border-r-3': orientation() === 'landscape',
-        'bg-white bg-opacity-5': activeTab() === tab && orientation() === 'landscape',
+        'bg-white/5': activeTab() === tab && orientation() === 'landscape',
         'px-4 border-b-3 xs:pl-2 xs:pr-3': orientation() === 'portrait',
       }}
       class="capitalize"

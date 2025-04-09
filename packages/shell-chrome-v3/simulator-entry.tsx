@@ -72,7 +72,7 @@ async function main() {
       // 3. proxy messages from backend to `window`
       targetWindow.addEventListener('message', (event: any) => {
         if (event.data.source === ALPINE_DEVTOOLS_BACKEND_SOURCE) {
-          console.log('backend -> devtools', event.data);
+          console.log('backend -> devtools', event.data?.payload);
           window.postMessage(event.data, '*');
         }
       });

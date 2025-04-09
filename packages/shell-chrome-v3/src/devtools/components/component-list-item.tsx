@@ -19,7 +19,7 @@ export function ComponentListItem({ component }: { component: Component }) {
         'text-gray-600 hover:bg-blue-200':
           openComponentValue()?.id !== component.id || !openComponentValue()?.isOpened,
       }}
-      class="block cursor-pointer rounded"
+      class="block cursor-pointer rounded-sm"
       style={`padding-left: ${component.depth * 20}px;`}
       onMouseEnter={(_e) => {
         hoverOnComponent(component);

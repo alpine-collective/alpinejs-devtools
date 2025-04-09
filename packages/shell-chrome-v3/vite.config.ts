@@ -1,9 +1,10 @@
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import solidPlugin from 'vite-plugin-solid';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  plugins: [solidPlugin()],
+  plugins: [tailwindcss(), solidPlugin()],
   server: {
     port: 3000,
   },
@@ -15,7 +16,9 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: fileURLToPath(new URL('./index.html', import.meta.url)),
-        simulator: fileURLToPath(new URL('./simulator.html', import.meta.url)),
+        ...(process.env.NODE_ENV !== 'production'
+          ? { simulator: fileURLToPath(new URL('./simulator.html', import.meta.url)) }
+          : {}),
       },
     },
   },

@@ -70,7 +70,7 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
         <a
           style={{ 'margin-left': `${props.attributeData.depth}px` }}
           onClick={toggleDataAttributeOpened}
-          class="block px-1 rounded hover:bg-blue-100"
+          class="block px-1 rounded-sm hover:bg-blue-100"
           classList={{ 'cursor-pointer': props.attributeData.hasArrow }}
         >
           <h5 class="flex items-center relative pl-3 leading-6 text-sm whitespace-nowrap">
@@ -121,7 +121,7 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
                     onChange={() => {
                       saveEditing(!editAttributeValue());
                     }}
-                    class="focus:ring-transparent h-4 w-4 text-blue-700 border-gray-300 cursor-pointer rounded transition duration-150 ease-in-out opacity-0 group-hover:opacity-100"
+                    class="focus:ring-transparent h-4 w-4 text-blue-700 border-gray-300 cursor-pointer rounded-sm transition duration-150 ease-in-out opacity-0 group-hover:opacity-100"
                   />
                 </div>
               </Show>
@@ -176,7 +176,7 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
               <input
                 data-testid={`input-${props.attributeData.attributeName}`}
                 type={props.attributeData.inputType}
-                class="flex text-gray-700 leading-tight focus:outline-none focus:ring w-2/3 shadow appearance-none border rounded py-1 px-1"
+                class="flex text-gray-700 leading-tight focus:outline-hidden focus:ring-3 w-2/3 shadow appearance-none border rounded-sm py-1 px-1"
                 // does having booleans cause issues?
                 value={attrDirtyValue() as any}
                 onInput={(e) => setDirtyEditAttributeValue(e.target.value)}

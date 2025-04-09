@@ -1,5 +1,5 @@
 import { createSignal, onCleanup, onMount, Show, type Component } from 'solid-js';
-import '../../../../dist/chrome/styles.css';
+import './styles.css';
 
 import { Header } from './components/header';
 import { ComponentGrid } from './components/component-grid';

@@ -64,7 +64,7 @@ export function Warnings() {
                 >
                   <Show when={error.type === 'eval'}>
                     <div
-                      class="flex items-start border-b border-gray-300 p-2 pr-3 bg-red-50 bg-opacity-50 hover:bg-yellow-50"
+                      class="flex items-start border-b border-gray-300 p-2 pr-3 bg-red-50/50 hover:bg-yellow-50/50"
                       data-testid={`eval-error-${error.source.name}`}
                       onClick={() => {
                         inspectUserGlobal(`window.${DEVTOOLS_ERROR_ELS_GLOBAL}[${error.errorId}]`);
@@ -111,7 +111,7 @@ export function Warnings() {
                         <div class="flex text-sm">
                           <div class="mr-2">
                             <svg
-                              class="inline-block w-3.5 h-3.5 -mt-0.5 -ml-0.5 text-gray-900 text-opacity-25"
+                              class="inline-block w-3.5 h-3.5 -mt-0.5 -ml-0.5 text-gray-900/25"
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 20 20"
                               fill="currentColor"

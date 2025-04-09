@@ -59,9 +59,16 @@ export function init(forceStart = false) {
       /** @type {string | undefined | null} */
       this.selectedStoreName = null;
 
-      this.debouncedSetComponentData = debounce((...args) => {
-        this.sendComponentData(...args);
-      }, 5);
+      this.debouncedSendComponentData = debounce(
+        this.sendComponentData.bind(this),
+        ([componentId]) => String(componentId),
+        5,
+      );
+      this.debouncedSendStoreData = debounce(
+        this.sendStoreData.bind(this),
+        ([storeName]) => storeName,
+        5,
+      );
       this._stopMutationObserver = false;
       this._lastComponentCrawl = Date.now();
     }
@@ -266,9 +273,7 @@ export function init(forceStart = false) {
           window[`$x${rootEl.__alpineDevtool.id - 1}`] = this.getAlpineDataInstance(rootEl);
         }
 
-        if (rootEl.__alpineDevtool.id === this.selectedComponentId) {
-          this.sendComponentData(this.selectedComponentId, rootEl);
-        }
+        this.debouncedSendComponentData(rootEl.__alpineDevtool.id, rootEl);
 
         if (this.isV3) {
           const componentData = this.getAlpineDataInstance(rootEl);
@@ -296,11 +301,9 @@ export function init(forceStart = false) {
                 }
               }
               visit(componentData, key);
-              if (rootEl.__alpineDevtool.id === this.selectedComponentId) {
-                // this re-computes the whole component data
-                // with effect we could send only the key-value of the field that's changed
-                this.debouncedSetComponentData(this.selectedComponentId, rootEl);
-              }
+              // this re-computes the whole component data
+              // with effect we could send only the key-value of the field that's changed
+              this.debouncedSendComponentData(rootEl.__alpineDevtool.id, rootEl);
             });
           });
         }
@@ -359,9 +362,7 @@ export function init(forceStart = false) {
               }
             }
             visit(this.alpineStoreMagic, storeName);
-            if (storeName === this.selectedStoreName) {
-              this.sendStoreData(this.selectedStoreName || storeName, this.alpineStoreMagic);
-            }
+            this.debouncedSendStoreData(storeName, this.alpineStoreMagic);
           });
         });
       }
@@ -373,7 +374,7 @@ export function init(forceStart = false) {
         components: this.components,
         stores: this.stores,
         url: btoa(window.location.href),
-        type: BACKEND_TO_PANEL_MESSAGES.SET_COMPONENT_AND_STORES,
+        type: BACKEND_TO_PANEL_MESSAGES.SET_COMPONENTS_AND_STORES,
       });
     }
 
@@ -461,9 +462,7 @@ export function init(forceStart = false) {
       this.selectedComponentId = componentId;
       this.runWithMutationPaused(() => {
         this.discoverComponents((component) => {
-          if (component.__alpineDevtool.id === componentId) {
-            this.sendComponentData(componentId, component);
-          }
+          this.debouncedSendComponentData(component.__alpineDevtool.id, component);
         });
       });
     }
@@ -481,7 +480,7 @@ export function init(forceStart = false) {
       }
       this.selectedStoreName = storeName;
       if (this.hasAlpineDataFn) {
-        this.sendStoreData(storeName, this.alpineStoreMagic);
+        this.debouncedSendStoreData(storeName, this.alpineStoreMagic);
       }
     }
 
