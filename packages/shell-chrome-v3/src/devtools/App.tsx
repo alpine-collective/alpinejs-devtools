@@ -9,6 +9,7 @@ import { handleResize, orientation } from './theme';
 import { StoreGrid } from './components/store-grid';
 import { TabValues } from './types';
 import { Warnings } from './components/warnings';
+import { view } from './metrics';
 
 const App: Component = () => {
   onMount(() => {
@@ -20,8 +21,8 @@ const App: Component = () => {
   const [activeTab, setActiveTab] = createSignal<TabValues>('components');
 
   effect(() => {
-    if (activeTab() && window?.sa_pageview) {
-      window.sa_pageview(`/${activeTab()}`);
+    if (activeTab()) {
+      view(`/${activeTab()}`);
     }
   });
   return (

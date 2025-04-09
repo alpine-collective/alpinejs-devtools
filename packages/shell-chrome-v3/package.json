@@ -1,13 +1,14 @@
 {
   "name": "shell-chrome-v3",
   "private": true,
-  "version": "2.2.4",
+  "version": "2.2.5",
   "description": "Alpine.js devtools with Chrome manifest v3 compatibility",
   "type": "module",
   "scripts": {
     "start": "npm run esbuild && vite",
-    "start:mainline": "VITE_MAINLINE_PUBLISH=true npm start",
+    "start:main": "VITE_MAINLINE_PUBLISH=true npm start",
     "dev": "npm run esbuild && vite build",
+    "dev:main": "VITE_MAINLINE_PUBLISH=true npm run dev",
     "build": "NODE_ENV=production npm run esbuild && vite build",
     "typecheck": "tsc",
     "format": "prettier -w .",

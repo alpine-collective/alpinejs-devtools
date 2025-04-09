@@ -11,11 +11,21 @@ export function bucketCount(num: number) {
   return '>=51';
 }
 
+export function view(pathname: string) {
+  window.sa_metadata ??= {
+    build: isEarlyAccess() ? 'ea' : 'ga',
+    buildNum: version,
+  };
+  if (!import.meta.env.DEV && window?.sa_pageview) {
+    window.sa_pageview(pathname);
+  }
+}
+
 export function metric(
   name: string,
   metadata: Record<string, string | number | boolean> = {},
 ): void {
-  if (window.sa_event) {
+  if (!import.meta.env.DEV && window.sa_event) {
     window.sa_event(name, {
       build: isEarlyAccess() ? 'ea' : 'ga',
       buildNum: version,

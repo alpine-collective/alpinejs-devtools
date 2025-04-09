@@ -9,6 +9,7 @@ declare global {
     __alpineDevtool: {
       port?: chrome.runtime.Port;
     };
+    sa_metadata?: Record<string, any>;
     sa_pageview?: (pathname: string) => void;
     sa_event?: (eventName: string, metadata?: Record<string, string | number | boolean>) => void;
   }
