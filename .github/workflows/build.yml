@@ -63,22 +63,16 @@ jobs:
         key: cypress-cache-v1-${{ runner.os }}-${{ hashFiles('**/package.json') }}
     # install Cypress binary
     - run: npx cypress install && npx cypress cache list
-    # - name: Devtools@v2 E2E
-    #   uses: cypress-io/github-action@v6
-    #   with:
-    #     start: node --run start
-    #     command: node --run cy:run
-    #     working-directory: packages/shell-chrome-v3
-    #     install: false
+    - name: Devtools@v2 E2E
+      uses: cypress-io/github-action@v6
+      with:
+        start: node --run start
+        command: node --run cy:run
+        working-directory: packages/shell-chrome-v3
+        install: false
     - name: Devtools@v1 E2E
       uses: cypress-io/github-action@v6
       with:
         start: node --run start:ci
         command: node --run cy:run
-        install: false
-    - uses: cypress-io/github-action@v6
-      with:
-        start: npm start
-        command: npm run cy:run
-        working-directory: packages/shell-chrome-v3
         install: false
