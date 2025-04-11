@@ -156,7 +156,7 @@ export function Footer({ setActiveTab }: FooterProps) {
         <a
           href="https://github.com/alpine-collective/alpinejs-devtools"
           target="_blank"
-          data-tooltip="Alpine.js devtools GitHub"
+          data-tooltip="Alpine.js Devtools GitHub"
           data-side="top"
           data-align="end"
           class="leading-9 font-medium font-mono"

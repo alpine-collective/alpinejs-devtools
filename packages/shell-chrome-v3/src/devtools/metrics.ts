@@ -32,6 +32,13 @@ export function bucketCount(num: number) {
   return '>=51';
 }
 
+export function bucketCountLarge(num: number) {
+  if (num <= 50) return bucketCount(num);
+  if (num <= 100) return '51-100';
+  if (num <= 500) return '101-500';
+  return '>=501';
+}
+
 export function bucketTime(ms: number) {
   if (ms < 5) return '<5ms';
   if (ms <= 10) return '6-10ms';

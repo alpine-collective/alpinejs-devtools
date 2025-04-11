@@ -6,9 +6,9 @@
     <!-- Devtools support v3 without using it internally for the devtools panel (for now)
             so we have to load from CDN
          -->
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> -->
     <!-- Uncomment the following script to use that version, eg. when working offline -->
-    <!-- <script src="/alpine.js" defer></script> -->
+    <script src="/cdn.min.js" defer></script>
   </head>
 
   <body>
@@ -25,6 +25,9 @@
           },
         });
         Alpine.store('primitiveVal', true);
+        // Array.from({ length: 20 }).forEach(() => {
+        //   Alpine.store(Math.random().toFixed(2), { foo: 'bar' });
+        // });
       });
     </script>
     <!-- <div x-data>
@@ -164,13 +167,5 @@
       <input x-ref="searchInput" />
     </div>
     <button onclick="document.dispatchEvent(new CustomEvent('focus-input'))">Click</button>
-    <button onclick="run()">Inject backend</button>
-    <script type="module">
-      import { init } from './src/scripts/backend.js';
-      function run() {
-        init(true);
-      }
-      window.run = run;
-    </script>
   </body>
 </html>

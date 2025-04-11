@@ -27,6 +27,7 @@ export const PANEL_TO_BACKEND_MESSAGES = {
   HIDE_HOVER: 'hide-hover',
   EDIT_ATTRIBUTE: 'edit-attribute',
   EDIT_STORE_ATTRIBUTE: 'edit-store-attribute',
+  SET_DATA_FROM_SNAPSHOT: 'SET_DATA_FROM_SNAPSHOT',
 } as const;
 
 export const CONTENT_TO_BACKGROUND_MESSAGES = {

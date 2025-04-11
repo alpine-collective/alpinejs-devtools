@@ -46,6 +46,7 @@ function serializeDataProperty(value) {
 }
 
 export function init(forceStart = false) {
+  const MSG_DEBOUNCE_MS = 10;
   class AlpineDevtoolsBackend {
     constructor() {
       this.components = [];
@@ -59,15 +60,16 @@ export function init(forceStart = false) {
       /** @type {string | undefined | null} */
       this.selectedStoreName = null;
 
+      this.enableSendDataMsg = true;
       this.debouncedSendComponentData = debounce(
         this.sendComponentData.bind(this),
         ([componentId]) => String(componentId),
-        5,
+        MSG_DEBOUNCE_MS,
       );
       this.debouncedSendStoreData = debounce(
         this.sendStoreData.bind(this),
         ([storeName]) => storeName,
-        5,
+        MSG_DEBOUNCE_MS,
       );
       this._stopMutationObserver = false;
       this._lastComponentCrawl = Date.now();
@@ -89,7 +91,7 @@ export function init(forceStart = false) {
       return isRequiredVersion('3.8.0', this.alpineVersion);
     }
 
-    runWithMutationPaused(cb) {
+    runWithMutationPaused(cb, disableMessaging = false) {
       if (!window.Alpine) {
         cb();
         return;
@@ -97,6 +99,9 @@ export function init(forceStart = false) {
       const alpineObserverPausedValue = window.Alpine.pauseMutationObserver;
       window.Alpine.pauseMutationObserver = true;
       this._stopMutationObserver = true;
+      if (disableMessaging) {
+        this.enableSendDataMsg = false;
+      }
       cb();
       setTimeout(() => {
         if (window.Alpine.pauseMutationObserver) {
@@ -104,6 +109,9 @@ export function init(forceStart = false) {
         }
         this._stopMutationObserver = false;
       }, 10);
+      setTimeout(() => {
+        this.enableSendDataMsg = true;
+      }, MSG_DEBOUNCE_MS * 2);
     }
 
     getAlpineDataInstance(node) {
@@ -424,6 +432,9 @@ export function init(forceStart = false) {
      * @returns
      */
     sendComponentData(componentId, componentRoot) {
+      if (!this.enableSendDataMsg) {
+        return;
+      }
       const componentData = this.getReadOnlyAlpineData(componentRoot);
 
       if (!componentData) return;
@@ -524,6 +535,22 @@ export function init(forceStart = false) {
         });
       });
     }
+
+    /**
+     *
+     * @param {number} componentId
+     * @param {import('../devtools/state').DataMessageHistory[number]} snapshot
+     */
+    handleSetAllComponentData(componentId, snapshot) {
+      this.runWithMutationPaused(() => {
+        this.discoverComponents((component) => {
+          if (component.__alpineDevtool.id === componentId) {
+            Object.assign(this.getWriteableAlpineData(component), snapshot.data);
+          }
+        });
+      }, true);
+    }
+
     handleSetStoreData(storeName, attributeSequence, attributeValue) {
       if (this.hasAlpineDataFn) {
         if (typeof this.alpineStoreMagic[storeName] === 'object') {
@@ -666,6 +693,14 @@ export function init(forceStart = false) {
         break;
       }
 
+      case PANEL_TO_BACKEND_MESSAGES.SET_DATA_FROM_SNAPSHOT: {
+        devtoolsBackend.handleSetAllComponentData(
+          e.data.payload.componentId,
+          e.data.payload.snapshot,
+        );
+        break;
+      }
+
       case PANEL_TO_BACKEND_MESSAGES.EDIT_STORE_ATTRIBUTE: {
         devtoolsBackend.handleSetStoreData(
           e.data.payload.storeName,
@@ -674,6 +709,7 @@ export function init(forceStart = false) {
         );
         break;
       }
+
       case PANEL_TO_BACKEND_MESSAGES.GET_DATA: {
         devtoolsBackend.handleGetComponentData(e.data.payload.componentId);
         break;

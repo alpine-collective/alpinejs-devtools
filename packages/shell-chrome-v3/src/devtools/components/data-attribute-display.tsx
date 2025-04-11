@@ -12,29 +12,32 @@ import {
 import { effect } from 'solid-js/web';
 import { metric } from '../metrics';
 import { isEarlyAccess } from '../../lib/isEarlyAccess';
+import { DataAttrSource } from '../types';
 
-interface DataDisplayProps {
-  attributeData: FlattenedComponentData | FlattenedStoreData;
-}
+type DataDisplayProps =
+  | {
+      attributeData: FlattenedComponentData;
+      type: Extract<DataAttrSource, 'component' | 'message'>;
+    }
+  | {
+      attributeData: FlattenedStoreData;
+      type: Extract<DataAttrSource, 'store'>;
+    };
 
 export function DataAttributeDisplay(props: DataDisplayProps) {
   const [inEditingMode, setInEditingMode] = createSignal(props.attributeData.inEditingMode);
   const editAttributeValue = createMemo(() => props.attributeData.editAttributeValue);
+  const readonly = createMemo(() => isReadOnly() || props.type === 'message');
 
   const toggleDataAttributeOpened = () => {
-    metric(
-      'parentStoreName' in props.attributeData
-        ? 'store_data_attr_opened'
-        : 'component_data_attr_opened',
-      {
-        dataType:
-          props.attributeData?.editAttributeValue === 'Array'
-            ? 'array'
-            : props.attributeData.dataType,
-      },
-    );
+    metric(`${props.type}_data_attr_opened`, {
+      dataType:
+        props.attributeData?.editAttributeValue === 'Array'
+          ? 'array'
+          : props.attributeData.dataType,
+    });
 
-    toggleDataAttributeOpen(props.attributeData);
+    toggleDataAttributeOpen(props.attributeData, props.type);
   };
   const [attrDirtyValue, setDirtyEditAttributeValue] = createSignal<string | boolean | undefined>(
     editAttributeValue(),
@@ -47,25 +50,20 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
   });
   const saveEditing = (newValue?: boolean) => {
     setInEditingMode(false);
-    if ('parentStoreName' in props.attributeData) {
+    if (props.type === 'store') {
       saveStoreAttributeEdit({
         ...props.attributeData,
         editAttributeValue: typeof newValue === 'undefined' ? attrDirtyValue() : newValue,
       });
-    } else {
+    } else if (props.type === 'component') {
       saveComponentAttributeEdit({
         ...props.attributeData,
         editAttributeValue: typeof newValue === 'undefined' ? attrDirtyValue() : newValue,
       });
     }
-    metric(
-      'parentStoreName' in props.attributeData
-        ? 'store_data_attr_saved'
-        : 'component_data_attr_saved',
-      {
-        instantToggle: typeof newValue !== 'undefined',
-      },
-    );
+    metric(`${props.type}_data_attr_saved`, {
+      instantToggle: typeof newValue !== 'undefined',
+    });
   };
 
   const cancelEditing = () => {
@@ -114,14 +112,14 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
                     e.preventDefault();
                     if (pinnedPrefix() !== props.attributeData.id) {
                       metric('set_prefix_on_pin', {
-                        datasource:
-                          'parentStoreName' in props.attributeData ? 'stores' : 'components',
+                        // *s to be backwards compatible to pre `props.type` existence
+                        datasource: `${props.type}s`,
                       });
                       setPinnedPrefix(props.attributeData.id);
                     } else {
                       metric('set_prefix_on_unpin', {
-                        datasource:
-                          'parentStoreName' in props.attributeData ? 'stores' : 'components',
+                        // *s to be backwards compatible to pre `props.type` existence
+                        datasource: `${props.type}s`,
                       });
                       setPinnedPrefix('');
                     }
@@ -153,17 +151,17 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
                   <span
                     class="block pr-1 text-blue-700 dark:text-blue-500"
                     classList={{
-                      'cursor-pointer': !isReadOnly(),
+                      'cursor-pointer': !readonly(),
                     }}
                     onClick={() => {
-                      if (!isReadOnly()) {
+                      if (!readonly()) {
                         saveEditing(!editAttributeValue());
                       }
                     }}
                   >
                     {String(props.attributeData.attributeValue)}
                   </span>
-                  <Show when={!isReadOnly()}>
+                  <Show when={!readonly()}>
                     <input
                       type="checkbox"
                       checked={!!editAttributeValue()}
@@ -210,7 +208,7 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
       >
         <div class="flex flex-col">
           <Show
-            when={!isReadOnly() && !inEditingMode() && props.attributeData.dataType !== 'boolean'}
+            when={!readonly() && !inEditingMode() && props.attributeData.dataType !== 'boolean'}
           >
             <svg
               fill="currentColor"

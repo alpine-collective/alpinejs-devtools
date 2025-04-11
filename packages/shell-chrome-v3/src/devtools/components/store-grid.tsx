@@ -86,7 +86,7 @@ export function StoreGrid() {
               <div class="leading-6 text-gray-300">{'{'}</div>
               <Show when={filteredStoreFlattenedData().length > 0}>
                 <For each={filteredStoreFlattenedData()}>
-                  {(data) => <DataAttributeDisplay attributeData={data} />}
+                  {(data) => <DataAttributeDisplay type="store" attributeData={data} />}
                 </For>
               </Show>
               <div class="leading-7 text-gray-300">{'}'}</div>

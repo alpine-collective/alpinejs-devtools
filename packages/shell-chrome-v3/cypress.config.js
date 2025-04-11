@@ -10,8 +10,6 @@ export default defineConfig({
 
   e2e: {
     experimentalRunAllSpecs: true,
-    // TODO: when reworking the tests, we should do 1 test -> multiple assertions
-    testIsolation: false,
     setupNodeEvents(on, config) {},
     baseUrl: 'http://localhost:3000',
   },

@@ -1,5 +1,5 @@
 import { createMemo, createSignal } from 'solid-js';
-import { createStore, reconcile } from 'solid-js/store';
+import { createStore, reconcile, unwrap } from 'solid-js/store';
 import { PANEL_TO_BACKEND_MESSAGES } from '../lib/constants';
 import { panelPostMessage } from './messaging';
 import { ALPINE_DEVTOOLS_PANEL_SOURCE } from './ports';
@@ -7,6 +7,8 @@ import { convertInputDataToType, flattenData, mapDataTypeToInputType } from '../
 import { metric } from './metrics';
 import { effect } from 'solid-js/web';
 import { getPartialPrefixes } from '../lib/prefix';
+import { MESSAGE_HISTORY_SIZE, snapshotToDataObj } from './state/message-history';
+import type { ComponentData, DataAttrSource } from './types';
 
 interface State {
   version: {
@@ -94,6 +96,106 @@ effect(() => {
     setPinnedPrefix('');
   }
 });
+export type DataMessageHistory = Array<{
+  id: `${string}-${string}`;
+  data: ComponentData;
+  receivedAt: Date;
+}>;
+
+interface MessageHistory {
+  selectedMessageId?: string;
+  /** Do not use directly, read via {@link selectedFlattenedMessageData} */
+  flattenedSelectedMessageData: FlattenedComponentData[];
+  openedAttrs: Set<FlattenedComponentData['id']>;
+  arrowDownAttrs: Set<FlattenedComponentData['id']>;
+  components: Record<number, DataMessageHistory>;
+}
+
+export const [messageHistory, setMessageHistory] = createStore<MessageHistory>({
+  components: {},
+  flattenedSelectedMessageData: [],
+  openedAttrs: new Set(),
+  arrowDownAttrs: new Set(),
+});
+
+export const setSelectedMessage = (id: DataMessageHistory[number]['id']) => {
+  setMessageHistory('selectedMessageId', id);
+};
+export const resetSelectedMessage = () => {
+  setMessageHistory('selectedMessageId', undefined);
+
+  const openedAttrs = new Set<string>();
+  const arrowDownAttrs = new Set<string>();
+  if (selectedComponentFlattenedData()?.length > 0) {
+    selectedComponentFlattenedData()!.forEach((el) => {
+      if (el.isOpened) {
+        openedAttrs.add(el.id);
+      }
+      if (el.isArrowDown) {
+        arrowDownAttrs.add(el.id);
+      }
+    });
+  }
+  setMessageHistory('openedAttrs', openedAttrs);
+  setMessageHistory('arrowDownAttrs', arrowDownAttrs);
+};
+export const getSelectedMessage = createMemo<DataMessageHistory[number] | undefined>(() => {
+  if (!messageHistory.selectedMessageId || !openComponentValue()) {
+    return undefined;
+  }
+  return messageHistory.components[openComponentValue()!.id].find(
+    (el) => el.id === messageHistory.selectedMessageId,
+  );
+});
+
+export const selectedFlattenedMessageData = createMemo(() => {
+  const flattenedData = messageHistory.flattenedSelectedMessageData.map((el) => {
+    return {
+      ...el,
+      isArrowDown: messageHistory.arrowDownAttrs.has(el.id),
+      isOpened: messageHistory.openedAttrs.has(el.id) || el.depth === 0,
+    };
+  });
+  if (!pinnedPrefix()) {
+    return flattenedData;
+  }
+  const prefix = pinnedPrefix();
+
+  const filteredAttrs = flattenedData.filter(
+    (el) => getPartialPrefixes(prefix).includes(el.id) || el.id.startsWith(`${prefix}.`),
+  );
+  if (filteredAttrs.length > 0) {
+    return filteredAttrs;
+  }
+  return flattenedData;
+});
+
+effect(() => {
+  if (state.selectedComponentId || state.selectedStoreName) {
+    resetSelectedMessage();
+  }
+});
+
+effect(() => {
+  if (getSelectedMessage()?.data) {
+    const newMessageData = flattenData(getSelectedMessage()!.data);
+    setMessageHistory('flattenedSelectedMessageData', newMessageData);
+  } else {
+    setMessageHistory('flattenedSelectedMessageData', []);
+  }
+});
+
+export const setDataFromSnapshot = (snapshot: DataMessageHistory[number], componentId: number) => {
+  panelPostMessage({
+    source: ALPINE_DEVTOOLS_PANEL_SOURCE,
+    action: PANEL_TO_BACKEND_MESSAGES.SET_DATA_FROM_SNAPSHOT,
+    snapshot: {
+      ...unwrap(snapshot),
+      data: snapshotToDataObj(unwrap(snapshot).data),
+    },
+    componentId,
+  });
+};
 
 export const setAlpineVersionFromBackend = (version: string) => {
   setState('version', {
@@ -149,7 +251,28 @@ export const setStoresFromList = (stores: Array<string>) => {
   );
 };
 
-export const setComponentData = (componentId: string, componentData: any) => {
+export const setComponentData = (componentId: string, componentData: ComponentData) => {
+  const receivedAt = new Date();
+  const newComponentMessages: DataMessageHistory = [
+    ...(messageHistory.components[Number(componentId)] || []),
+    {
+      id: `${componentId}-${receivedAt.toISOString()}`,
+      data: componentData,
+      receivedAt,
+    },
+  ];
+  if (newComponentMessages.length > MESSAGE_HISTORY_SIZE) {
+    newComponentMessages.shift();
+  }
+  setMessageHistory(
+    reconcile({
+      ...messageHistory,
+      components: {
+        ...messageHistory.components,
+        [Number(componentId)]: newComponentMessages,
+      },
+    }),
+  );
   const existingComponentData = state.preloadedComponentData[Number(componentId)];
   const attrPrevState: Record<string, Record<number, FlattenedComponentData> | undefined> =
     existingComponentData
@@ -295,8 +418,12 @@ export function selectStore(storeName: Store['name']) {
   }
 }
 
-export function toggleDataAttributeOpen(attribute: FlattenedComponentData | FlattenedStoreData) {
+export function toggleDataAttributeOpen(
+  attribute: FlattenedComponentData | FlattenedStoreData,
+  dataSourceType: DataAttrSource,
+) {
   const isStore = 'parentStoreName' in attribute;
+  const isMessage = dataSourceType === 'message';
   if (attribute.hasArrow) {
     const childrenIdLength = attribute.id.split('.').length + 1;
 
@@ -311,7 +438,11 @@ export function toggleDataAttributeOpen(attribute: FlattenedComponentData | Flat
 
     const closeRegex = new RegExp(closeRegexStr);
 
-    const flattenedData = isStore ? selectedStoreFlattenedData() : selectedComponentFlattenedData();
+    const flattenedData = isStore
+      ? selectedStoreFlattenedData()
+      : isMessage
+        ? selectedFlattenedMessageData()
+        : selectedComponentFlattenedData();
 
     const childrenAttributesIds = flattenedData
       .filter((attr) => {
@@ -350,6 +481,21 @@ export function toggleDataAttributeOpen(attribute: FlattenedComponentData | Flat
     if (isStore) {
       // @ts-expect-error
       setStoreFlattenedData(state.selectedStoreName!, newSelectedFlattenedData);
+    } else if (isMessage) {
+      // @ts-expect-error
+      setMessageHistory('flattenedSelectedMessageData', newSelectedFlattenedData);
+      const openedAttrs = new Set<string>();
+      const arrowDownAttrs = new Set<string>();
+      newSelectedFlattenedData.forEach((el) => {
+        if (el.isOpened) {
+          openedAttrs.add(el.id);
+        }
+        if (el.isArrowDown) {
+          arrowDownAttrs.add(el.id);
+        }
+      });
+      setMessageHistory('openedAttrs', openedAttrs);
+      setMessageHistory('arrowDownAttrs', arrowDownAttrs);
     } else {
       // @ts-expect-error
       setComponentFlattenedData(String(state.selectedComponentId), newSelectedFlattenedData);
