@@ -57,7 +57,7 @@ export function handleBackendToPanelMessage(
           setComponentData(message.componentId, comps);
           setPort(port);
         },
-        { sampled: true },
+        { sampled: true, minValueMs: 5 },
       );
       break;
     }

@@ -52,12 +52,12 @@ const sampler = new Sampler(0.1);
 export function runWithMeasure(
   label: string,
   fn: Function,
-  options: { sampled: boolean } = { sampled: false },
+  options: { sampled: boolean; minValueMs: number } = { sampled: false, minValueMs: 0 },
 ) {
   const start = performance.now();
   fn();
   const time = performance.now() - start;
-  if (options.sampled && sampler.shouldSample()) {
+  if ((!options.sampled || sampler.shouldSample()) && time >= options.minValueMs) {
     metric(`${label}_exec_time`, { time: bucketTime(time) });
   }
 }

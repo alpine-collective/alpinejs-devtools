@@ -1,6 +1,18 @@
 @config "../../../../tailwind.config.js";
 @import 'tailwindcss';
 
+/*
+Redefine outside of tailwind generation,
+split-grid needs the style definitions to create the right tracks and
+doesn't like `@layer` (which TW@4 uses)
+*/
+.grid-cols-panes {
+  grid-template-columns: 1fr 1px 1fr;
+}
+.grid-rows-panes {
+  grid-template-rows: 1fr 1px 1fr;
+}
+
 /* custom styles */
 .arrow {
   display: inline-block;
