@@ -8,6 +8,18 @@ import {
 } from './src/devtools/ports';
 import { INIT_MESSAGE } from './src/lib/constants';
 
+function inject(src: string, done: Function) {
+  if (!src || src === 'false') {
+    return done();
+  }
+  // @ts-expect-error
+  const script = target.contentDocument.createElement('script');
+  script.src = src;
+  script.onload = done;
+  // @ts-expect-error
+  target.contentDocument.body.appendChild(script);
+}
+
 let isInitialised = false;
 function initProxy(window: Window, targetWindow: Window) {
   window.addEventListener('message', async (event) => {
@@ -51,7 +63,8 @@ async function main() {
   // @ts-expect-error
   target.onload = () => {
     // 1. inject backend script to "target" iframe
-    import('./src/scripts/backend').then(() => {
+    // import('./src/scripts/backend').then(() => {
+    inject('./dist/backend.js', () => {
       // 2. init devtools
       targetWindow.postMessage({
         source: ALPINE_DEVTOOLS_PROXY_SOURCE,
