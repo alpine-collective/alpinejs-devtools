@@ -91,6 +91,10 @@ export const setAlpineVersionFromBackend = (version: string) => {
   });
 };
 
+export const isReadOnly = createMemo(() => {
+  return (state.version?.detected ?? '').length === 0;
+});
+
 export const setPageLoaded = () => {
   setState('pageLoadCompleted', true);
 };

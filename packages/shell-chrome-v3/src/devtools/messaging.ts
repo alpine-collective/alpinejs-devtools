@@ -1,5 +1,5 @@
 import { BACKEND_TO_PANEL_MESSAGES } from '../lib/constants';
-import { runWithMeasure } from './metrics';
+import { metric, runWithMeasure } from './metrics';
 import {
   setAlpineVersionFromBackend,
   setComponentsList,
@@ -37,6 +37,18 @@ export function handleBackendToPanelMessage(
   switch (message.type) {
     case BACKEND_TO_PANEL_MESSAGES.SET_VERSION: {
       setAlpineVersionFromBackend(message.version);
+      if (message.hasHtmxTarget || message.hasAlpineAjaxTarget) {
+        let tools = [];
+        if (message.hasHtmxTarget) {
+          tools.push('htmx');
+        }
+        if (message.hasAlpineAjaxTarget) {
+          tools.push('alpine-ajax');
+        }
+        metric('detected_tools', {
+          tools: tools.join(','),
+        });
+      }
       setPort(port);
       break;
     }

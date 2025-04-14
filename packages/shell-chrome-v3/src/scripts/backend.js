@@ -90,6 +90,10 @@ export function init(forceStart = false) {
     }
 
     runWithMutationPaused(cb) {
+      if (!window.Alpine) {
+        cb();
+        return;
+      }
       const alpineObserverPausedValue = window.Alpine.pauseMutationObserver;
       window.Alpine.pauseMutationObserver = true;
       this._stopMutationObserver = true;
@@ -139,7 +143,7 @@ export function init(forceStart = false) {
       this.selectedStoreName = selectedStoreName;
 
       this.initAlpineErrorCollection();
-      this.getAlpineVersion();
+      this.sendAlpineVersion();
       this.watchComponents();
       // Watch on the body for injected components. This is lightweight
       // as work is only done if there are components added/removed
@@ -277,7 +281,7 @@ export function init(forceStart = false) {
 
         if (this.isV3) {
           const componentData = this.getAlpineDataInstance(rootEl);
-          Alpine.effect(() => {
+          window?.Alpine?.effect(() => {
             Object.keys(componentData).forEach((key) => {
               let recursionDepth = 0;
               function visit(componentData, key) {
@@ -338,7 +342,7 @@ export function init(forceStart = false) {
       });
 
       if (this.hasAlpineDataFn) {
-        Alpine.effect(() => {
+        window?.Alpine?.effect(() => {
           Object.keys(this.alpineStoreMagic).forEach((storeName) => {
             let recursionDepth = 0;
             function visit(componentData, key) {
@@ -380,15 +384,21 @@ export function init(forceStart = false) {
 
     get alpineStoreMagic() {
       if (this.hasAlpineDataFn) {
-        return Alpine.$data(document.querySelector('[x-data]')).$store;
+        return window?.Alpine?.$data(document.querySelector('[x-data]')).$store ?? {};
       }
       return {};
     }
 
-    getAlpineVersion() {
+    sendAlpineVersion() {
       console.info(`Alpine Devtools: detected version ${this.alpineVersion}`);
       this._postMessage({
         version: this.alpineVersion,
+        hasHtmxTarget: !!document.querySelector(
+          ['target', 'get', 'post', 'put', 'patch', 'delete']
+            .flatMap((suffix) => [`[hx-${suffix}]`, `[data-hx-${suffix}]`])
+            .join(','),
+        ),
+        hasAlpineAjaxTarget: !!document.querySelector('[x-target]'),
         type: BACKEND_TO_PANEL_MESSAGES.SET_VERSION,
       });
     }
@@ -491,7 +501,7 @@ export function init(forceStart = false) {
       if (this.isV3) {
         document.querySelectorAll('[x-data]').forEach(cb);
       } else {
-        Alpine.discoverComponents(cb);
+        window?.Alpine?.discoverComponents(cb);
       }
     }
 

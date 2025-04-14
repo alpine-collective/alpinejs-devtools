@@ -66,7 +66,14 @@ export function waitForAlpine(
     if (attempts >= maxAttempts || window.Alpine) {
       clearInterval(timer);
     }
-    if (window.Alpine) {
+    const xDataEl = document.querySelector('[x-data]');
+    if (
+      window.Alpine ||
+      // Alpine v2
+      xDataEl?.__x ||
+      // Alpine v3
+      xDataEl?._x_dataStack
+    ) {
       cb();
     }
   }

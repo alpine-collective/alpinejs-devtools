@@ -2,6 +2,7 @@ import { createMemo, createSignal, Show } from 'solid-js';
 import {
   FlattenedComponentData,
   FlattenedStoreData,
+  isReadOnly,
   saveComponentAttributeEdit,
   saveStoreAttributeEdit,
   toggleDataAttributeOpen,
@@ -23,9 +24,13 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
         ? 'store_data_attr_opened'
         : 'component_data_attr_opened',
       {
-        dataType: props.attributeData.dataType,
+        dataType:
+          props.attributeData?.editAttributeValue === 'Array'
+            ? 'array'
+            : props.attributeData.dataType,
       },
     );
+
     toggleDataAttributeOpen(props.attributeData);
   };
   const [attrDirtyValue, setDirtyEditAttributeValue] = createSignal<string | boolean | undefined>(
@@ -110,19 +115,28 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
               <Show when={props.attributeData.dataType === 'boolean'}>
                 <div class="flex items-center">
                   <span
-                    class="block pr-1 text-blue-700 cursor-pointer"
-                    onClick={() => saveEditing(!editAttributeValue())}
+                    class="block pr-1 text-blue-700"
+                    classList={{
+                      'cursor-pointer': !isReadOnly(),
+                    }}
+                    onClick={() => {
+                      if (!isReadOnly()) {
+                        saveEditing(!editAttributeValue());
+                      }
+                    }}
                   >
                     {String(props.attributeData.attributeValue)}
                   </span>
-                  <input
-                    type="checkbox"
-                    checked={!!editAttributeValue()}
-                    onChange={() => {
-                      saveEditing(!editAttributeValue());
-                    }}
-                    class="focus:ring-transparent h-4 w-4 text-blue-700 border-gray-300 cursor-pointer rounded-sm transition duration-150 ease-in-out opacity-0 group-hover:opacity-100"
-                  />
+                  <Show when={!isReadOnly()}>
+                    <input
+                      type="checkbox"
+                      checked={!!editAttributeValue()}
+                      onChange={() => {
+                        saveEditing(!editAttributeValue());
+                      }}
+                      class="focus:ring-transparent h-4 w-4 text-blue-700 border-gray-300 cursor-pointer rounded-sm transition duration-150 ease-in-out opacity-0 group-hover:opacity-100"
+                    />
+                  </Show>
                 </div>
               </Show>
               <Show
@@ -159,7 +173,9 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
         }
       >
         <div class="flex flex-col">
-          <Show when={!inEditingMode() && props.attributeData.dataType !== 'boolean'}>
+          <Show
+            when={!isReadOnly() && !inEditingMode() && props.attributeData.dataType !== 'boolean'}
+          >
             <svg
               fill="currentColor"
               data-testid={`edit-icon-${props.attributeData.attributeName}`}
