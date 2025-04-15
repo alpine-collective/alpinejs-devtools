@@ -1,5 +1,11 @@
 import { isRequiredVersion } from '../../lib/utils';
-import { openStoreValue, selectedStoreFlattenedData, state, storesValue } from '../state';
+import {
+  filteredStoreFlattenedData,
+  openStoreValue,
+  pinnedPrefix,
+  state,
+  storesValue,
+} from '../state';
 import { StoreListItem } from './store-list-item';
 import { DataAttributeDisplay } from './data-attribute-display';
 import { SplitPane } from './split-pane';
@@ -7,6 +13,7 @@ import { EarlyAccessNotice } from './early-access';
 import { isEarlyAccess } from '../../lib/isEarlyAccess';
 import { For, Show } from 'solid-js';
 import { metric } from '../metrics';
+import { PinnedPrefixPath } from './pinned-prefix-path';
 
 export function StoreGrid() {
   if (!isEarlyAccess()) {
@@ -50,9 +57,15 @@ export function StoreGrid() {
         <>
           {openStoreValue() ? (
             <div class="sticky top-0 left-0 z-20 w-full flex items-center px-3 py-2 text-base font-mono text-gray-600 bg-gray-100 dark:text-gray-100 dark:bg-alpine-400">
-              <span class="opacity-25">$store{'['}'</span>
-              <span>{openStoreValue()?.name}</span>
-              <span class="opacity-25">'{']'}</span>
+              {pinnedPrefix() ? (
+                <PinnedPrefixPath pinnedPrefix={pinnedPrefix} />
+              ) : (
+                <>
+                  <span class="opacity-25">$store{'['}'</span>
+                  <span>{openStoreValue()?.name}</span>
+                  <span class="opacity-25">'{']'}</span>
+                </>
+              )}
             </div>
           ) : (
             <div
@@ -71,8 +84,8 @@ export function StoreGrid() {
           >
             <div class="font-mono">
               <div class="leading-6 text-gray-300">{'{'}</div>
-              <Show when={selectedStoreFlattenedData().length > 0}>
-                <For each={selectedStoreFlattenedData()}>
+              <Show when={filteredStoreFlattenedData().length > 0}>
+                <For each={filteredStoreFlattenedData()}>
                   {(data) => <DataAttributeDisplay attributeData={data} />}
                 </For>
               </Show>

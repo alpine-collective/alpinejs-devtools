@@ -1,7 +1,7 @@
 {
   "name": "shell-chrome-v3",
   "private": true,
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Alpine.js devtools with Chrome manifest v3 compatibility",
   "type": "module",
   "scripts": {
@@ -10,6 +10,7 @@
     "dev": "npm run esbuild && NODE_ENV=dev vite build",
     "dev:main": "VITE_MAINLINE_PUBLISH=true npm run dev",
     "build": "NODE_ENV=production npm run esbuild && vite build",
+    "test": "node --experimental-strip-types --test **/*.test.ts",
     "typecheck": "tsc",
     "format": "prettier -w .",
     "esbuild": "node build.js && prettier -w manifest.json",

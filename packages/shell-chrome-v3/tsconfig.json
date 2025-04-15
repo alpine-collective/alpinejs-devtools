@@ -8,6 +8,7 @@
     "esModuleInterop": true,
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
+    "allowImportingTsExtensions": true,
     // this isn't strictly right, not all the .ts files will have access to Chrome APIs
     "types": ["vite/client", "@types/chrome"],
     "noEmit": true,

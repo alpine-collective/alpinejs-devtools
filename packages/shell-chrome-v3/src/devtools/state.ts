@@ -1,10 +1,12 @@
-import { createMemo } from 'solid-js';
+import { createMemo, createSignal } from 'solid-js';
 import { createStore, reconcile } from 'solid-js/store';
 import { PANEL_TO_BACKEND_MESSAGES } from '../lib/constants';
 import { panelPostMessage } from './messaging';
 import { ALPINE_DEVTOOLS_PANEL_SOURCE } from './ports';
 import { convertInputDataToType, flattenData, mapDataTypeToInputType } from '../lib/utils';
 import { metric } from './metrics';
+import { effect } from 'solid-js/web';
+import { getPartialPrefixes } from '../lib/prefix';
 
 interface State {
   version: {
@@ -83,6 +85,14 @@ export const [state, setState] = createStore<State>({
   preloadedComponentData: {},
   stores: {},
   preloadedStoreData: {},
+});
+
+export const [pinnedPrefix, setPinnedPrefix] = createSignal<string>('');
+
+effect(() => {
+  if (state.selectedComponentId || state.selectedStoreName) {
+    setPinnedPrefix('');
+  }
 });
 
 export const setAlpineVersionFromBackend = (version: string) => {
@@ -415,6 +425,26 @@ export const selectedComponentFlattenedData = createMemo(() => {
   );
 });
 
+export const filteredSelectedCompData = createMemo(() => {
+  const flattenedData = selectedComponentFlattenedData();
+  if (!pinnedPrefix()) {
+    return flattenedData;
+  }
+  const prefix = pinnedPrefix();
+
+  const filteredAttrs = flattenedData.filter(
+    (el) => getPartialPrefixes(prefix).includes(el.id) || el.id.startsWith(`${prefix}.`),
+  );
+  if (filteredAttrs.length > 0) {
+    return filteredAttrs;
+  }
+  metric('filter_by_prefix_no_such_paths', {
+    datasource: 'components',
+  });
+  // TODO, should return each partial prefix
+  return flattenedData;
+});
+
 const setComponentFlattenedData = (
   selectedComponentId: string,
   newSelectedComponentFlattenedData: Array<FlattenedComponentData>,
@@ -430,6 +460,26 @@ const setComponentFlattenedData = (
 
 export const selectedStoreFlattenedData = createMemo(() => {
   return (state.selectedStoreName && state.preloadedStoreData[state.selectedStoreName]) || [];
+});
+
+export const filteredStoreFlattenedData = createMemo(() => {
+  const flattenedData = selectedStoreFlattenedData();
+  if (!pinnedPrefix()) {
+    return flattenedData;
+  }
+  const prefix = pinnedPrefix();
+
+  const filteredAttrs = flattenedData.filter(
+    (el) => getPartialPrefixes(prefix).includes(el.id) || el.id.startsWith(`${prefix}.`),
+  );
+  if (filteredAttrs.length > 0) {
+    return filteredAttrs;
+  }
+  metric('filter_by_prefix_no_such_paths', {
+    datasource: 'stores',
+  });
+  // TODO, should return each partial prefix
+  return flattenedData;
 });
 
 const setStoreFlattenedData = (

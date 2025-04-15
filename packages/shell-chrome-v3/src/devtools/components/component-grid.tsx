@@ -1,8 +1,14 @@
 import { For, Show } from 'solid-js';
-import { componentsValue, openComponentValue, selectedComponentFlattenedData } from '../state';
+import {
+  componentsValue,
+  filteredSelectedCompData,
+  openComponentValue,
+  pinnedPrefix,
+} from '../state';
 import { ComponentListItem } from './component-list-item';
 import { DataAttributeDisplay } from './data-attribute-display';
 import { SplitPane } from './split-pane';
+import { PinnedPrefixPath } from './pinned-prefix-path';
 
 export function ComponentGrid() {
   return (
@@ -29,9 +35,15 @@ export function ComponentGrid() {
         <>
           {openComponentValue() ? (
             <div class="sticky top-0 left-0 z-20 w-full flex items-center px-3 py-2 text-base font-mono text-gray-600 bg-gray-100 dark:text-gray-100 dark:bg-alpine-400">
-              <span class="opacity-25">&lt;</span>
-              <span>{openComponentValue()?.name}</span>
-              <span class="opacity-25">&gt;</span>
+              {pinnedPrefix() ? (
+                <PinnedPrefixPath pinnedPrefix={pinnedPrefix} />
+              ) : (
+                <>
+                  <span class="opacity-25">&lt;</span>
+                  <span>{openComponentValue()?.name}</span>
+                  <span class="opacity-25">&gt;</span>
+                </>
+              )}
             </div>
           ) : (
             <div
@@ -49,9 +61,9 @@ export function ComponentGrid() {
             class="flex-1 px-3 py-2 dark:bg-alpine-400 dark:text-gray-50"
           >
             <div class="font-mono">
-              <div class="leading-6 text-gray-300">x-data: {'{'}</div>
-              <Show when={selectedComponentFlattenedData().length > 0}>
-                <For each={selectedComponentFlattenedData()}>
+              <div class="leading-6 text-gray-300">$data: {'{'}</div>
+              <Show when={filteredSelectedCompData().length > 0}>
+                <For each={filteredSelectedCompData()}>
                   {(data) => <DataAttributeDisplay attributeData={data} />}
                 </For>
               </Show>

@@ -3,12 +3,15 @@ import {
   FlattenedComponentData,
   FlattenedStoreData,
   isReadOnly,
+  pinnedPrefix,
   saveComponentAttributeEdit,
   saveStoreAttributeEdit,
+  setPinnedPrefix,
   toggleDataAttributeOpen,
 } from '../state';
 import { effect } from 'solid-js/web';
 import { metric } from '../metrics';
+import { isEarlyAccess } from '../../lib/isEarlyAccess';
 
 interface DataDisplayProps {
   attributeData: FlattenedComponentData | FlattenedStoreData;
@@ -92,13 +95,42 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
               </Show>
             </div>
 
-            <span
-              class="text-purple dark:brightness-150"
-              data-testid={`data-property-name-${props.attributeData.attributeName}`}
-            >
+            <span class="text-purple dark:brightness-150">
               {/* TODO: do something about __root_value */}
               {/* {props.attributeData.attributeName === '__root_value' ? '' : props.attributeData.attributeName} */}
-              {props.attributeData.attributeName}
+              <span data-testid={`data-property-name-${props.attributeData.attributeName}`}>
+                {props.attributeData.attributeName}
+              </span>
+
+              <Show when={isEarlyAccess()}>
+                <button
+                  data-testid={
+                    pinnedPrefix() !== props.attributeData.id
+                      ? `pin-${props.attributeData.id}`
+                      : `unpin-${props.attributeData.id}`
+                  }
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    if (pinnedPrefix() !== props.attributeData.id) {
+                      metric('set_prefix_on_pin', {
+                        datasource:
+                          'parentStoreName' in props.attributeData ? 'stores' : 'components',
+                      });
+                      setPinnedPrefix(props.attributeData.id);
+                    } else {
+                      metric('set_prefix_on_unpin', {
+                        datasource:
+                          'parentStoreName' in props.attributeData ? 'stores' : 'components',
+                      });
+                      setPinnedPrefix('');
+                    }
+                  }}
+                  class="text-gray-500 cursor-pointer ml-1 text-xs"
+                >
+                  {pinnedPrefix() !== props.attributeData.id ? '(pin)' : '(unpin)'}
+                </button>
+              </Show>
             </span>
 
             <span class="text-black dark:text-gray-100">:</span>
