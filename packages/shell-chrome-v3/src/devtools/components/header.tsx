@@ -15,7 +15,7 @@ export function Header({ activeTab, setActiveTab }: HeaderProps) {
         'flex-col w-48 min-h-0 overflow-y-auto': orientation() === 'landscape',
         'flex-row items-center pl-3 pr-1 xs:pr-3': orientation() === 'portrait',
       }}
-      class="flex py-px text-base tracking-tight font-bold text-white border-b border-gray-300 transition duration-700 transition-colors ease-in-out"
+      class="flex py-px text-base tracking-tight font-bold text-white border-b border-gray-300 dark:border-none transition duration-700 transition-colors ease-in-out"
     >
       <div
         classList={{

@@ -27,7 +27,7 @@ const App: Component = () => {
   });
   return (
     <div class="h-full">
-      <div class="bg-white flex flex-col relative h-full w-full mx-auto">
+      <div class="bg-white dark:bg-alpine-400 flex flex-col relative h-full w-full mx-auto">
         <div
           class="flex-1 min-h-0 flex"
           classList={{

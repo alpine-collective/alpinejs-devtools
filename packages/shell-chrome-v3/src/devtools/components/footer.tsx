@@ -23,7 +23,7 @@ export function Footer({ setActiveTab }: FooterProps) {
   });
 
   return (
-    <div class="flex font-bold text-gray-400 border-t border-gray-300 bg-white">
+    <div class="flex font-bold text-gray-400 border-t border-gray-300 bg-white dark:text-gray-100 dark:bg-gray-600 dark:border-gray-600">
       <div class="flex-1">
         <div class="flex items-center text-xs leading-9 font-medium font-mono">
           <div class="flex-1 pl-3" data-testid="footer-line">
@@ -93,7 +93,7 @@ export function Footer({ setActiveTab }: FooterProps) {
         </div>
       </div>
 
-      <div class="text-gray-500 flex items-center ml-3 px-2.5 space-x-1 border-l border-gray-300 transition-colors duration-700">
+      <div class="text-gray-500 dark:text-gray-200 flex items-center ml-3 px-2.5 space-x-1 border-l border-gray-300 transition-colors duration-700">
         <a
           href={
             isEarlyAccess()

@@ -399,6 +399,7 @@ export function init(forceStart = false) {
             .join(','),
         ),
         hasAlpineAjaxTarget: !!document.querySelector('[x-target]'),
+        hasPineconeRouter: !!document.querySelector('[x-route]'),
         hasLivewire: !!window.Livewire,
         hasLiveView: !!window.liveSocket,
         hasTurbo: !!window.Turbo,

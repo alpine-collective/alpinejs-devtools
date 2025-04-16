@@ -33,7 +33,7 @@ export function StoreGrid() {
           {storesValue().length === 0 ? (
             <div
               data-testid="stores-not-found-message"
-              class="flex flex-1 h-full w-full items-center justify-center p-4 text-gray-400 text-sm"
+              class="flex h-full w-full items-center justify-center p-4 text-gray-400 text-sm bg-gray-50 dark:bg-gray-400 dark:text-gray-50"
             >
               No stores found.
             </div>
@@ -49,7 +49,7 @@ export function StoreGrid() {
       rightPaneContent={
         <>
           {openStoreValue() ? (
-            <div class="sticky top-0 left-0 z-20 w-full flex items-center px-3 py-2 text-base font-mono text-gray-600 bg-gray-100">
+            <div class="sticky top-0 left-0 z-20 w-full flex items-center px-3 py-2 text-base font-mono text-gray-600 bg-gray-100 dark:text-gray-100 dark:bg-alpine-400">
               <span class="opacity-25">$store{'['}'</span>
               <span>{openStoreValue()?.name}</span>
               <span class="opacity-25">'{']'}</span>
@@ -57,7 +57,7 @@ export function StoreGrid() {
           ) : (
             <div
               data-testid="select-store-message"
-              class="flex h-full w-full items-center justify-center p-4 text-gray-400 text-sm bg-gray-50"
+              class="flex h-full w-full items-center justify-center p-4 text-gray-400 text-sm bg-gray-50 dark:bg-alpine-400 dark:text-gray-50"
             >
               {storesValue().length > 0 ? 'Select a store to view' : ''}
             </div>
@@ -67,7 +67,7 @@ export function StoreGrid() {
             classList={{
               hidden: !openStoreValue(),
             }}
-            class="flex-1 px-3 py-2"
+            class="flex-1 px-3 py-2 dark:bg-alpine-400 dark:text-gray-50"
           >
             <div class="font-mono">
               <div class="leading-6 text-gray-300">{'{'}</div>

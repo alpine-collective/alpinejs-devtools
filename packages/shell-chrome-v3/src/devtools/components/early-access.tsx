@@ -28,7 +28,7 @@ export function EarlyAccessNotice({
       <div class="relative w-full max-h-full overflow-scroll">
         <div
           data-testid="early-access-notice"
-          class="flex flex-1 h-full w-full items-center justify-center p-4 text-gray-500 text-base leading-5"
+          class="flex flex-1 h-full w-full items-center justify-center p-4 text-gray-500 dark:text-gray-200 text-base leading-5"
         >
           <div class="flex flex-col my-auto pb-4 max-w-lg items-center justify-center">
             <a

@@ -11,8 +11,8 @@ export function StoreListItem({ idx, storeName, isOpen }: StoreListItemProps) {
   return (
     <a
       classList={{
-        'text-white bg-alpine-300': isOpen,
-        'text-gray-600 hover:bg-blue-200': !isOpen,
+        'text-white bg-alpine-300 dark:text-gray-100 dark:bg-alpine-300': isOpen,
+        'text-gray-600 dark:text-gray-100 hover:bg-blue-200 dark:hover:bg-blue-500': !isOpen,
       }}
       class="block cursor-pointer rounded-sm"
       onClick={(_e) => {

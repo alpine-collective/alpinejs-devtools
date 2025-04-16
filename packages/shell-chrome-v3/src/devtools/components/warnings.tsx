@@ -64,7 +64,7 @@ export function Warnings() {
                 >
                   <Show when={error.type === 'eval'}>
                     <div
-                      class="flex items-start border-b border-gray-300 p-2 pr-3 bg-red-50/50 hover:bg-yellow-50/50"
+                      class="flex items-start border-b border-gray-300 p-2 pr-3 bg-red-50/50 dark:bg-red-50/90 hover:bg-yellow-50/50 dark:hover:bg-yellow-50/90"
                       data-testid={`eval-error-${error.source.name}`}
                       onClick={() => {
                         inspectUserGlobal(`window.${DEVTOOLS_ERROR_ELS_GLOBAL}[${error.errorId}]`);

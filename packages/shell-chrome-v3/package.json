@@ -1,7 +1,7 @@
 {
   "name": "shell-chrome-v3",
   "private": true,
-  "version": "2.2.10",
+  "version": "2.3.0",
   "description": "Alpine.js devtools with Chrome manifest v3 compatibility",
   "type": "module",
   "scripts": {

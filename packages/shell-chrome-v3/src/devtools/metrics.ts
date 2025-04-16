@@ -101,6 +101,9 @@ export function toolDetector(message: any): string {
   if (message.hasAlpineAjaxTarget) {
     tools.push('alpine-ajax');
   }
+  if (message.hasPineconeRouter) {
+    tools.push('pinecone');
+  }
   if (message.hasLivewire) {
     tools.push('livewire');
   }

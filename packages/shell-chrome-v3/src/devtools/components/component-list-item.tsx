@@ -14,9 +14,9 @@ export function ComponentListItem({ component }: { component: Component }) {
   return (
     <a
       classList={{
-        'text-white bg-alpine-300':
+        'text-white bg-alpine-300 dark:text-gray-100 dark:bg-alpine-300':
           openComponentValue()?.id === component.id && openComponentValue()?.isOpened,
-        'text-gray-600 hover:bg-blue-200':
+        'text-gray-600 dark:text-gray-100 hover:bg-blue-200 dark:hover:bg-blue-500':
           openComponentValue()?.id !== component.id || !openComponentValue()?.isOpened,
       }}
       class="block cursor-pointer rounded-sm"

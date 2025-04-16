@@ -75,7 +75,7 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
         <a
           style={{ 'margin-left': `${props.attributeData.depth}px` }}
           onClick={toggleDataAttributeOpened}
-          class="block px-1 rounded-sm hover:bg-blue-100"
+          class="block px-1 rounded-sm hover:bg-blue-100 dark:hover:bg-blue-200"
           classList={{ 'cursor-pointer': props.attributeData.hasArrow }}
         >
           <h5 class="flex items-center relative pl-3 leading-6 text-sm whitespace-nowrap">
@@ -93,7 +93,7 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
             </div>
 
             <span
-              class="text-purple"
+              class="text-purple dark:brightness-150"
               data-testid={`data-property-name-${props.attributeData.attributeName}`}
             >
               {/* TODO: do something about __root_value */}
@@ -101,21 +101,25 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
               {props.attributeData.attributeName}
             </span>
 
-            <span class="text-black">:</span>
+            <span class="text-black dark:text-gray-100">:</span>
 
             <div
               data-testid={`data-property-value-${props.attributeData.attributeName}`}
-              class="text-black ml-1"
+              class="text-black dark:text-gray-100 ml-1"
             >
               <Show when={!inEditingMode() && props.attributeData.dataType === 'string'}>
                 <div>
-                  "<span class="text-red-700">{props.attributeData.attributeValue}</span>"
+                  "
+                  <span class="text-red-700 dark:text-red-500">
+                    {props.attributeData.attributeValue}
+                  </span>
+                  "
                 </div>
               </Show>
               <Show when={props.attributeData.dataType === 'boolean'}>
                 <div class="flex items-center">
                   <span
-                    class="block pr-1 text-blue-700"
+                    class="block pr-1 text-blue-700 dark:text-blue-500"
                     classList={{
                       'cursor-pointer': !isReadOnly(),
                     }}
