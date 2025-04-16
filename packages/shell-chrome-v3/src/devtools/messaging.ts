@@ -1,5 +1,5 @@
 import { BACKEND_TO_PANEL_MESSAGES } from '../lib/constants';
-import { metric, runWithMeasure } from './metrics';
+import { metric, toolDetector } from './metrics';
 import {
   setAlpineVersionFromBackend,
   setComponentsList,
@@ -37,40 +37,24 @@ export function handleBackendToPanelMessage(
   switch (message.type) {
     case BACKEND_TO_PANEL_MESSAGES.SET_VERSION: {
       setAlpineVersionFromBackend(message.version);
-      if (message.hasHtmxTarget || message.hasAlpineAjaxTarget) {
-        let tools = [];
-        if (message.hasHtmxTarget) {
-          tools.push('htmx');
-        }
-        if (message.hasAlpineAjaxTarget) {
-          tools.push('alpine-ajax');
-        }
-        metric('detected_tools', {
-          tools: tools.join(','),
-        });
-      }
+      metric('detected_tools', {
+        tools: toolDetector(message),
+        version: message.version,
+      });
       setPort(port);
       break;
     }
     case BACKEND_TO_PANEL_MESSAGES.SET_COMPONENTS_AND_STORES: {
-      runWithMeasure('panel_set_components_and_stores', () => {
-        setComponentsList(message.components, message.url);
-        setStoresFromList(message.stores);
-        setPageLoaded();
-        setPort(port);
-      });
+      setComponentsList(message.components, message.url);
+      setStoresFromList(message.stores);
+      setPageLoaded();
+      setPort(port);
       break;
     }
     case BACKEND_TO_PANEL_MESSAGES.SET_DATA: {
-      runWithMeasure(
-        'panel_set_data',
-        () => {
-          const comps = JSON.parse(message.data);
-          setComponentData(message.componentId, comps);
-          setPort(port);
-        },
-        { sampled: true, minValueMs: 5 },
-      );
+      const comps = JSON.parse(message.data);
+      setComponentData(message.componentId, comps);
+      setPort(port);
       break;
     }
     case BACKEND_TO_PANEL_MESSAGES.SET_STORE_DATA: {

@@ -399,6 +399,9 @@ export function init(forceStart = false) {
             .join(','),
         ),
         hasAlpineAjaxTarget: !!document.querySelector('[x-target]'),
+        hasLivewire: !!window.Livewire,
+        hasLiveView: !!window.liveSocket,
+        hasTurbo: !!window.Turbo,
         type: BACKEND_TO_PANEL_MESSAGES.SET_VERSION,
       });
     }

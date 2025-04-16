@@ -47,18 +47,14 @@ export function bucketTime(ms: number) {
   return `>5000ms`;
 }
 
-const sampler = new Sampler(0.1);
+const tenPercentSampler = new Sampler(0.1);
 
-export function runWithMeasure(
-  label: string,
-  fn: Function,
-  options: { sampled: boolean; minValueMs: number } = { sampled: false, minValueMs: 0 },
+export function sampledMetric(
+  name: string,
+  metadata: Record<string, string | number | boolean> = {},
 ) {
-  const start = performance.now();
-  fn();
-  const time = performance.now() - start;
-  if ((!options.sampled || sampler.shouldSample()) && time >= options.minValueMs) {
-    metric(`${label}_exec_time`, { time: bucketTime(time) });
+  if (tenPercentSampler.shouldSample()) {
+    metric(name, metadata);
   }
 }
 
@@ -92,4 +88,28 @@ export function metric(
       },
     });
   }
+}
+
+export function toolDetector(message: any): string {
+  if (!message) {
+    return 'error';
+  }
+  const tools = [];
+  if (message.hasHtmxTarget) {
+    tools.push('htmx');
+  }
+  if (message.hasAlpineAjaxTarget) {
+    tools.push('alpine-ajax');
+  }
+  if (message.hasLivewire) {
+    tools.push('livewire');
+  }
+  if (message.hasLiveView) {
+    tools.push('liveview');
+  }
+  if (message.hasTurbo) {
+    tools.push('turbo');
+  }
+
+  return tools.length === 0 ? 'none' : tools.join(',');
 }

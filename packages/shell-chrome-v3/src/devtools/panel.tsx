@@ -4,14 +4,13 @@ import { inspectorPortName } from './ports';
 import { handleBackendToPanelMessage, unsetPort } from './messaging';
 import { state } from './state';
 import { DEVTOOLS_INITIAL_STATE_GLOBAL } from '../lib/constants';
-import { metric } from './metrics';
+import { sampledMetric } from './metrics';
 
 let dispose: () => void;
 /* Entrypoint for Extension panel, integrates with Devtools/extension APIs, initialises the solidJS app, see also index.html */
 function connect() {
   if (dispose) {
-    metric('panel_reinjection');
-    console.log('unmounting solid app');
+    console.log('[alpine-devtools] unmounting solid app');
     dispose();
   }
   dispose = renderApp(document.getElementById('root')!);
@@ -71,7 +70,6 @@ let injectionAttempts = 0;
  * user app.
  */
 function injectScript(scriptSrc: string, globals: any, cb: Function) {
-  metric('inject_script_start', { scriptSrc });
   const src = `
     (function() {
       var script = document.constructor.prototype.createElement.call(document, 'script');
@@ -90,7 +88,7 @@ function injectScript(scriptSrc: string, globals: any, cb: Function) {
           injectScript(scriptSrc, globals, cb);
         }, 300);
       } else {
-        metric('inject_script_retry_stop');
+        sampledMetric('inject_script_retry_stop');
         console.error('[alpine-devtools] error injecting script, stopping retries', err);
       }
     }

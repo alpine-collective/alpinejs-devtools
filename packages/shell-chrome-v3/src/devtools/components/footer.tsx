@@ -1,7 +1,7 @@
 import { createSignal } from 'solid-js';
 import { componentsValue, errors, state, storesValue } from '../state';
 import { effect } from 'solid-js/web';
-import { bucketCount, metric } from '../metrics';
+import { bucketCount, metric, sampledMetric } from '../metrics';
 import { isEarlyAccess } from '../../lib/isEarlyAccess';
 
 interface FooterProps {
@@ -13,7 +13,7 @@ export function Footer({ setActiveTab }: FooterProps) {
 
   effect(() => {
     if (state.pageLoadCompleted) {
-      metric('watching_els', {
+      sampledMetric('watching_els', {
         components: bucketCount(componentsValue().length),
         stores: bucketCount(storesValue().length),
         errors: bucketCount(errors().length),
