@@ -26,6 +26,14 @@ New, [**Early Access feature**](https://alpinedevtools.com/pricing).
 - View/edit store data
 - Access stores in the console via globals `$s0`, `$s1` ...
 
+## Data Attribute Pinning
+
+New, [**Early Access feature**](https://alpinedevtools.com/pricing).
+
+![Alpine Devtools Pin Component Data Attribute](./docs/alpine-devtools-pin-data.png)
+
+Both components and stores tab allow you to "pin"/"unpin" a data attribute. This is useful for components and stores with large data sets in order to "focus" a subset of the data.
+
 ## Warnings
 
 [**Early Access feature**](https://alpinedevtools.com/pricing)
