@@ -30,7 +30,9 @@ export function StoreListItem({ idx, storeName, isOpen }: StoreListItemProps) {
         <div
           data-testid="console-global"
           class="text-gray pl-2 text-xs"
-          title={`Available as $s${idx} in the console`}
+          data-tooltip={`Available as $s${idx} in the console`}
+          data-align="center"
+          data-side="bottom"
         >
           = <span>{`$s${idx}`}</span>
         </div>

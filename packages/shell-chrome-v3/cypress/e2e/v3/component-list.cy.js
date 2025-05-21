@@ -29,7 +29,7 @@ it('v3 -  should create globals + add annotation for each component', () => {
     .then((componentCount) => {
       cy.get('[data-testid="console-global"]')
         .should('contain.text', '= $x0')
-        .should('have.attr', 'title', 'Available as $x0 in the console')
+        .should('have.attr', 'data-tooltip', 'Available as $x0 in the console')
         .should('contain.text', '= $x1')
         .should('contain.text', '= $x2')
         .should('contain.text', '= $x3')

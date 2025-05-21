@@ -29,9 +29,11 @@ export function Footer({ setActiveTab }: FooterProps) {
           <div class="flex-1 pl-3" data-testid="footer-line">
             Watching{' '}
             <div class="inline-flex">
-              <a
-                href="#"
+              <button
+                class="cursor-pointer"
                 data-testid="footer-components-link"
+                data-tooltip="View Components"
+                data-side="top"
                 onClick={(e) => {
                   e.preventDefault();
                   setActiveTab('components');
@@ -39,30 +41,33 @@ export function Footer({ setActiveTab }: FooterProps) {
               >
                 {componentsValue().length}{' '}
                 {componentsValue().length !== 1 ? 'components' : 'component'}
-              </a>
+              </button>
               ,&nbsp;
-              <a
-                href="#"
+              <button
+                class="cursor-pointer"
                 data-testid="footer-stores-link"
+                data-tooltip="View Stores"
+                data-side="top"
                 onClick={(e) => {
                   e.preventDefault();
                   setActiveTab('stores');
                 }}
               >
                 {storesValue().length} {storesValue().length !== 1 ? 'stores' : 'store'}
-              </a>
+              </button>
               ,&nbsp;
-              <a
-                href="#"
+              <button
+                class={errors().length > 0 ? 'cursor-pointer text-red-400' : 'cursor-pointer'}
                 data-testid="footer-warnings-link"
+                data-tooltip="View Warnings"
+                data-side="top"
                 onClick={(e) => {
                   e.preventDefault();
                   setActiveTab('warnings');
                 }}
-                class={errors().length > 0 ? 'text-red-400' : ''}
               >
                 {errors().length} {errors().length !== 1 ? 'warnings' : 'warning'}
-              </a>
+              </button>
             </div>
           </div>
 
@@ -101,8 +106,9 @@ export function Footer({ setActiveTab }: FooterProps) {
               : 'https://github.com/alpine-collective/alpinejs-devtools/issues/new'
           }
           target="_blank"
-          title="Report a Bug"
-          class="hover:opacity-75"
+          data-tooltip="Report a Bug"
+          data-side="top"
+          class="hover:opacity-75 leading-9 font-medium font-mono"
           onClick={() => {
             metric('footer_cta', {
               target: isEarlyAccess()
@@ -123,8 +129,9 @@ export function Footer({ setActiveTab }: FooterProps) {
         <a
           href="https://alpinejs.dev"
           target="_blank"
-          title="Alpine.js Docs"
-          class="hover:opacity-75"
+          data-tooltip="Alpine.js Docs"
+          data-side="top"
+          class="leading-9 font-medium font-mono"
           onClick={() => {
             metric('footer_cta', {
               target: 'alpinejs_dev',
@@ -136,7 +143,7 @@ export function Footer({ setActiveTab }: FooterProps) {
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
-            class="w-5 h-5"
+            class="w-5 h-5 hover:opacity-75"
           >
             <path
               stroke-linecap="round"
@@ -149,8 +156,10 @@ export function Footer({ setActiveTab }: FooterProps) {
         <a
           href="https://github.com/alpine-collective/alpinejs-devtools"
           target="_blank"
-          title="Alpine Devtools GitHub"
-          class="hover:opacity-75"
+          data-tooltip="Alpine.js devtools GitHub"
+          data-side="top"
+          data-align="end"
+          class="leading-9 font-medium font-mono"
           onClick={() => {
             metric('footer_cta', {
               target: 'alpinejs_devtools_gh',
@@ -158,7 +167,7 @@ export function Footer({ setActiveTab }: FooterProps) {
           }}
         >
           <svg
-            class="fill-current w-5 h-5"
+            class="fill-current w-5 h-5 hover:opacity-75"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="-2 -2 24 24"
           >
@@ -168,8 +177,10 @@ export function Footer({ setActiveTab }: FooterProps) {
         <a
           href="https://alpinedevtools.com/pricing?utm_source=extension&utm_campaign=footer-heart-icon"
           target="_blank"
-          title="Devtools Early Access"
-          class="hover:opacity-75"
+          data-tooltip="Support Alpine Devtools"
+          data-side="top"
+          data-align="end"
+          class="leading-9 font-medium font-mono"
           onClick={() => {
             metric('footer_cta', {
               target: 'alpine_devtools_pricing',
@@ -177,7 +188,7 @@ export function Footer({ setActiveTab }: FooterProps) {
           }}
         >
           <svg
-            class="fill-current w-5 h-5"
+            class="fill-current w-5 h-5 hover:opacity-75"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
