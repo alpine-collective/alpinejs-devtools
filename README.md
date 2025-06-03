@@ -7,7 +7,7 @@
 
 Due to Chrome's Manifest v3 rollout, the extension had to be rewritten. As part of this we've launched a [**Paid Early Access Program**](https://alpinedevtools.com/pricing).
 
-Public Extension includes:
+**Free Extension** includes:
 
 - ✅ Component state inspection/editing
 - ✅ More reliable state updates/sync (🆕)
@@ -20,9 +20,8 @@ Public Extension includes:
 - ✅ Store state viewing/editing (🆕)
 - ✅ Store data in console globals (🆕)
 - ✅ Warnings tab (inc. Alpine v3 support)
-- ✅ Jump to root element in Chrome inspector (🆕)
-
-**Multiple Tiers Available** 👉 [Explore Options](https://alpinedevtools.com/pricing)
+- ✅ Jump to root element/scroll element into view (🆕)
+- 🔜 Time travel debugging of $data (🆕)
 
 # Alpine.js devtools
 
