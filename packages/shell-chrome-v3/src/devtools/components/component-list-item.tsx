@@ -1,11 +1,11 @@
 import { Show } from 'solid-js';
 import {
-  Component,
   hoverLeftComponent,
   hoverOnComponent,
   openComponentValue,
   selectComponent,
-} from '../state';
+} from '../state/components';
+import { Component } from '../types';
 import { isEarlyAccess } from '../../lib/isEarlyAccess';
 import { inspectUserGlobal, scrollElGlobalIntoView } from '../inspect';
 import { metric } from '../metrics';

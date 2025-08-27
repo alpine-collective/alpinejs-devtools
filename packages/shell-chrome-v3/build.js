@@ -95,7 +95,10 @@ function convertToFirefoxManifest(manifest) {
     },
     browser_specific_settings: {
       gecko: {
-        id: 'devtools@alpinedevtools.com',
+        id:
+          process.env.VITE_MAINLINE_PUBLISH !== 'true'
+            ? 'devtools@alpinedevtools.com'
+            : '{9abd6c79-c126-42cc-bacc-658d531864f1}',
         strict_min_version: '112.0',
         ...(process.env.VITE_MAINLINE_PUBLISH !== 'true'
           ? {

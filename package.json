@@ -14,7 +14,7 @@
         "early-access": "rm -rf dist && npm --prefix packages/shell-chrome-v3 run build && node --run postpackage",
         "ea": "npm run early-access",
         "watch": "npm start",
-        "test": "node --test tests/* && node --experimental-strip-types --test **/*.test.ts",
+        "test": "node --test \"{tests/*,**/*.test.ts}\"",
         "cy:run": "cypress run",
         "cy:open": "cypress open",
         "archive:v3": "git archive -o ./dist/alpine-devtools-source-archive-v2.zip HEAD:packages/shell-chrome-v3",

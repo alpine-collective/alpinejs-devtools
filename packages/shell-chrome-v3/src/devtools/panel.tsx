@@ -1,14 +1,17 @@
 /* @refresh reload */
 import { renderApp } from './App';
+import { loadPersistedEarlyAccessInfo } from '../lib/isEarlyAccess';
 import { inspectorPortName } from './ports';
 import { handleBackendToPanelMessage, unsetPort } from './messaging';
-import { state } from './state';
+import { state } from './state/store';
 import { DEVTOOLS_INITIAL_STATE_GLOBAL } from '../lib/constants';
 import { sampledMetric } from './metrics';
 
 let dispose: () => void;
 /* Entrypoint for Extension panel, integrates with Devtools/extension APIs, initialises the solidJS app, see also index.html */
-function connect() {
+async function connect() {
+  loadPersistedEarlyAccessInfo();
+
   if (dispose) {
     console.log('[alpine-devtools] unmounting solid app');
     dispose();

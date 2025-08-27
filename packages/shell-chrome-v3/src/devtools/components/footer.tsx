@@ -1,8 +1,17 @@
-import { createSignal } from 'solid-js';
-import { componentsValue, errors, state, storesValue } from '../state';
+import { createSignal, Show } from 'solid-js';
+import { componentsValue } from '../state/components';
+import { errors } from '../state/errors';
+import { state } from '../state/store';
+import { storesValue } from '../state/stores';
 import { effect } from 'solid-js/web';
 import { bucketCount, metric, sampledMetric } from '../metrics';
-import { isEarlyAccess } from '../../lib/isEarlyAccess';
+import {
+  earlyAccessExpiry,
+  isEarlyAccess,
+  isEarlyAccessExpiryInPast,
+} from '../../lib/isEarlyAccess';
+import { msToDays } from '../time-utils';
+import { breakpoint } from '../theme';
 
 interface FooterProps {
   setActiveTab: Function;
@@ -25,61 +34,146 @@ export function Footer({ setActiveTab }: FooterProps) {
   return (
     <div class="flex font-bold text-gray-400 border-t border-gray-300 bg-white dark:text-gray-100 dark:bg-gray-600 dark:border-gray-600">
       <div class="flex-1">
-        <div class="flex items-center text-xs leading-9 font-medium font-mono">
+        <div
+          class="flex items-center text-xs leading-9 font-medium font-mono"
+          data-testid="footer-left"
+        >
           <div class="flex-1 pl-3" data-testid="footer-line">
-            Watching{' '}
             <div class="inline-flex">
               <button
-                class="cursor-pointer"
+                class="cursor-pointer inline-flex items-center hover:text-gray-500 dark:hover:text-gray-200"
                 data-testid="footer-components-link"
-                data-tooltip="View Components"
+                data-tooltip={
+                  breakpoint() === 'sm'
+                    ? `${componentsValue().length} ${
+                        componentsValue().length !== 1 ? 'components' : 'component'
+                      }`
+                    : undefined
+                }
                 data-side="top"
                 onClick={(e) => {
                   e.preventDefault();
                   setActiveTab('components');
                 }}
               >
-                {componentsValue().length}{' '}
-                {componentsValue().length !== 1 ? 'components' : 'component'}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                  />
+                </svg>
+                <span class="ml-1">{componentsValue().length}</span>
+                <span class="hidden sm:inline ml-1">
+                  {' '}
+                  {componentsValue().length !== 1 ? 'components' : 'component'}
+                </span>
               </button>
               ,&nbsp;
               <button
-                class="cursor-pointer"
+                class="cursor-pointer inline-flex items-center hover:text-gray-500 dark:hover:text-gray-200"
                 data-testid="footer-stores-link"
-                data-tooltip="View Stores"
+                data-tooltip={
+                  breakpoint() === 'sm'
+                    ? `${storesValue().length} ${storesValue().length !== 1 ? 'stores' : 'store'}`
+                    : undefined
+                }
                 data-side="top"
                 onClick={(e) => {
                   e.preventDefault();
                   setActiveTab('stores');
                 }}
               >
-                {storesValue().length} {storesValue().length !== 1 ? 'stores' : 'store'}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z" />
+                  <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z" />
+                  <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
+                </svg>
+                <span class="ml-1">{storesValue().length}</span>
+                <span class="hidden sm:inline ml-1">
+                  {' '}
+                  {storesValue().length !== 1 ? 'stores' : 'store'}
+                </span>
               </button>
               ,&nbsp;
               <button
-                class={errors().length > 0 ? 'cursor-pointer text-red-400' : 'cursor-pointer'}
+                class={
+                  errors().length > 0
+                    ? 'cursor-pointer text-red-400 inline-flex items-center hover:text-red-600'
+                    : 'cursor-pointer inline-flex items-center hover:text-gray-500 dark:hover:text-gray-200'
+                }
                 data-testid="footer-warnings-link"
-                data-tooltip="View Warnings"
+                data-tooltip={
+                  breakpoint() === 'sm'
+                    ? `${errors().length} ${errors().length !== 1 ? 'warnings' : 'warning'}`
+                    : undefined
+                }
                 data-side="top"
                 onClick={(e) => {
                   e.preventDefault();
                   setActiveTab('warnings');
                 }}
               >
-                {errors().length} {errors().length !== 1 ? 'warnings' : 'warning'}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-1">{errors().length}</span>
+                <span class="hidden sm:inline ml-1">
+                  {' '}
+                  {errors().length !== 1 ? 'warnings' : 'warning'}
+                </span>
               </button>
             </div>
           </div>
 
+          <Show when={!isEarlyAccess() && earlyAccessExpiry() && isEarlyAccessExpiryInPast()}>
+            <button
+              class="mr-4 flex underline cursor-pointer"
+              onClick={() => setActiveTab('stores')}
+            >
+              Trial expired
+            </button>
+          </Show>
+          <Show
+            when={
+              earlyAccessExpiry() &&
+              earlyAccessExpiry() !== Infinity &&
+              !isEarlyAccessExpiryInPast()
+            }
+          >
+            <div class="mr-4 flex">
+              Trial expires in: {msToDays(earlyAccessExpiry()! - Date.now()).toFixed(1)} days
+            </div>
+          </Show>
           <div
             data-testid="version-line"
             class="flex items-center transition-colors duration-700 ease-in-out"
+            data-tooltip={`Alpine.js v${state.version.detected} detected`}
+            data-side="top"
           >
             <svg
-              class={`mr-1.5 h-2 w-2 transition-colors duration-700 ease-in-out ${
-                // isLatest() ? 'text-green-500' : 'text-orange-500'
-                'text-green-500'
-              }`}
+              class="mr-1.5 h-2 w-2 transition-colors duration-700 ease-in-out text-green-500"
               fill="currentColor"
               viewBox="0 0 8 8"
             >
@@ -90,9 +184,7 @@ export function Footer({ setActiveTab }: FooterProps) {
               target="_blank"
               href="https://github.com/alpinejs/alpine/releases"
             >
-              <span class="hidden xs:block">Alpine.js</span>
-              <span>{state.version.detected}</span>
-              <span class="hidden xs:block">detected</span>
+              v{state.version.detected}
             </a>
           </div>
         </div>
@@ -102,7 +194,7 @@ export function Footer({ setActiveTab }: FooterProps) {
         <a
           href={
             isEarlyAccess()
-              ? 'mailto:support@codewithhugo.com'
+              ? 'mailto:support@alpinedevtools.com'
               : 'https://github.com/alpine-collective/alpinejs-devtools/issues/new'
           }
           target="_blank"

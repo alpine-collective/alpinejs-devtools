@@ -1,4 +1,4 @@
-import { ADDED_ATTRIBUTES } from './constants';
+import { ADDED_ATTRIBUTES } from './constants.ts';
 
 /**
  * Semver version check
@@ -66,7 +66,7 @@ export function waitForAlpine(
     if (attempts >= maxAttempts || window.Alpine) {
       clearInterval(timer);
     }
-    const xDataEl = document.querySelector('[x-data]');
+    const xDataEl = document.querySelector('[x-data],[data-x-data]');
     if (
       window.Alpine ||
       // Alpine v2

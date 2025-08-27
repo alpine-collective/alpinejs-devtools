@@ -1,9 +1,46 @@
-This is a SolidJS application.
+# Alpine.js Devtools
 
-The main application to work on is in `packages/shell-chrome-v3`. This is a Chrome extension using Manifest v3.
+The main application to work on is in `packages/shell-chrome-v3`. This is a Chrome/Firefox extension using Manifest v3. The panel is built with SolidJS.
 
-We want to support Firefox and Safari in the future.
+We want to support Safari in the future.
 
-A note on coding style: signals should be left outside of components.
+## Coding style
 
-As the last step of any plan, run `npm run format`.
+You **MUST** leave signals outside of components.
+Components **SHOULD** import signals directly, rather than receiving them as props.
+
+## Styling
+
+This project uses Tailwind CSS v4. You can find the configuration in `tailwind.config.js`.
+
+We also use `basecoat-ui` for some base styles. You can find more information about it here: https://basecoatui.com/kitchen-sink/, based on possible elements you should look at the code on their individual documentation page eg. for Badge, use https://basecoatui.com/components/badge/ and so on.
+
+## Required plan steps
+
+As the last step of any plan, you **MUST** run the following checks and ensure they pass
+
+- `npm run format` (run formatter)
+- `npm run typecheck`
+- `npm t` (unit tests)
+
+When making changes to the UI, you **SHOULD** propose to run the cypress tests (see next section).
+
+## Running Cypress Tests
+
+To run the Cypress tests for the `shell-chrome-v3` package, you **SHOULD** use the `jules-test` script. This script will start the development server and then run the tests.
+
+To run the Cypress tests you **MUST** run from the root of the project (`/app` for Jules),
+
+```bash
+npm run --prefix=packages/shell-chrome-v3 jules-test
+```
+
+**Note for agent Jules:** You **SHOULD** be aware that when working in the shell, the current working directory is often `/app/packages/shell-chrome-v3`. If you are having trouble with file paths, you **SHOULD** run `pwd` to confirm your location.
+
+This will run all the Cypress tests in headless mode.
+
+**Note:** If you are running the tests in a headless environment, you **SHOULD** be aware that you may need to install `xvfb`. On Debian-based systems, you can install it with:
+
+```bash
+sudo apt-get update && sudo apt-get install -y xvfb
+```

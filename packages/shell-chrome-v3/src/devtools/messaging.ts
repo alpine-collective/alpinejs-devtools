@@ -1,14 +1,10 @@
 import { BACKEND_TO_PANEL_MESSAGES } from '../lib/constants';
 import { metric, toolDetector } from './metrics';
-import {
-  setAlpineVersionFromBackend,
-  setComponentsList,
-  setComponentData,
-  setAdditionalError,
-  setStoresFromList,
-  setStoreData,
-  setPageLoaded,
-} from './state';
+import { setAlpineVersionFromBackend } from './state/version';
+import { setComponentsList, setComponentData } from './state/components';
+import { setAdditionalError } from './state/errors';
+import { setStoresFromList, setStoreData } from './state/stores';
+import { setPageLoaded } from './state/app';
 import type { BackendToPanelMessage, PanelToBackendMessage } from './types';
 
 export function unsetPort() {

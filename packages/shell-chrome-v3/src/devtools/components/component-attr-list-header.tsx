@@ -1,10 +1,7 @@
 import { Show } from 'solid-js';
-import {
-  pinnedPrefix,
-  getSelectedMessage,
-  openComponentValue,
-  setDataFromSnapshot,
-} from '../state';
+import { pinnedPrefix } from '../state/app';
+import { getSelectedMessage, setDataFromSnapshot } from '../state/messages';
+import { openComponentValue } from '../state/components';
 import { PinnedPrefixPath } from './pinned-prefix-path';
 import { metric } from '../metrics';
 

@@ -1,4 +1,5 @@
 // dev-wrapper for component inspector panel
+import './src/mock-chrome-api';
 import { handleBackendToPanelMessage } from './src/devtools/messaging';
 import { renderApp } from './src/devtools/App';
 import {
@@ -7,6 +8,16 @@ import {
   ALPINE_DEVTOOLS_PROXY_SOURCE,
 } from './src/devtools/ports';
 import { INIT_MESSAGE } from './src/lib/constants';
+import { loadPersistedEarlyAccessInfo, forceEarlyAccess } from './src/lib/isEarlyAccess';
+import { setupWorker } from 'msw/browser';
+import { handlers } from './src/mocks/handlers';
+
+async function prepare() {
+  if (typeof window !== 'undefined') {
+    const worker = setupWorker(...handlers);
+    await worker.start();
+  }
+}
 
 function inject(src: string, done: Function) {
   const target = document.getElementById('target');
@@ -23,7 +34,6 @@ let isInitialised = false;
 function initProxy(window: Window, targetWindow: Window) {
   window.addEventListener('message', async (event) => {
     if (event.data.source === ALPINE_DEVTOOLS_BACKEND_SOURCE) {
-      // message from backend -> app
       if (!isInitialised) {
         console.log('initialising panel');
         renderApp(document.querySelector('#devtools-container')!);
@@ -48,8 +58,14 @@ function initProxy(window: Window, targetWindow: Window) {
 }
 
 async function main() {
+  await prepare();
   const target = document.getElementById('target');
   const targetWindow = (target as HTMLIFrameElement).contentWindow;
+
+  if (new URL(window.location.href).searchParams.get('sa-enabled') === 'true') {
+    forceEarlyAccess(false);
+    loadPersistedEarlyAccessInfo();
+  }
 
   initProxy(window, targetWindow!);
 

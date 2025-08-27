@@ -9,7 +9,6 @@ import {
   DEVTOOLS_INITIAL_STATE_GLOBAL,
 } from '../lib/constants';
 import { debounce } from '../lib/debounce';
-// import { isEarlyAccess } from '../lib/isEarlyAccess';
 import {
   getComponentName,
   isSerializable,
@@ -239,7 +238,7 @@ export function init(forceStart = false) {
     }
 
     watchComponents() {
-      const alpineRoots = Array.from(document.querySelectorAll('[x-data]'));
+      const alpineRoots = Array.from(document.querySelectorAll('[x-data],[data-x-data]'));
 
       const allComponentsInitialized = Object.values(alpineRoots).every((e) => e.__alpineDevtool);
       if (allComponentsInitialized) {
@@ -300,16 +299,17 @@ export function init(forceStart = false) {
                 if (recursionDepth >= 10) {
                   return;
                 }
-                if (
-                  componentData[key] &&
-                  typeof componentData[key] === 'object' &&
-                  !Array.isArray(componentData[key])
-                ) {
-                  Object.keys(componentData[key])
-                    .filter((k) => !k.startsWith('$') && !k.startsWith('_x'))
-                    .forEach((k) => {
-                      visit(componentData[key], k);
-                    });
+                if (componentData[key] && typeof componentData[key] === 'object') {
+                  if (Array.isArray(componentData[key])) {
+                    // access the length to be notified of new array items
+                    void componentData[key].length;
+                  } else {
+                    Object.keys(componentData[key])
+                      .filter((k) => !k.startsWith('$') && !k.startsWith('_x'))
+                      .forEach((k) => {
+                        visit(componentData[key], k);
+                      });
+                  }
                 }
               }
               visit(componentData, key);
@@ -392,7 +392,7 @@ export function init(forceStart = false) {
 
     get alpineStoreMagic() {
       if (this.hasAlpineDataFn) {
-        return window?.Alpine?.$data(document.querySelector('[x-data]')).$store ?? {};
+        return window?.Alpine?.$data(document.querySelector('[x-data],[data-x-data]')).$store ?? {};
       }
       return {};
     }
@@ -514,7 +514,7 @@ export function init(forceStart = false) {
      */
     discoverComponents(cb) {
       if (this.isV3) {
-        document.querySelectorAll('[x-data]').forEach(cb);
+        document.querySelectorAll('[x-data],[data-x-data]').forEach(cb);
       } else {
         window?.Alpine?.discoverComponents(cb);
       }

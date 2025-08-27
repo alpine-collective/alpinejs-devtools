@@ -2,6 +2,7 @@ import { Accessor } from 'solid-js';
 import { theme, orientation } from '../theme';
 import { TabValues } from '../types';
 import { TabLink } from './tab-link';
+import { DebugMenu } from './debug-menu';
 
 interface HeaderProps {
   activeTab: Accessor<TabValues>;
@@ -115,6 +116,7 @@ export function Header({ activeTab, setActiveTab }: HeaderProps) {
                 />
               </svg>
             </TabLink>
+            {process.env.NODE_ENV !== 'production' ? <DebugMenu /> : ''}
           </div>
         </div>
       </div>

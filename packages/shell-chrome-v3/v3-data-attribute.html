@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Alpine.js Devtools v3 (data-x-data)</title>
+    <script>
+      document.addEventListener('alpine:init', () => {
+        Alpine.prefix('data-x-');
+      });
+    </script>
+    <script src="/cdn.min.js" defer></script>
+  </head>
+  <body>
+    <div data-x-data="{ foo: 'bar' }" id="component1">
+      <span data-x-text="foo"></span>
+    </div>
+    <div data-x-data="{ baz: 'qux' }" name="component2">
+      <span data-x-text="baz"></span>
+    </div>
+  </body>
+</html>

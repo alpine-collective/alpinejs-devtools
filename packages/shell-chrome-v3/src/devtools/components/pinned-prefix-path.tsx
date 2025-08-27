@@ -1,5 +1,5 @@
 import { Accessor, createMemo, For } from 'solid-js';
-import { setPinnedPrefix } from '../state';
+import { setPinnedPrefix } from '../state/app';
 import { metric } from '../metrics';
 
 function getPathSegments(pinnedPrefix: string) {

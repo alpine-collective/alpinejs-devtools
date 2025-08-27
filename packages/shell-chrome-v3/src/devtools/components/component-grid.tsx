@@ -1,12 +1,11 @@
 import { createMemo, For, Show } from 'solid-js';
+import { componentsValue, filteredSelectedCompData, openComponentValue } from '../state/components';
 import {
-  componentsValue,
-  filteredSelectedCompData,
   getSelectedMessage,
   messageHistory,
-  openComponentValue,
   selectedFlattenedMessageData,
-} from '../state';
+} from '../state/messages';
+import { Component } from '../types';
 import { ComponentListItem } from './component-list-item';
 import { DataAttributeDisplay } from './data-attribute-display';
 import { SplitPane } from './split-pane';
@@ -38,7 +37,7 @@ export function ComponentGrid() {
                 'pb-9': isEarlyAccess(),
               }}
             >
-              {componentsValue().map((c) => (
+              {componentsValue().map((c: Component) => (
                 <ComponentListItem component={c} />
               ))}
             </div>

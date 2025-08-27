@@ -1,12 +1,12 @@
 import { Accessor, createSignal, For } from 'solid-js';
 import {
-  DataMessageHistory,
   getSelectedMessage,
   messageHistory,
-  openComponentValue,
   resetSelectedMessage,
   setSelectedMessage,
-} from '../state';
+} from '../state/messages';
+import { openComponentValue } from '../state/components';
+import { DataMessageHistory } from '../types';
 import { effect } from 'solid-js/web';
 import { AlphaSurveyLink } from './alpha-survey-link';
 import { bucketCountLarge, metric } from '../metrics';

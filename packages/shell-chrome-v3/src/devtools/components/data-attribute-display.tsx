@@ -1,18 +1,14 @@
 import { createMemo, createSignal, Show } from 'solid-js';
-import {
-  FlattenedComponentData,
-  FlattenedStoreData,
-  isReadOnly,
-  pinnedPrefix,
-  saveComponentAttributeEdit,
-  saveStoreAttributeEdit,
-  setPinnedPrefix,
-  toggleDataAttributeOpen,
-} from '../state';
+import { isReadOnly } from '../state/version';
+import { pinnedPrefix, setPinnedPrefix } from '../state/app';
+import { saveComponentAttributeEdit, toggleComponentDataAttributeOpen } from '../state/components';
+import { saveStoreAttributeEdit, toggleStoreDataAttributeOpen } from '../state/stores';
+import { FlattenedComponentData, FlattenedStoreData } from '../types';
 import { effect } from 'solid-js/web';
 import { metric } from '../metrics';
 import { isEarlyAccess } from '../../lib/isEarlyAccess';
 import { DataAttrSource } from '../types';
+import { ROOT_VALUE } from '../../lib/constants';
 
 type DataDisplayProps =
   | {
@@ -28,6 +24,9 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
   const [inEditingMode, setInEditingMode] = createSignal(props.attributeData.inEditingMode);
   const editAttributeValue = createMemo(() => props.attributeData.editAttributeValue);
   const readonly = createMemo(() => isReadOnly() || props.type === 'message');
+  const isRootValueAttr = createMemo(
+    () => props.attributeData.attributeName === ROOT_VALUE && props.type === 'store',
+  );
 
   const toggleDataAttributeOpened = () => {
     metric(`${props.type}_data_attr_opened`, {
@@ -37,7 +36,11 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
           : props.attributeData.dataType,
     });
 
-    toggleDataAttributeOpen(props.attributeData, props.type);
+    if (props.type === 'store') {
+      toggleStoreDataAttributeOpen(props.attributeData);
+    } else {
+      toggleComponentDataAttributeOpen(props.attributeData, props.type);
+    }
   };
   const [attrDirtyValue, setDirtyEditAttributeValue] = createSignal<string | boolean | undefined>(
     editAttributeValue(),
@@ -94,13 +97,13 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
             </div>
 
             <span class="text-purple dark:brightness-150">
-              {/* TODO: do something about __root_value */}
-              {/* {props.attributeData.attributeName === '__root_value' ? '' : props.attributeData.attributeName} */}
-              <span data-testid={`data-property-name-${props.attributeData.attributeName}`}>
-                {props.attributeData.attributeName}
-              </span>
+              <Show when={!isRootValueAttr()}>
+                <span data-testid={`data-property-name-${props.attributeData.attributeName}`}>
+                  {props.attributeData.attributeName}
+                </span>
+              </Show>
 
-              <Show when={isEarlyAccess()}>
+              <Show when={isEarlyAccess() && !isRootValueAttr()}>
                 <button
                   data-testid={
                     pinnedPrefix() !== props.attributeData.id
@@ -131,7 +134,9 @@ export function DataAttributeDisplay(props: DataDisplayProps) {
               </Show>
             </span>
 
-            <span class="text-black dark:text-gray-100">:</span>
+            <Show when={!isRootValueAttr()}>
+              <span class="text-black dark:text-gray-100">:</span>
+            </Show>
 
             <div
               data-testid={`data-property-value-${props.attributeData.attributeName}`}

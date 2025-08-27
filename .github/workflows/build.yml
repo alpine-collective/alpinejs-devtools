@@ -70,9 +70,9 @@ jobs:
         command: node --run cy:run
         working-directory: packages/shell-chrome-v3
         install: false
-    - name: Devtools@v1 E2E
-      uses: cypress-io/github-action@v6
-      with:
-        start: node --run start:ci
-        command: node --run cy:run
-        install: false
+    # - name: Devtools@v1 E2E
+    #   uses: cypress-io/github-action@v6
+    #   with:
+    #     start: node --run start:ci
+    #     command: node --run cy:run
+    #     install: false

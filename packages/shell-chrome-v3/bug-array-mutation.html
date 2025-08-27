@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script src="https://unpkg.com/alpinejs" defer></script>
+  </head>
+  <body x-data="{}">
+    <section x-data="{ alternatives: [''] }">
+      <div>
+        <form>
+          <template x-for="(alternative, index) in alternatives">
+            <div class="flex">
+              <input type="text" x-model="alternatives[index]" />
+              <button type="button" @click="alternatives.splice(index, 1)" class="btn btn-blue">
+                -
+              </button>
+            </div>
+          </template>
+          <button type="button" @click="alternatives.push('')" class="btn btn-blue self-start">
+            +
+          </button>
+        </form>
+      </div>
+    </section>
+  </body>
+</html>

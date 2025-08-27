@@ -15,6 +15,7 @@ it('primitive store - should populate data, allow edits and receive state update
   cy.visit('/simulator?target=v3.html');
   cy.get('[data-testid=tab-link-stores]').click();
   cy.get('[data-testid=store-name]').contains('primitiveVal').click();
+  cy.get('[data-testid=data-property-name-__root_value]').should('not.exist');
   cy.get('[data-testid=data-property-value-__root_value]').should('contain.text', 'true');
   cy.get('[data-testid=data-property-value-__root_value] [type=checkbox]').click({ force: true });
   cy.get('[data-testid=data-property-value-__root_value]').should('contain.text', 'false');

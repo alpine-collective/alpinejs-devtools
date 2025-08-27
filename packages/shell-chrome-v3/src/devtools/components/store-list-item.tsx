@@ -1,5 +1,5 @@
 import { metric } from '../metrics';
-import { selectStore } from '../state';
+import { selectStore } from '../state/stores';
 
 interface StoreListItemProps {
   idx: number;

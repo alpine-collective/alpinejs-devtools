@@ -17,6 +17,7 @@ function convertSingleValue(
     return singleValue;
   }
 }
+
 export function snapshotToDataObj(obj: ComponentData) {
   const newObj: Record<string, Exclude<ComponentData[string], NoValueSerializedData>['value']> = {};
   for (const k in obj) {

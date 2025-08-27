@@ -9,7 +9,7 @@ function detect(win: Window) {
   function doDetect() {
     setTimeout(() => {
       const alpineGlobalDetected = !!window.Alpine;
-      const alpineElementDetected = !!document.querySelector('[x-data]');
+      const alpineElementDetected = !!document.querySelector('[x-data],[data-x-data]');
       const alpineDetected = alpineGlobalDetected || alpineElementDetected;
       win.postMessage(
         {
