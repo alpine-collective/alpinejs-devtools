@@ -1,6 +1,6 @@
 # Alpine.js Devtools
 
-The main application to work on is in `packages/shell-chrome-v3`. This is a Chrome/Firefox extension using Manifest v3. The panel is built with SolidJS.
+The main application to work on is in `packages/browser-extension`. This is a Chrome/Firefox extension using Manifest v3. The panel is built with SolidJS.
 
 We want to support Safari in the future.
 
@@ -27,15 +27,15 @@ When making changes to the UI, you **SHOULD** propose to run the cypress tests (
 
 ## Running Cypress Tests
 
-To run the Cypress tests for the `shell-chrome-v3` package, you **SHOULD** use the `jules-test` script. This script will start the development server and then run the tests.
+To run the Cypress tests for the `browser-extension` package, you **SHOULD** use the `jules-test` script. This script will start the development server and then run the tests.
 
 To run the Cypress tests you **MUST** run from the root of the project (`/app` for Jules),
 
 ```bash
-npm run --prefix=packages/shell-chrome-v3 jules-test
+npm run --prefix=packages/browser-extension jules-test
 ```
 
-**Note for agent Jules:** You **SHOULD** be aware that when working in the shell, the current working directory is often `/app/packages/shell-chrome-v3`. If you are having trouble with file paths, you **SHOULD** run `pwd` to confirm your location.
+**Note for agent Jules:** You **SHOULD** be aware that when working in the shell, the current working directory is often `/app/packages/browser-extension`. If you are having trouble with file paths, you **SHOULD** run `pwd` to confirm your location.
 
 This will run all the Cypress tests in headless mode.
 

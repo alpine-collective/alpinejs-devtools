@@ -30,7 +30,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - name: install
-      run: npm ci && npm --prefix=packages/shell-chrome-v3 ci
+      run: npm ci
       env:
         CYPRESS_INSTALL_BINARY: "0"
     - name: build
@@ -46,11 +46,7 @@ jobs:
     - name: typecheck
       run: node --run typecheck
     - name: check formatting
-      run: node --run format
-    - name: Commit changes
-      uses: stefanzweifel/git-auto-commit-action@v5
-      with:
-        commit_message: Apply formatting changes
+      run: node --run check:format
     # see https://github.com/bahmutov/cypress-gh-action-split-install
     - run: npx cypress cache path && npx cypress cache list
     # restore / cache the binary ourselves on Linux
@@ -68,11 +64,5 @@ jobs:
       with:
         start: node --run start
         command: node --run cy:run
-        working-directory: packages/shell-chrome-v3
+        working-directory: packages/browser-extension
         install: false
-    # - name: Devtools@v1 E2E
-    #   uses: cypress-io/github-action@v6
-    #   with:
-    #     start: node --run start:ci
-    #     command: node --run cy:run
-    #     install: false

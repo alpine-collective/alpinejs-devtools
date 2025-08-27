@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 460" fill="currentColor" stroke="none">
-    <rect class="text-alpine-500" x="0" y="0" width="460" height="460"></rect>
-    <polygon class="text-alpine-ice" points="50,230 140,140 320,320 140,320" />
-    <polygon class="text-alpine-silver" points="320,140 410,230 320,320 230,230" />
-</svg>
