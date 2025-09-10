@@ -68,7 +68,7 @@ chrome.runtime.onConnect.addListener(async (port) => {
     tabId = inspectorPortNameToTabId(port.name);
     console.log(`[alpine-devtools] injecting proxy for tabId "${tabId}"`);
     await chrome.scripting.executeScript({
-      target: { tabId: tabId },
+      target: { tabId },
       files: ['./proxy.js'],
     });
     initPortsForTab(tabId);

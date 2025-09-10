@@ -160,9 +160,13 @@ export function Footer({ setActiveTab }: FooterProps) {
               !isEarlyAccessExpiryInPast()
             }
           >
-            <div class="mr-4 flex">
+            <a
+              class="mr-4 flex underline"
+              href="https://alpinedevtools.com/checkout?utm_source=extension&utm_campaign=trial_link_cta"
+              target="_blank"
+            >
               Trial expires in: {msToDays(earlyAccessExpiry()! - Date.now()).toFixed(1)} days
-            </div>
+            </a>
           </Show>
           <div
             data-testid="version-line"

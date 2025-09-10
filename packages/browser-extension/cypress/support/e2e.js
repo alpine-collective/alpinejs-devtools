@@ -1,4 +1,4 @@
 import './commands';
 
-import { packages } from '../../../../package-lock.json';
-export const AlpineVersion = packages['node_modules/alpinejs'].version;
+import { devDependencies } from '../../../../package.json';
+export const AlpineVersion = devDependencies.alpinejs.version;

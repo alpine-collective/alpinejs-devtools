@@ -1,0 +1,11 @@
+packages:
+  - packages/*
+
+ignoredBuiltDependencies:
+  - esbuild
+  - msw
+  - spawn-sync
+
+onlyBuiltDependencies:
+  - '@tailwindcss/oxide'
+  - cypress

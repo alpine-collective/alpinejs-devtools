@@ -9,6 +9,44 @@ it('v3 -  should get names of components', () => {
     .should('contain.text', 'combobox');
 });
 
+it('filtering by name', () => {
+  cy.visit('/simulator')
+    .get('[data-testid=component-name]')
+    .should('be.visible')
+    .should('contain.text', 'div')
+    .should('contain.text', 'app')
+    .should('contain.text', 'myFn')
+    .should('contain.text', 'component')
+    .should('contain.text', 'combobox');
+
+  cy.get('[data-testid=component-name]').should('have.length.above', 1);
+
+  // filters to one
+  cy.get('[data-testid=component-filter-input]').should('be.visible').type('app');
+  cy.get('[data-testid=component-name]').should('have.length', 1);
+  cy.get('[data-testid=component-name]').should('contain.text', 'app');
+
+  // filters to multiple
+  cy.get('[data-testid=component-filter-input]').should('be.visible').clear().type('com');
+
+  cy.get('[data-testid=component-name]').should('have.length', 2);
+  cy.get('[data-testid=component-name]').should('contain.text', 'component');
+  cy.get('[data-testid=component-name]').should('contain.text', 'combobox');
+
+  // filters case insensitive
+  cy.get('[data-testid=component-filter-input]').should('be.visible').clear().type('repla');
+
+  cy.get('[data-testid=component-name]').should('have.length', 1);
+  cy.get('[data-testid=component-name]').should('contain.text', 'Replaceable');
+  // filters to none
+  cy.get('[data-testid=component-filter-input]')
+    .should('be.visible')
+    .clear()
+    .type('nothing-matches');
+  cy.get('[data-testid=component-name]').should('have.length', 0);
+  cy.get('[data-testid="no-components-message"]').should('be.visible');
+});
+
 it('v3 -  should create globals + add annotation for each component', () => {
   cy.visit('/simulator?target=v3.html').get('[data-testid=component-name]').should('be.visible');
 

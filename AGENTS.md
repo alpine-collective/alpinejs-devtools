@@ -19,11 +19,15 @@ We also use `basecoat-ui` for some base styles. You can find more information ab
 
 As the last step of any plan, you **MUST** run the following checks and ensure they pass
 
-- `npm run format` (run formatter)
-- `npm run typecheck`
-- `npm t` (unit tests)
+- `pnpm run format` (run formatter)
+- `pnpm run typecheck`
+- `pnpm t` (unit tests)
 
 When making changes to the UI, you **SHOULD** propose to run the cypress tests (see next section).
+
+## Commit message
+
+You **MUST** include the full user-provided prompt as part of commit messages.
 
 ## Running Cypress Tests
 
@@ -32,7 +36,7 @@ To run the Cypress tests for the `browser-extension` package, you **SHOULD** use
 To run the Cypress tests you **MUST** run from the root of the project (`/app` for Jules),
 
 ```bash
-npm run --prefix=packages/browser-extension jules-test
+pnpm test:e2e
 ```
 
 **Note for agent Jules:** You **SHOULD** be aware that when working in the shell, the current working directory is often `/app/packages/browser-extension`. If you are having trouble with file paths, you **SHOULD** run `pwd` to confirm your location.

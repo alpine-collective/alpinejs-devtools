@@ -6,10 +6,12 @@ import { ActivateLicense } from './activate-license';
 const FEATURE_IMAGE = {
   stores: 'https://alpinedevtools.com/assets/alpine-devtools-stores.png',
   warnings: 'https://alpinedevtools.com/assets/alpine-devtools-warnings.png',
+  history: 'https://alpinedevtools.com/assets/alpine-devtools-history.png',
 };
 const FEATURE_LINK = {
   stores: 'https://alpinedevtools.com/docs/#/stores-inspection',
   warnings: 'https://alpinedevtools.com/docs/#/warnings',
+  history: 'https://alpinedevtools.com/docs/#/time-travel-debugging',
 };
 
 const FEATURE_DESCRIPTIONS = {
@@ -34,6 +36,16 @@ const FEATURE_DESCRIPTIONS = {
       </li>
     </>
   ),
+  history: (
+    <>
+      <li>
+        <strong>Inspect component data history</strong> to debug updates.
+      </li>
+      <li>
+        <strong>Apply snapshots</strong> to time travel debug.
+      </li>
+    </>
+  ),
 };
 
 export function EarlyAccessNotice({
@@ -43,7 +55,7 @@ export function EarlyAccessNotice({
   onClose,
 }: {
   feature: string;
-  featureCode: 'stores' | 'warnings';
+  featureCode: 'stores' | 'warnings' | 'history';
   enableClose?: boolean;
   onClose?: () => void;
 }) {
@@ -83,16 +95,18 @@ export function EarlyAccessNotice({
                 </button>
               </div>
             </Show>
-            <a
-              href={FEATURE_LINK[featureCode]}
-              target="_blank"
-              class="m-auto"
-              onClick={() => {
-                metric('early_access_image_clicked', { featureCode });
-              }}
-            >
-              <img class="max-w-xs" src={FEATURE_IMAGE[featureCode]} />
-            </a>
+            <Show when={!earlyAccessExpiry()}>
+              <a
+                href={FEATURE_LINK[featureCode]}
+                target="_blank"
+                class="m-auto"
+                onClick={() => {
+                  metric('early_access_href_clicked', { featureCode, action: 'feature_image' });
+                }}
+              >
+                <img class="max-w-xs" src={FEATURE_IMAGE[featureCode]} />
+              </a>
+            </Show>
             <Show when={!earlyAccessExpiry() && !isEarlyAccess()}>
               <>
                 <p class="mt-6 mb-2 w-md">
@@ -104,6 +118,7 @@ export function EarlyAccessNotice({
                     onClick={(_e) => {
                       metric('early_access_href_clicked', {
                         featureCode,
+                        action: 'early_access_program',
                       });
                     }}
                   >
@@ -120,8 +135,9 @@ export function EarlyAccessNotice({
                       target="_blank"
                       class="underline"
                       onClick={(_e) => {
-                        metric('early_access_benefits_href_clicked', {
+                        metric('early_access_href_clicked', {
                           featureCode,
+                          action: 'benefits',
                         });
                       }}
                     >
@@ -134,31 +150,79 @@ export function EarlyAccessNotice({
                   </li>
                   {FEATURE_DESCRIPTIONS[featureCode]}
                 </ul>
-                <button
-                  class="m-auto bg-ice-700 hover:bg-ice-900 border-transparent text-white font-bold px-4 py-2 rounded-lg"
-                  data-testid="start-trial-button"
-                  onClick={() => {
-                    startTrial();
-                    metric('early_access_cta_clicked', {
-                      featureCode,
-                      action: 'start_trial',
-                    });
-                  }}
-                >
-                  Start 7 day trial
-                </button>
+                <div class="flex flex-col items-center justify-center m-auto">
+                  <button
+                    class="bg-ice-700 hover:bg-ice-900 border-transparent text-white font-bold px-4 py-2 rounded-lg cursor-pointer"
+                    data-testid="start-trial-button"
+                    onClick={() => {
+                      startTrial();
+                      metric('early_access_cta_clicked', {
+                        featureCode,
+                        action: 'start_trial',
+                      });
+                    }}
+                  >
+                    Start 7 day trial
+                  </button>
+                  <a
+                    href={`https://alpinedevtools.com/pricing?utm_source=extension&utm_campaign=${featureCode}_pre_trial_purchase_href`}
+                    target="_blank"
+                    class="underline mt-3 text-sm"
+                    onClick={(_e) => {
+                      metric('early_access_href_clicked', {
+                        featureCode,
+                        action: 'purchase_now',
+                      });
+                    }}
+                  >
+                    Or purchase now
+                  </a>
+                </div>
               </>
             </Show>
             <Show when={earlyAccessExpiry() && !isEarlyAccess()}>
               <>
-                <p class="mt-6 mb-2 w-md">
-                  Your trial has expired. To continue using <strong>{feature}</strong> and other
-                  Early Access features, please purchase a license.
+                <p class="mb-2 w-md">
+                  <strong>Your trial has expired</strong>. To unlock all early access features
+                  (including <strong>{feature}</strong>), please purchase a license.
+                </p>
+                <p class="mb-2 w-md">Unlocked features include:</p>
+                <ul class="list-disc mx-4 mb-2 w-md">
+                  <li>
+                    <strong>Store Inspection:</strong> Easily inspect and debug Alpine.js stores.
+                  </li>
+                  <li>
+                    <strong>Time Travel Debugging:</strong> Step through component state changes to
+                    find bugs faster.
+                  </li>
+                  <li>
+                    <strong>Warnings Tab:</strong> Catch common mistakes and potential bugs before
+                    they hit production.
+                  </li>
+                  <li>
+                    <strong>Advanced Component Features:</strong> Pin attributes, inspect DOM
+                    elements, and more.
+                  </li>
+                </ul>
+                <p class="mb-6 w-md">
+                  <a
+                    class="underline cursor-pointer"
+                    target="_blank"
+                    href={`https://alpinedevtools.com/pricing?utm_source=extension&utm_campaign=${featureCode}_read_more_href`}
+                    onClick={(_e) => {
+                      metric('early_access_read_more_clicked', {
+                        featureCode,
+                        action: 'post_trial',
+                      });
+                    }}
+                  >
+                    Read more about early access features
+                  </a>
                 </p>
                 <a
                   class="m-auto bg-ice-700 hover:bg-ice-900 border-transparent text-white font-bold px-4 py-2 rounded-lg"
                   data-testid="get-access-button"
-                  href={`https://alpinedevtools.com/checkout?utm_source=extension&utm_campaign=${featureCode}_cta`}
+                  href={`https://alpinedevtools.com/pricing?utm_source=extension&utm_campaign=${featureCode}_cta`}
                   target="_blank"
                   onClick={(_e) => {
                     metric('early_access_cta_clicked', {
@@ -171,7 +235,7 @@ export function EarlyAccessNotice({
                 </a>
               </>
             </Show>
-            <div class="mt-4 m-auto">
+            <div class="mt-3 m-auto">
               <ActivateLicense />
             </div>
           </div>

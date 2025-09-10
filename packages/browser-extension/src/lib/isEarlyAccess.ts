@@ -1,5 +1,6 @@
 import { createMemo } from 'solid-js';
 import { createStore } from 'solid-js/store';
+import { metric } from '../devtools/metrics';
 import { daysToMs } from '../devtools/time-utils';
 
 interface EarlyAccessState {
@@ -80,6 +81,7 @@ export async function activateLicense(
         isEarlyAccess: true,
         expiry,
       });
+      metric('license_activated');
       return { success: true };
     } else {
       return { success: false, message: 'Invalid license key' };

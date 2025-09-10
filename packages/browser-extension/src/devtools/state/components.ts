@@ -262,9 +262,21 @@ export function saveComponentAttributeEdit(editedAttr: FlattenedComponentData) {
   });
 }
 
+export const componentFilterValue = createMemo(() => state.componentFilter);
+
+export const setComponentFilter = (filter: string) => setState('componentFilter', filter);
+
 export const componentsValue = createMemo(() =>
   Object.values(state.components).sort((a, b) => a.index - b.index),
 );
+
+export const filteredComponentsValue = createMemo(() => {
+  const filter = state.componentFilter.toLowerCase();
+  if (!filter) {
+    return componentsValue();
+  }
+  return componentsValue().filter((c) => c.name.toLowerCase().includes(filter));
+});
 
 export const openComponentValue = createMemo(() =>
   state.selectedComponentId ? state.components[state.selectedComponentId] : null,

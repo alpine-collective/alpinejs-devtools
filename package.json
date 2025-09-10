@@ -5,35 +5,38 @@
   "description": "DevTools extension for debugging Alpine.js applications.",
   "homepage": "https://github.com/alpine-collective/alpinejs-devtools",
   "scripts": {
-    "start": "npm --prefix=packages/browser-extension start",
-    "build": "VITE_MAINLINE_PUBLISH=true npm --prefix packages/browser-extension run build",
-    "early-access": "rm -rf dist && npm --prefix packages/browser-extension run build && node --run package",
-    "ea": "npm run early-access",
-    "test": "node --test \"{tests/*,**/*.test.ts}\"",
-    "cy:run": "npm --prefix=packages/browser-extension cy:run",
-    "cy:open": "npm --prefix=packages/browser-extension cy:run",
-    "archive:v3": "git archive -o ./dist/alpine-devtools-source-archive-v2.zip HEAD:packages/browser-extension",
+    "prepare": "[ -f \"/opt/environment_summary.sh\" ] && husky || echo 'Skipping hooks install in Jules VM'",
+    "start": "pnpm --filter=browser-extension start",
+    "build": "VITE_MAINLINE_PUBLISH=true pnpm --filter=browser-extension build",
+    "ea": "pnpm early-access",
+    "early-access": "rm -rf dist && pnpm --filter=browser-extension build && pnpm package",
+    "sa": "pnpm mainline",
+    "mainline": "rm -rf dist && pnpm build && pnpm package",
+    "test": "pnpm -r test",
+    "test:e2e": "pnpm -r jules-test",
+    "cy:run": "pnpm --filter=browser-extension cy:run",
+    "cy:open": "pnpm --filter=browser-extension cy:open",
     "format": "prettier './{packages/**/,cypress/**/*,lib/}*.{js,ts,tsx,html,css}' --write",
     "check:format": "prettier './{packages/**/,cypress/**/*,}*.{js,ts,tsx,html,css}' -c",
-    "check:firefox": "npm run ea && web-ext lint --source-dir=dist/firefox-ext",
-    "typecheck": "npm --prefix packages/browser-extension run typecheck",
-    "prepackage": "rm -rf dist && npm run build",
-    "sa": "npm run package",
+    "check:firefox": "pnpm ea && web-ext lint --source-dir=dist/firefox-ext",
+    "typecheck": "pnpm --filter=browser-extension typecheck",
+    "package": "pnpm pkg:chrome && pnpm pkg:firefox && pnpm archive:v2",
     "pkg:chrome": "web-ext build --source-dir=dist/browser-extension --artifacts-dir=./dist/chrome-v2",
     "pkg:firefox": "web-ext build --source-dir=dist/firefox-ext --artifacts-dir=./dist/firefox-v2",
-    "package": "node --run pkg:chrome && node --run pkg:firefox",
+    "archive:v2": "git archive -o ./dist/alpine-devtools-source-archive-v2.zip HEAD:packages/browser-extension",
     "ff:open": "web-ext run -s=./dist/firefox-ext",
     "ff:dev": "web-ext run -s=./dist/browser-extension",
-    "prepare": "husky"
+    "cy:cache:check": "pnpm --filter=browser-extension exec cypress cache path && pnpm --filter=browser-extension exec cypress cache list",
+    "cy:bin:install": "pnpm --filter=browser-extension exec cypress install && pnpm --filter=browser-extension exec cypress cache list"
   },
   "license": "MIT",
   "workspaces": [
     "packages/*"
   ],
   "devDependencies": {
-    "alpinejs": "^2.8.2",
+    "alpinejs": "2.8.2",
     "husky": "9.1.7",
-    "lint-staged": "16.1.4",
+    "lint-staged": "16.1.6",
     "prettier": "3.6.2",
     "web-ext": "8.9.0"
   },
@@ -41,8 +44,5 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
-  },
-  "lint-staged": {
-    "*.{js,ts,tsx,css,md,html,json}": "prettier --write"
   }
 }

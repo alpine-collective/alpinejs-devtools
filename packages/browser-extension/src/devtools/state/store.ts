@@ -14,6 +14,7 @@ export interface State {
   selectedStoreName?: string;
   preloadedStoreData: Record<string, Array<FlattenedStoreData>>;
   errors: any[];
+  componentFilter: string;
 }
 
 export const [state, setState] = createStore<State>({
@@ -24,4 +25,5 @@ export const [state, setState] = createStore<State>({
   preloadedComponentData: {},
   stores: {},
   preloadedStoreData: {},
+  componentFilter: '',
 });
