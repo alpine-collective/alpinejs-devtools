@@ -56,10 +56,24 @@ async function buildAll() {
     if (process.env.VITE_MAINLINE_PUBLISH === 'true') {
       newManifestJson.name = 'Alpine.js devtools';
     }
+
     await fs.writeFile(
       fileURLToPath(new URL('../../dist/shell-chrome-v3/manifest.json', import.meta.url)),
       JSON.stringify(newManifestJson, null, 2),
     );
+
+    if (process.env.TARGET === 'firefox') {
+      console.log('Overwriting manifest.json with Firefox compatible one.');
+      await fs.writeFile(
+        fileURLToPath(new URL('../../dist/shell-chrome-v3/manifest.json', import.meta.url)),
+        JSON.stringify(convertToFirefoxManifest(newManifestJson), null, 2),
+      );
+    } else {
+      await fs.writeFile(
+        fileURLToPath(new URL('../../dist/shell-chrome-v3/manifest-ff.json', import.meta.url)),
+        JSON.stringify(convertToFirefoxManifest(newManifestJson), null, 2),
+      );
+    }
 
     console.log('manifest.json updates successful');
   } catch (error) {
@@ -70,3 +84,25 @@ async function buildAll() {
 
 // Run build process
 buildAll();
+
+function convertToFirefoxManifest(manifest) {
+  const { service_worker, ...rest } = manifest.background;
+  return {
+    ...manifest,
+    background: {
+      ...rest,
+      scripts: [service_worker],
+    },
+    browser_specific_settings: {
+      gecko: {
+        id: 'devtools@alpinedevtools.com',
+        strict_min_version: '112.0',
+        ...(process.env.VITE_MAINLINE_PUBLISH !== 'true'
+          ? {
+              update_url: 'https://alpinedevtools.com/ff-ea-updates.json',
+            }
+          : undefined),
+      },
+    },
+  };
+}

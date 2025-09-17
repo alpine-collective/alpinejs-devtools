@@ -23,7 +23,7 @@ export function StoreListItem({ idx, storeName, isOpen }: StoreListItemProps) {
     >
       <h5 class="flex items-center px-2 leading-7 font-mono whitespace-nowrap">
         <span class="opacity-25">$store{"['"}</span>
-        <span data-testid="component-name" class="text-base">
+        <span data-testid="store-name" class="text-base">
           {storeName}
         </span>
         <span class="opacity-25">{"']"}</span>

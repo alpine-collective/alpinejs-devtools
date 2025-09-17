@@ -12,30 +12,6 @@
   </head>
 
   <body>
-    <script>
-      document.addEventListener('alpine:init', () => {
-        Alpine.store('sampleStore', {
-          nested: {
-            array: ['123', '345'],
-          },
-          on: false,
-
-          toggle() {
-            this.on = !this.on;
-          },
-        });
-        Alpine.store('primitiveVal', true);
-        // Array.from({ length: 20 }).forEach(() => {
-        //   Alpine.store(Math.random().toFixed(2), { foo: 'bar' });
-        // });
-      });
-    </script>
-    <!-- <div x-data>
-        <button @click="$store.sampleStore.nested = []">Reset nested store</button>
-    </div>
-    <div x-data>
-        <button @click="$store.primitiveVal = false">Reset primitive store</button>
-    </div> -->
     <div
       x-data="{
                 el: $el,
@@ -154,6 +130,35 @@
     <button data-testid="broken-click" x-data x-on:click="foo.bar.baz">Broken x-on:click</button>
     <div>
       <a data-testid="navigation-target" href="/navigation-target.html">Go to next page</a>
+    </div>
+
+    <script>
+      document.addEventListener('alpine:init', () => {
+        Alpine.store('sampleStore', {
+          nested: {
+            array: ['123', '345'],
+          },
+          on: false,
+
+          toggle() {
+            this.on = !this.on;
+          },
+        });
+        Alpine.store('primitiveVal', true);
+        // Array.from({ length: 20 }).forEach(() => {
+        //   Alpine.store(Math.random().toFixed(2), { foo: 'bar' });
+        // });
+      });
+    </script>
+    <div x-data>
+      <button data-testid="reset-nested-store" @click="$store.sampleStore.nested = []">
+        Reset nested store
+      </button>
+    </div>
+    <div x-data>
+      <button data-testid="reset-primitive-store" @click="$store.primitiveVal = false">
+        Reset primitive store
+      </button>
     </div>
 
     <h3>Manual test</h3>

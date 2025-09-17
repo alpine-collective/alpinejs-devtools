@@ -9,15 +9,14 @@ import {
 import { INIT_MESSAGE } from './src/lib/constants';
 
 function inject(src: string, done: Function) {
+  const target = document.getElementById('target');
   if (!src || src === 'false') {
     return done();
   }
-  // @ts-expect-error
-  const script = target.contentDocument.createElement('script');
+  const script = (target as HTMLIFrameElement).contentDocument!.createElement('script');
   script.src = src;
-  script.onload = done;
-  // @ts-expect-error
-  target.contentDocument.body.appendChild(script);
+  script.onload = done as any;
+  (target as HTMLIFrameElement).contentDocument!.body.appendChild(script);
 }
 
 let isInitialised = false;
@@ -30,8 +29,7 @@ function initProxy(window: Window, targetWindow: Window) {
         renderApp(document.querySelector('#devtools-container')!);
         isInitialised = true;
       }
-      // @ts-expect-error
-      handleBackendToPanelMessage(event.data.payload, window);
+      handleBackendToPanelMessage(event.data.payload, window as any);
       return;
     }
     if (event.data.source === ALPINE_DEVTOOLS_PANEL_SOURCE) {
@@ -51,27 +49,24 @@ function initProxy(window: Window, targetWindow: Window) {
 
 async function main() {
   const target = document.getElementById('target');
-  // @ts-expect-error
-  const targetWindow = target.contentWindow;
+  const targetWindow = (target as HTMLIFrameElement).contentWindow;
 
-  initProxy(window, targetWindow);
+  initProxy(window, targetWindow!);
 
   // 1. load user app
   const targetPath = new URL(window.location.href).searchParams.get('target');
-  // @ts-expect-error
-  target.src = targetPath || './v3.html';
-  // @ts-expect-error
-  target.onload = () => {
+  (target as HTMLIFrameElement).src = targetPath || './v3.html';
+  (target as HTMLIFrameElement).onload = () => {
     // 1. inject backend script to "target" iframe
     // import('./src/scripts/backend').then(() => {
     inject('./dist/backend.js', () => {
       // 2. init devtools
-      targetWindow.postMessage({
+      targetWindow!.postMessage({
         source: ALPINE_DEVTOOLS_PROXY_SOURCE,
         payload: INIT_MESSAGE,
       });
       // 3. proxy messages from backend to `window`
-      targetWindow.addEventListener('message', (event: any) => {
+      targetWindow!.addEventListener('message', (event: any) => {
         if (event.data.source === ALPINE_DEVTOOLS_BACKEND_SOURCE) {
           console.log('backend -> devtools', event.data?.payload);
           window.postMessage(event.data, '*');
