@@ -3,11 +3,17 @@ import { CONTENT } from '../devtools/ports';
 function loadScriptInRealWorld(path: string) {
   return new Promise(async (resolve, reject) => {
     const script = document.createElement('script');
-    // Was originally:
-    // script.src = chrome.runtime.getURL(path)
-    // which causes issues on sites with CSPs, see:
-    // https://github.com/alpine-collective/alpinejs-devtools/issues/445
-    script.innerHTML = await fetch(chrome.runtime.getURL(path)).then((res) => res.text());
+
+    const scriptPath = chrome.runtime.getURL(path);
+    if (scriptPath.startsWith('chrome-extension://')) {
+      script.src = chrome.runtime.getURL(path);
+    } else {
+      // On Firefox, loading from the extension path causes issues with
+      // with CSPs, see:
+      // https://github.com/alpine-collective/alpinejs-devtools/issues/445
+      script.innerHTML = await fetch(scriptPath).then((res) => res.text());
+    }
+
     script.type = 'module';
 
     script.addEventListener('error', (err) => reject(err));

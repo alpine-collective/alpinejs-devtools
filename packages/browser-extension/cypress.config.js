@@ -5,7 +5,7 @@ export default defineConfig({
   fixturesFolder: false,
   chromeWebSecurity: false,
   retries: {
-    runMode: 1,
+    runMode: 2,
   },
 
   e2e: {

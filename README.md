@@ -14,6 +14,7 @@ Due to Chrome's Manifest v3 rollout, the extension had to be rewritten. As part 
 - ✅ Highlight component in page on hover
 - ✅ Component data in console globals
 - ✅ High performance on nested data objects (🆕️, tested on ~10k data properties)
+- ✅ Component filtering (🆕)
 
 **Early Access** includes:
 
@@ -21,7 +22,7 @@ Due to Chrome's Manifest v3 rollout, the extension had to be rewritten. As part 
 - ✅ Store data in console globals (🆕)
 - ✅ Warnings tab (inc. Alpine v3 support)
 - ✅ Jump to root element/scroll element into view (🆕)
-- 🔜 Time travel debugging of $data (🆕)
+- ✅ Time travel debugging of $data (🆕)
 
 # Alpine.js devtools
 
