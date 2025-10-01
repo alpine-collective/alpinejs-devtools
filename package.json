@@ -36,9 +36,9 @@
   "devDependencies": {
     "alpinejs": "2.8.2",
     "husky": "9.1.7",
-    "lint-staged": "16.1.6",
+    "lint-staged": "16.2.3",
     "prettier": "3.6.2",
-    "web-ext": "8.9.0"
+    "web-ext": "8.10.0"
   },
   "husky": {
     "hooks": {
