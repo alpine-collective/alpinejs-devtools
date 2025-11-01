@@ -23,17 +23,17 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@types/chrome": "0.1.6",
-    "@types/node": "24.3.1",
-    "@typescript/native-preview": "7.0.0-dev.20250904.1",
-    "cypress": "15.1.0",
+    "@types/chrome": "0.1.27",
+    "@types/node": "24.9.2",
+    "@typescript/native-preview": "7.0.0-dev.20251031.1",
+    "cypress": "15.5.0",
     "cypress-iframe": "1.0.1",
-    "esbuild": "0.25.9",
+    "esbuild": "0.25.11",
     "linkedom": "0.18.12",
-    "msw": "^2.0.0",
-    "start-server-and-test": "^2.0.13",
-    "vite": "^7.1.4",
-    "vite-plugin-solid": "^2.11.6"
+    "msw": "^2.11.6",
+    "start-server-and-test": "^2.1.2",
+    "vite": "^7.1.12",
+    "vite-plugin-solid": "^2.11.10"
   },
   "dependencies": {
     "@tailwindcss/vite": "4.1.13",
