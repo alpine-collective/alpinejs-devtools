@@ -16,30 +16,29 @@ The extension has three main parts:
 
 Here is a breakdown of the important files and directories in the `packages/browser-extension` directory:
 
-*   **`manifest.json`**: The main configuration file for the extension. It defines the extension's name, version, permissions, and the scripts it uses.
+- **`manifest.json`**: The main configuration file for the extension. It defines the extension's name, version, permissions, and the scripts it uses.
 
-*   **`src/`**: This directory contains the main source code for the extension.
+- **`src/`**: This directory contains the main source code for the extension.
+  - **`src/devtools/`**: This directory contains the source code for the devtools panel. It is built with Solid.js and TypeScript.
+    - **`panel.tsx`**: The entry point for the devtools panel.
+    - **`App.tsx`**: The main application component for the devtools panel.
+    - **`components/`**: Contains the Solid.js components used in the devtools panel.
+    - **`state/`**: Contains the state management logic for the devtools panel.
 
-    *   **`src/devtools/`**: This directory contains the source code for the devtools panel. It is built with Solid.js and TypeScript.
-        *   **`panel.tsx`**: The entry point for the devtools panel.
-        *   **`App.tsx`**: The main application component for the devtools panel.
-        *   **`components/`**: Contains the Solid.js components used in the devtools panel.
-        *   **`state/`**: Contains the state management logic for the devtools panel.
+  - **`src/lib/`**: This directory contains shared utility functions.
 
-    *   **`src/lib/`**: This directory contains shared utility functions.
+  - **`src/scripts/`**: This directory contains the background scripts, content scripts, and other scripts that run in the browser.
+    - **`background.ts`**: The service worker that runs in the background.
+    - **`content.ts`**: The content script that is injected into the web page.
+    - **`detector.ts`**: A script that detects the Alpine.js components on the page.
 
-    *   **`src/scripts/`**: This directory contains the background scripts, content scripts, and other scripts that run in the browser.
-        *   **`background.ts`**: The service worker that runs in the background.
-        *   **`content.ts`**: The content script that is injected into the web page.
-        *   **`detector.ts`**: A script that detects the Alpine.js components on the page.
+- **`assets/`**: This directory contains static assets like images, HTML files, and icons.
 
-*   **`assets/`**: This directory contains static assets like images, HTML files, and icons.
+- **`cypress/`**: This directory contains the end-to-end tests for the extension.
 
-*   **`cypress/`**: This directory contains the end-to-end tests for the extension.
+- **`package.json`**: This file lists the project's dependencies and scripts.
 
-*   **`package.json`**: This file lists the project's dependencies and scripts.
-
-*   **`README.md`**: This file provides a general overview of the project.
+- **`README.md`**: This file provides a general overview of the project.
 
 ## How the Parts Work Together
 

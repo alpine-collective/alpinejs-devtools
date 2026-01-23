@@ -26,6 +26,35 @@ const mockPort: chrome.runtime.Port = {
   sender: undefined,
 };
 
+const fakeStorage = {
+  clear() {
+    window.localStorage.removeItem('chrome-local');
+  },
+  set(partial) {
+    console.log('setting partial', partial);
+    window.localStorage.setItem('chrome-local', JSON.stringify(partial));
+  },
+  getKeys() {
+    const storage = window.localStorage.getItem('chrome-local');
+    return storage ? Promise.resolve(Object.keys(JSON.parse(storage))) : Promise.resolve([]);
+  },
+  get(key, cb) {
+    const raw = window.localStorage.getItem('chrome-local');
+    try {
+      if (!raw) {
+        throw new Error('chrome-local not set');
+      }
+      const parsed = JSON.parse(raw);
+      if (cb) {
+        cb(parsed);
+      }
+      return Promise.resolve(parsed[key]);
+    } catch (e) {
+      console.log("Key doesn't exist: ", key, raw, e);
+    }
+  },
+} as chrome.storage.SyncStorageArea;
+
 globalThis.chrome = {
   devtools: {
     panels: {
@@ -161,33 +190,7 @@ globalThis.chrome = {
     setPopup: () => {},
   },
   storage: {
-    sync: {
-      clear() {
-        window.localStorage.removeItem('chrome-local');
-      },
-      set(partial) {
-        console.log('setting partial', partial);
-        window.localStorage.setItem('chrome-local', JSON.stringify(partial));
-      },
-      getKeys() {
-        const storage = window.localStorage.getItem('chrome-local');
-        return storage ? Promise.resolve(Object.keys(JSON.parse(storage))) : Promise.resolve([]);
-      },
-      get(key, cb) {
-        const raw = window.localStorage.getItem('chrome-local');
-        try {
-          if (!raw) {
-            throw new Error('chrome-local not set');
-          }
-          const parsed = JSON.parse(raw);
-          if (cb) {
-            cb(parsed);
-          }
-          return Promise.resolve(parsed[key]);
-        } catch (e) {
-          console.log("Key doesn't exist: ", key, raw, e);
-        }
-      },
-    } as chrome.storage.SyncStorageArea,
+    sync: fakeStorage,
+    local: fakeStorage,
   },
 } as unknown as typeof chrome;

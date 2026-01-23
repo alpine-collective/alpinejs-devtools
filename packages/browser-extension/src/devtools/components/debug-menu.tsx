@@ -31,7 +31,13 @@ export function DebugMenu() {
 
           <section>
             <div>
-              <button class="btn" onClick={() => chrome.storage.sync.clear()}>
+              <button
+                class="btn"
+                onClick={() => {
+                  chrome.storage.sync.clear();
+                  chrome.storage.local.clear();
+                }}
+              >
                 Clear storage
               </button>
             </div>

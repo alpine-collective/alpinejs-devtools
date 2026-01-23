@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Alpine.js Devtools Example</title>
+    <!-- <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> -->
+    <!-- Uncomment the following script to use that version, eg. when working offline -->
+    <script src="/cdn.min.js" defer></script>
+  </head>
+
+  <body>
+    <div x-data="parent">
+      <h1 x-text="title"></h1>
+      <p>Times clicked: <span x-text="count"></span></p>
+      <p>Messages:</p>
+      <ul>
+        <template x-for="message in messages">
+          <li x-text="message"></li>
+        </template>
+      </ul>
+      <div x-data="child">
+        <h2 x-text="title"></h2>
+        <p>Times clicked doubled: <span x-text="doubledCount"></span></p>
+        <p x-text="doubledHello"></p>
+      </div>
+      <p><button @click="onClick" data-testid="click-target">Click me</button></p>
+    </div>
+
+    <script>
+      document.addEventListener('alpine:initializing', () => {
+        Alpine.data('parent', () => ({
+          title: 'Parent component',
+          count: 0,
+          messages: ['one', 'two', 'three'],
+          onClick() {
+            this.count++;
+            this.messages.push('new');
+          },
+        }));
+
+        Alpine.data('child', () => ({
+          title: 'Child component',
+          get doubledCount() {
+            return this.count * 2;
+          },
+          get doubledHello() {
+            return this.messages.join(', ');
+          },
+        }));
+      });
+    </script>
+  </body>
+</html>

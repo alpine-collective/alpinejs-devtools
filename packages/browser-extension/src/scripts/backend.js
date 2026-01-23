@@ -113,15 +113,55 @@ export function init(forceStart = false) {
       }, MSG_DEBOUNCE_MS * 2);
     }
 
-    getAlpineDataInstance(node) {
+    /**
+     * @param {{ _x_dataStack: Array<unknown>} | { __x: unknown}} node
+     * @param {{ getRawInstance: boolean }} config
+     * @returns
+     */
+    getAlpineDataInstance(node, config = { getRawInstance: true }) {
       if (this.isV3) {
-        return node._x_dataStack?.[0];
+        if (config.getRawInstance || node._x_dataStack.length === 1) {
+          return node._x_dataStack?.[0];
+        }
+        // For accessing the data contents, we need to inherit scoped data.
+        let i = node._x_dataStack.length - 1;
+        let mergedDataStack = {};
+        const leafDataObj = {};
+        while (i >= 0) {
+          const stackEntry = node._x_dataStack[i];
+          const isLeafStackEntry = i === 0;
+          if (!isLeafStackEntry) {
+            mergedDataStack = Object.assign(mergedDataStack, stackEntry);
+          } else {
+            Object.entries(Object.getOwnPropertyDescriptors(stackEntry)).forEach(
+              ([prop, descriptor]) => {
+                if (!descriptor.enumerable) {
+                  // magics are non-enumerable
+                  return;
+                }
+                if (typeof descriptor.get === 'function') {
+                  // this is a getter, evaluate with nested context
+                  leafDataObj[prop] = descriptor.get.call(mergedDataStack);
+                  // TODO: need to hide the edit button etc, if this
+                  // doesn't have a `descriptor.set !== 'function'` function
+                  // and/or `!!descriptor.writable`
+                } else {
+                  leafDataObj[prop] = descriptor.value;
+                }
+                return;
+              },
+            );
+          }
+
+          i--;
+        }
+        return leafDataObj;
       }
       return node.__x;
     }
 
     getReadOnlyAlpineData(node) {
-      const alpineDataInstance = this.getAlpineDataInstance(node);
+      const alpineDataInstance = this.getAlpineDataInstance(node, { getRawInstance: false });
       if (!alpineDataInstance) {
         if (import.meta.env.DEV) {
           console.warn('element has no dataStack', node);
@@ -129,10 +169,7 @@ export function init(forceStart = false) {
         return;
       }
       if (this.isV3) {
-        // in v3 magics are registered on the data stack
-        return Object.fromEntries(
-          Object.entries(alpineDataInstance).filter(([key]) => !key.startsWith('$')),
-        );
+        return alpineDataInstance;
       } else {
         return alpineDataInstance?.getUnobservedData();
       }
@@ -293,6 +330,19 @@ export function init(forceStart = false) {
               let recursionDepth = 0;
               function visit(componentData, key) {
                 recursionDepth += 1;
+                const descriptor = Object.getOwnPropertyDescriptor(componentData, key);
+                if (descriptor.get && !descriptor.set && !descriptor.value) {
+                  // this is a getter, we don't need to re-run getters
+                  // unless there's a setter
+                  for (const stack of rootEl._x_dataStack.slice(1)) {
+                    // But ensure Alpine recomputes this effect if any of
+                    // the parents change as they could be used in the getter
+                    Object.keys(stack).forEach((k) => {
+                      visit(stack, k);
+                    });
+                  }
+                  return;
+                }
                 // since effects track which dependencies are accessed,
                 // run a fake component data access so that the effect runs
                 void componentData[key];

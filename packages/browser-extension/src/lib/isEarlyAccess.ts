@@ -23,19 +23,23 @@ export const isEarlyAccessExpiryInPast = createMemo(() => {
 });
 
 export function loadPersistedEarlyAccessInfo() {
-  chrome.storage.sync.get('earlyAccess', (result) => {
+  const handleStorageResult = (result: any) => {
     if (result.earlyAccess && result.earlyAccess.expiry) {
       setEarlyAccessStore({
         expiry: result.earlyAccess.expiry,
         isEarlyAccess: result.earlyAccess.expiry > Date.now(),
       });
     }
-  });
+  };
+  chrome.storage.sync.get('earlyAccess', handleStorageResult);
+  chrome.storage.local.get('earlyAccess', handleStorageResult);
 }
 
 export function startTrial() {
   const expiry = Date.now() + daysToMs(7);
-  chrome.storage.sync.set({ earlyAccess: { expiry } });
+  const storagePayload = { earlyAccess: { expiry } };
+  chrome.storage.sync.set(storagePayload);
+  chrome.storage.local.set(storagePayload);
   setEarlyAccessStore({
     isEarlyAccess: true,
     expiry,
@@ -76,7 +80,9 @@ export async function activateLicense(
 
     if (data.enabled) {
       const expiry = Infinity;
-      chrome.storage.sync.set({ earlyAccess: { expiry, key: licenseKey } });
+      const storagePayload = { earlyAccess: { expiry, key: licenseKey } };
+      chrome.storage.sync.set(storagePayload);
+      chrome.storage.local.set(storagePayload);
       setEarlyAccessStore({
         isEarlyAccess: true,
         expiry,
