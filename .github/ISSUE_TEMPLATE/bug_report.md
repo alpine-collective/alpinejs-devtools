@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Report a bug
-title: "[BUG]"
+title: ""
 labels: bug
 assignees: ''
 
@@ -15,6 +15,13 @@ A clear and concise description of what the bug is.
  - Browser [e.g. chrome, firefox, edge]
  - Extension version [e.g. 1.2.0]
  - Alpine.js version [eg. 3.8.0]
+
+**Code sample**
+
+Minimal code sample (ideally inline, **not** codesanbox/codepen as those have been deleted before the issue could be addressed in the past)
+```html
+<div x-data="badComponent"></div>
+```
 
 **To Reproduce**
 Steps to reproduce the behavior:
