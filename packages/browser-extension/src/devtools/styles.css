@@ -27,6 +27,10 @@ doesn't like `@layer` (which TW@4 uses)
   border-left: 6px solid #444;
 }
 
+.dark .right {
+  border-left: 6px solid var(--color-gray-100);
+}
+
 .down {
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;

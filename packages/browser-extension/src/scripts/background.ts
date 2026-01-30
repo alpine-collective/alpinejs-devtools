@@ -1,5 +1,5 @@
 import { isInspector, inspectorPortNameToTabId, PROXY, CONTENT } from '../devtools/ports';
-import { CONTENT_TO_BACKGROUND_MESSAGES } from '../lib/constants';
+import { BACKGROUND_TO_CONTENT_MESSAGES, CONTENT_TO_BACKGROUND_MESSAGES } from '../lib/constants';
 
 // TODO: refactor this to a class?
 let ports: Record<string, { devtools?: chrome.runtime.Port; backend?: chrome.runtime.Port }> = {};
@@ -93,6 +93,22 @@ chrome.runtime.onConnect.addListener(async (port) => {
     doublePipe(tabId, ports[tabId].devtools!, ports[tabId].backend!);
   }
   return;
+});
+
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    id: 'alpine-devtools-inspect',
+    title: 'Inspect in Alpine DevTools',
+    contexts: ['all'],
+  });
+});
+
+chrome.contextMenus.onClicked.addListener((_info, tab) => {
+  if (tab?.id != null) {
+    chrome.tabs.sendMessage(tab.id, {
+      type: BACKGROUND_TO_CONTENT_MESSAGES.INSPECT_RIGHT_CLICKED_ELEMENT,
+    });
+  }
 });
 
 /**

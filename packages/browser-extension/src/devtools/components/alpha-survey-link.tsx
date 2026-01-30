@@ -11,7 +11,7 @@ export function AlphaSurveyLink({ feature }: AlphaSurveyProps) {
   const featureDef = ALPHA_FEATURES[feature];
   return (
     <a
-      class="text-xs hover:underline text-gray-500"
+      class="text-xs hover:underline text-gray-500 dark:text-gray-400"
       onClick={(e) => {
         e.stopPropagation();
       }}

@@ -6,6 +6,7 @@ import {
   filteredComponentsValue,
   componentFilterValue,
 } from '../state/components';
+import { isInspectorMode, toggleInspectorMode } from '../state/inspector';
 import {
   getSelectedMessage,
   messageHistory,
@@ -41,15 +42,42 @@ export function ComponentGrid() {
       <SplitPane
         leftPaneContent={
           <>
-            <div class="pt-2 pb-1 px-2 sticky top-0 z-10 bg-white w-full">
+            <div class="pt-2 pb-1 px-2 sticky top-0 z-10 bg-white dark:bg-alpine-500 w-full flex items-center gap-1">
               <input
                 data-testid="component-filter-input"
                 type="text"
                 placeholder="Filter components"
-                class="w-full text-sm px-2 py-1 border border-gray-300 rounded-md dark:bg-alpine-500 dark:border-alpine-400"
+                class="flex-1 text-sm px-2 py-1 border border-gray-300 rounded-md dark:bg-alpine-500 dark:border-alpine-400"
                 onInput={(e) => setComponentFilter(e.currentTarget.value)}
                 value={componentFilterValue()}
               />
+              <button
+                data-testid="inspector-button"
+                data-tooltip="Select element to inspect"
+                data-side="left"
+                onClick={toggleInspectorMode}
+                classList={{
+                  'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300':
+                    isInspectorMode(),
+                  'text-gray-500 hover:bg-gray-100 dark:hover:bg-alpine-400': !isInspectorMode(),
+                }}
+                class="flex-shrink-0 p-1 rounded"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-5 h-5"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672Zm-7.518-.267A8.25 8.25 0 1 1 20.25 10.5M8.288 14.212A5.25 5.25 0 1 1 17.25 10.5"
+                  />
+                </svg>
+              </button>
             </div>
             {filteredComponentsValue().length === 0 ? (
               <div

@@ -3,6 +3,7 @@ import { theme, orientation } from '../theme';
 import { TabValues } from '../types';
 import { TabLink } from './tab-link';
 import { DebugMenu } from './debug-menu';
+import { ThemeToggle } from './theme-toggle';
 
 interface HeaderProps {
   activeTab: Accessor<TabValues>;
@@ -16,7 +17,7 @@ export function Header({ activeTab, setActiveTab }: HeaderProps) {
         'flex-col w-48 min-h-0 overflow-y-auto': orientation() === 'landscape',
         'flex-row items-center pl-3 pr-1 xs:pr-3': orientation() === 'portrait',
       }}
-      class="flex py-px text-base tracking-tight font-bold text-white border-b border-gray-300 dark:border-none transition duration-700 transition-colors ease-in-out"
+      class="relative flex py-px text-base tracking-tight font-bold text-white border-b border-gray-300 dark:border-none transition duration-700 transition-colors ease-in-out"
     >
       <div
         classList={{
@@ -117,6 +118,7 @@ export function Header({ activeTab, setActiveTab }: HeaderProps) {
               </svg>
             </TabLink>
             {process.env.NODE_ENV !== 'production' ? <DebugMenu /> : ''}
+            <ThemeToggle />
           </div>
         </div>
       </div>

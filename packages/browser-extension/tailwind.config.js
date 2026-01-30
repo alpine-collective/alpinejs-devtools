@@ -1,4 +1,5 @@
 module.exports = {
+  darkMode: 'class',
   theme: {
     fontSize: {
       xs: '.75rem',

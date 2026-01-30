@@ -41,6 +41,12 @@ async function buildAll() {
       sourcemap: true,
       target: 'esnext',
       platform: 'browser',
+      define: {
+        'import.meta.env.DEV': JSON.stringify(!isProd),
+        'import.meta.env.VITE_MAINLINE_PUBLISH': JSON.stringify(
+          JSON.stringify(process.env.VITE_MAINLINE_PUBLISH === 'true'),
+        ),
+      },
     });
 
     const alpineBuild = await copyFile(

@@ -1,4 +1,5 @@
-import { CONTENT } from '../devtools/ports';
+import { CONTENT, ALPINE_DEVTOOLS_PROXY_SOURCE } from '../devtools/ports';
+import { BACKGROUND_TO_CONTENT_MESSAGES, PANEL_TO_BACKEND_MESSAGES } from '../lib/constants';
 
 function loadScriptInRealWorld(path: string) {
   return new Promise(async (resolve, reject) => {
@@ -53,5 +54,26 @@ function forwardWindowMessageListener(e: any) {
 }
 // window is shared with detector.ts/backend.js
 window.addEventListener('message', forwardWindowMessageListener);
+
+let rightClickTarget: Element | null = null;
+document.addEventListener('contextmenu', (e) => {
+  if (rightClickTarget) {
+    rightClickTarget.removeAttribute('data-alpine-devtools-right-click');
+  }
+  rightClickTarget = e.target as Element;
+  rightClickTarget?.setAttribute('data-alpine-devtools-right-click', '');
+});
+
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.type === BACKGROUND_TO_CONTENT_MESSAGES.INSPECT_RIGHT_CLICKED_ELEMENT) {
+    window.postMessage(
+      {
+        source: ALPINE_DEVTOOLS_PROXY_SOURCE,
+        payload: { action: PANEL_TO_BACKEND_MESSAGES.INSPECT_RIGHT_CLICKED_ELEMENT },
+      },
+      '*',
+    );
+  }
+});
 
 loadScriptInRealWorld('./detector.js');

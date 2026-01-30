@@ -13,11 +13,10 @@
     "sa": "pnpm mainline",
     "mainline": "rm -rf dist && pnpm build && pnpm package",
     "test": "pnpm -r test",
-    "test:e2e": "pnpm -r jules-test",
-    "cy:run": "pnpm --filter=browser-extension cy:run",
-    "cy:open": "pnpm --filter=browser-extension cy:open",
-    "format": "prettier './{packages/**/,cypress/**/*,lib/}*.{js,ts,tsx,html,css}' --write",
-    "check:format": "prettier './{packages/**/,cypress/**/*,}*.{js,ts,tsx,html,css}' -c",
+    "pw:run": "pnpm --filter=browser-extension pw:run",
+    "pw:open": "pnpm --filter=browser-extension pw:open",
+    "format": "prettier './{packages/**/,lib/}*.{js,ts,tsx,html,css}' --write",
+    "check:format": "prettier './{packages/**/,}*.{js,ts,tsx,html,css}' -c",
     "check:firefox": "pnpm ea && web-ext lint --source-dir=dist/firefox-ext",
     "typecheck": "pnpm --filter=browser-extension typecheck",
     "package": "pnpm pkg:chrome && pnpm pkg:firefox && pnpm archive:v2",
@@ -25,9 +24,7 @@
     "pkg:firefox": "web-ext build --source-dir=dist/firefox-ext --artifacts-dir=./dist/firefox-v2",
     "archive:v2": "git archive -o ./dist/alpine-devtools-source-archive-v2.zip HEAD:packages/browser-extension",
     "ff:open": "web-ext run -s=./dist/firefox-ext",
-    "ff:dev": "web-ext run -s=./dist/browser-extension",
-    "cy:cache:check": "pnpm --filter=browser-extension exec cypress cache path && pnpm --filter=browser-extension exec cypress cache list",
-    "cy:bin:install": "pnpm --filter=browser-extension exec cypress install && pnpm --filter=browser-extension exec cypress cache list"
+    "ff:dev": "web-ext run -s=./dist/browser-extension"
   },
   "license": "MIT",
   "workspaces": [

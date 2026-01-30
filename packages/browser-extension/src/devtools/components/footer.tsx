@@ -12,6 +12,7 @@ import {
 } from '../../lib/isEarlyAccess';
 import { msToDays } from '../time-utils';
 import { breakpoint } from '../theme';
+import { ActivateLicense } from './activate-license';
 
 interface FooterProps {
   setActiveTab: Function;
@@ -160,13 +161,17 @@ export function Footer({ setActiveTab }: FooterProps) {
               !isEarlyAccessExpiryInPast()
             }
           >
-            <a
-              class="mr-4 flex underline"
-              href="https://alpinedevtools.com/checkout?utm_source=extension&utm_campaign=trial_link_cta"
-              target="_blank"
-            >
-              Trial expires in: {msToDays(earlyAccessExpiry()! - Date.now()).toFixed(1)} days
-            </a>
+            <div class="mr-4 flex items-center gap-2">
+              <a
+                class="flex underline"
+                href="https://alpinedevtools.com/checkout?utm_source=extension&utm_campaign=trial_link_cta"
+                target="_blank"
+              >
+                Trial expires in: {msToDays(earlyAccessExpiry()! - Date.now()).toFixed(1)} days
+              </a>
+              <span>·</span>
+              <ActivateLicense variant="footer" />
+            </div>
           </Show>
           <div
             data-testid="version-line"

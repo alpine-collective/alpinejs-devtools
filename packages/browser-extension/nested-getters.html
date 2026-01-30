@@ -33,6 +33,19 @@
       </div>
     </section>
 
+    <div x-data="rootComponent()">
+      <span data-testid="root-name" x-text="name"></span>
+      <span data-testid="root-getter" x-text="getterRoot"></span>
+      <div x-data="parentComponent()">
+        <span data-testid="parent-name" x-text="name"></span>
+        <span data-testid="parent-getter" x-text="getterParent"></span>
+        <div x-data="childComponent()">
+          <span data-testid="child-name" x-text="name"></span>
+          <span data-testid="child-getter" x-text="getterChild"></span>
+        </div>
+      </div>
+    </div>
+
     <script>
       document.addEventListener('alpine:initializing', () => {
         Alpine.data('parent', () => ({
@@ -68,6 +81,27 @@
 
           get textDisplay() {
             return this.text + '!';
+          },
+        }));
+
+        Alpine.data('rootComponent', () => ({
+          name: 'Root',
+          get getterRoot() {
+            return this.name;
+          },
+        }));
+
+        Alpine.data('parentComponent', () => ({
+          name: 'Parent',
+          get getterParent() {
+            return this.name;
+          },
+        }));
+
+        Alpine.data('childComponent', () => ({
+          name: 'Child',
+          get getterChild() {
+            return this.name;
           },
         }));
       });

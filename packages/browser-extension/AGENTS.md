@@ -34,7 +34,7 @@ Here is a breakdown of the important files and directories in the `packages/brow
 
 - **`assets/`**: This directory contains static assets like images, HTML files, and icons.
 
-- **`cypress/`**: This directory contains the end-to-end tests for the extension.
+- **`tests/`**: This directory contains the Playwright end-to-end tests for the extension.
 
 - **`package.json`**: This file lists the project's dependencies and scripts.
 

@@ -255,6 +255,7 @@ export function init(forceStart = false) {
     }
 
     shutdown() {
+      this.exitInspectorMode();
       this.cleanupHoverElement();
       this.disconnectObserver();
 
@@ -740,6 +741,7 @@ export function init(forceStart = false) {
         backgroundColor: 'rgba(104, 182, 255, 0.35)',
         borderRadius: '4px',
         zIndex: 9999,
+        pointerEvents: 'none',
       });
       hoverElement.dataset.testid = 'hover-element';
 
@@ -752,6 +754,68 @@ export function init(forceStart = false) {
         this.hoverElement.remove();
         this.hoverElement = null;
       }
+    }
+
+    enterInspectorMode() {
+      this._inspectorStyleEl = document.createElement('style');
+      this._inspectorStyleEl.textContent = '* { cursor: crosshair !important; }';
+      document.head.appendChild(this._inspectorStyleEl);
+
+      this._inspectorMoveHandler = (e) => {
+        const alpineEl = e.target.closest('[x-data],[data-x-data]');
+        if (alpineEl && alpineEl.__alpineDevtool?.id != null) {
+          this.addHoverElement(alpineEl);
+        } else {
+          this.cleanupHoverElement();
+        }
+      };
+
+      this._inspectorClickHandler = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const alpineEl = e.target.closest('[x-data],[data-x-data]');
+        if (alpineEl && alpineEl.__alpineDevtool?.id != null) {
+          this._postMessage({
+            type: BACKEND_TO_PANEL_MESSAGES.INSPECT_COMPONENT,
+            componentId: alpineEl.__alpineDevtool.id,
+          });
+        }
+        this.exitInspectorMode();
+      };
+
+      this._inspectorKeyHandler = (e) => {
+        if (e.key === 'Escape') {
+          this._postMessage({
+            type: BACKEND_TO_PANEL_MESSAGES.INSPECT_COMPONENT,
+            componentId: null,
+          });
+          this.exitInspectorMode();
+        }
+      };
+
+      document.addEventListener('mouseover', this._inspectorMoveHandler, true);
+      document.addEventListener('click', this._inspectorClickHandler, true);
+      document.addEventListener('keydown', this._inspectorKeyHandler, true);
+    }
+
+    exitInspectorMode() {
+      if (this._inspectorStyleEl) {
+        this._inspectorStyleEl.remove();
+        this._inspectorStyleEl = null;
+      }
+      if (this._inspectorMoveHandler) {
+        document.removeEventListener('mouseover', this._inspectorMoveHandler, true);
+        this._inspectorMoveHandler = null;
+      }
+      if (this._inspectorClickHandler) {
+        document.removeEventListener('click', this._inspectorClickHandler, true);
+        this._inspectorClickHandler = null;
+      }
+      if (this._inspectorKeyHandler) {
+        document.removeEventListener('keydown', this._inspectorKeyHandler, true);
+        this._inspectorKeyHandler = null;
+      }
+      this.cleanupHoverElement();
     }
   }
   // using a function scope to avoid running into issues on re-injection
@@ -855,6 +919,31 @@ export function init(forceStart = false) {
 
       case PANEL_TO_BACKEND_MESSAGES.GET_STORE_DATA: {
         devtoolsBackend.handleGetStoreData(e.data.payload.storeName);
+        break;
+      }
+
+      case PANEL_TO_BACKEND_MESSAGES.ENTER_INSPECTOR_MODE: {
+        devtoolsBackend.enterInspectorMode();
+        break;
+      }
+
+      case PANEL_TO_BACKEND_MESSAGES.EXIT_INSPECTOR_MODE: {
+        devtoolsBackend.exitInspectorMode();
+        break;
+      }
+
+      case PANEL_TO_BACKEND_MESSAGES.INSPECT_RIGHT_CLICKED_ELEMENT: {
+        const markedEl = document.querySelector('[data-alpine-devtools-right-click]');
+        if (markedEl) {
+          markedEl.removeAttribute('data-alpine-devtools-right-click');
+          const alpineEl = markedEl.closest('[x-data],[data-x-data]');
+          if (alpineEl && alpineEl.__alpineDevtool?.id != null) {
+            devtoolsBackend._postMessage({
+              type: BACKEND_TO_PANEL_MESSAGES.INSPECT_COMPONENT,
+              componentId: alpineEl.__alpineDevtool.id,
+            });
+          }
+        }
         break;
       }
     }

@@ -44,7 +44,7 @@ export function HistoryFlyout({
     <>
       <div
         data-testid="history-flyout"
-        class="z-30 flex flex-col transition-all absolute bottom-0 bg-gray-100 w-full h-10 py-2 px-3 overflow-hidden"
+        class="z-30 flex flex-col transition-all absolute bottom-0 bg-gray-100 dark:bg-alpine-400 w-full h-10 py-2 px-3 overflow-hidden"
         classList={{
           'h-full': isHistoryOpened(),
           'overflow-scroll': isHistoryOpened(),

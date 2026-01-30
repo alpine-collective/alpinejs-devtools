@@ -32,8 +32,6 @@ jobs:
         cache: 'pnpm'
     - name: install
       run: pnpm install --frozen-lockfile
-      env:
-        CYPRESS_INSTALL_BINARY: "0"
     - name: build
       run: pnpm mainline
     - name: Archive production artifacts
@@ -47,22 +45,9 @@ jobs:
       run: pnpm typecheck
     - name: check formatting
       run: pnpm run check:format
-    # see https://github.com/bahmutov/cypress-gh-action-split-install
-    - run: pnpm cy:cache:check
-    # restore / cache the binary ourselves on Linux
-    # see https://github.com/actions/cache
-    - name: Cache Cypress
-      id: cache-cypress
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/Cypress
-        key: cypress-cache-v1-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-    # install Cypress binary
-    - run: pnpm cy:bin:install
-    - name: Devtools@v2 E2E
-      uses: cypress-io/github-action@v6
-      with:
-        start: pnpm start
-        command: pnpm run cy:run
-        working-directory: packages/browser-extension
-        install: false
+    - name: Install Playwright browsers
+      run: pnpm exec playwright install chromium --with-deps
+      working-directory: packages/browser-extension
+    - name: E2E tests
+      run: pnpm pw:run
+      working-directory: packages/browser-extension

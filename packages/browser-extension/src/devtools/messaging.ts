@@ -1,10 +1,12 @@
 import { BACKEND_TO_PANEL_MESSAGES } from '../lib/constants';
 import { metric, toolDetector } from './metrics';
 import { setAlpineVersionFromBackend } from './state/version';
-import { setComponentsList, setComponentData } from './state/components';
+import { setComponentsList, setComponentData, selectComponent } from './state/components';
 import { setAdditionalError } from './state/errors';
 import { setStoresFromList, setStoreData } from './state/stores';
 import { setPageLoaded } from './state/app';
+import { exitInspectorMode } from './state/inspector';
+import { state } from './state/store';
 import type { BackendToPanelMessage, PanelToBackendMessage } from './types';
 
 export function unsetPort() {
@@ -60,6 +62,15 @@ export function handleBackendToPanelMessage(
     }
     case BACKEND_TO_PANEL_MESSAGES.ADD_ERROR: {
       setAdditionalError(message.error);
+      setPort(port);
+      break;
+    }
+    case BACKEND_TO_PANEL_MESSAGES.INSPECT_COMPONENT: {
+      exitInspectorMode();
+      if (message.componentId != null) {
+        const component = state.components[message.componentId];
+        if (component) selectComponent(component);
+      }
       setPort(port);
       break;
     }

@@ -14,6 +14,7 @@ export const BACKEND_TO_PANEL_MESSAGES = {
   SET_DATA: 'set-data',
   SET_STORE_DATA: 'set-store-data',
   ADD_ERROR: 'add-error',
+  INSPECT_COMPONENT: 'inspect-component',
 } as const;
 
 export const PANEL_TO_BACKEND_MESSAGES = {
@@ -29,8 +30,15 @@ export const PANEL_TO_BACKEND_MESSAGES = {
   EDIT_ATTRIBUTE: 'edit-attribute',
   EDIT_STORE_ATTRIBUTE: 'edit-store-attribute',
   SET_DATA_FROM_SNAPSHOT: 'SET_DATA_FROM_SNAPSHOT',
+  ENTER_INSPECTOR_MODE: 'enter-inspector-mode',
+  EXIT_INSPECTOR_MODE: 'exit-inspector-mode',
+  INSPECT_RIGHT_CLICKED_ELEMENT: 'inspect-right-clicked-element',
 } as const;
 
 export const CONTENT_TO_BACKGROUND_MESSAGES = {
   ALPINE_DETECTED: 'ALPINE_DETECTED',
+} as const;
+
+export const BACKGROUND_TO_CONTENT_MESSAGES = {
+  INSPECT_RIGHT_CLICKED_ELEMENT: 'INSPECT_RIGHT_CLICKED_ELEMENT',
 } as const;

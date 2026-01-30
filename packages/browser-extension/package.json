@@ -1,7 +1,7 @@
 {
   "name": "browser-extension",
   "private": true,
-  "version": "2.7.4",
+  "version": "2.8.0",
   "description": "Alpine.js devtools with Chrome manifest v3 compatibility",
   "type": "module",
   "scripts": {
@@ -17,21 +17,18 @@
     "format": "prettier -w .",
     "esbuild": "node build.js && prettier -w manifest.json",
     "serve": "vite preview",
-    "cy:run": "cypress run",
-    "cy:open": "cypress open --e2e --browser=electron",
-    "jules-test": "start-server-and-test start http://localhost:3000 cy:run"
+    "pw:run": "playwright test",
+    "pw:open": "playwright test --ui"
   },
   "license": "MIT",
   "devDependencies": {
+    "@playwright/test": "^1.49.0",
     "@types/chrome": "0.1.6",
     "@types/node": "24.3.1",
     "@typescript/native-preview": "7.0.0-dev.20250904.1",
-    "cypress": "15.1.0",
-    "cypress-iframe": "1.0.1",
     "esbuild": "0.25.9",
     "linkedom": "0.18.12",
     "msw": "^2.0.0",
-    "start-server-and-test": "^2.0.13",
     "vite": "^7.1.4",
     "vite-plugin-solid": "^2.11.6"
   },

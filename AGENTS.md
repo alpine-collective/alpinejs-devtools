@@ -23,28 +23,18 @@ As the last step of any plan, you **MUST** run the following checks and ensure t
 - `pnpm run typecheck`
 - `pnpm t` (unit tests)
 
-When making changes to the UI, you **SHOULD** propose to run the cypress tests (see next section).
+When making changes to the UI, you **SHOULD** propose to run the Playwright tests (see next section).
 
 ## Commit message
 
 You **MUST** include the full user-provided prompt as part of commit messages.
 
-## Running Cypress Tests
+## Running Playwright Tests
 
-To run the Cypress tests for the `browser-extension` package, you **SHOULD** use the `jules-test` script. This script will start the development server and then run the tests.
-
-To run the Cypress tests you **MUST** run from the root of the project (`/app` for Jules),
+To run the Playwright E2E tests for the `browser-extension` package, run from the root of the project:
 
 ```bash
-pnpm test:e2e
+pnpm pw:run
 ```
 
-**Note for agent Jules:** You **SHOULD** be aware that when working in the shell, the current working directory is often `/app/packages/browser-extension`. If you are having trouble with file paths, you **SHOULD** run `pwd` to confirm your location.
-
-This will run all the Cypress tests in headless mode.
-
-**Note:** If you are running the tests in a headless environment, you **SHOULD** be aware that you may need to install `xvfb`. On Debian-based systems, you can install it with:
-
-```bash
-sudo apt-get update && sudo apt-get install -y xvfb
-```
+This will start the dev server automatically and run all tests in headless mode.
