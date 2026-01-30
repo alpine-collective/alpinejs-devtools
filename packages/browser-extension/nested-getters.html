@@ -26,6 +26,13 @@
       <p><button @click="onClick" data-testid="click-target">Click me</button></p>
     </div>
 
+    <section x-data="page">
+      <h1 x-text="titleDisplay"></h1>
+      <div x-data="myData">
+        <p x-text="textDisplay"></p>
+      </div>
+    </section>
+
     <script>
       document.addEventListener('alpine:initializing', () => {
         Alpine.data('parent', () => ({
@@ -45,6 +52,22 @@
           },
           get doubledHello() {
             return this.messages.join(', ');
+          },
+        }));
+
+        Alpine.data('page', () => ({
+          title: 'test',
+
+          get titleDisplay() {
+            return this.title.toUpperCase();
+          },
+        }));
+
+        Alpine.data('myData', () => ({
+          text: 'hello world',
+
+          get textDisplay() {
+            return this.text + '!';
           },
         }));
       });

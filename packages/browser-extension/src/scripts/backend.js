@@ -120,7 +120,7 @@ export function init(forceStart = false) {
      */
     getAlpineDataInstance(node, config = { getRawInstance: true }) {
       if (this.isV3) {
-        if (config.getRawInstance || node._x_dataStack.length === 1) {
+        if (config.getRawInstance || node._x_dataStack?.length === 1) {
           return node._x_dataStack?.[0];
         }
         // For accessing the data contents, we need to inherit scoped data.
@@ -338,6 +338,9 @@ export function init(forceStart = false) {
                     // But ensure Alpine recomputes this effect if any of
                     // the parents change as they could be used in the getter
                     Object.keys(stack).forEach((k) => {
+                      if (recursionDepth >= 10) {
+                        return;
+                      }
                       visit(stack, k);
                     });
                   }
