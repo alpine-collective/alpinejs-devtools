@@ -36,9 +36,9 @@
     "vite-plugin-solid": "^2.11.6"
   },
   "dependencies": {
-    "@tailwindcss/vite": "4.1.13",
-    "basecoat-css": "0.3.2",
-    "solid-js": "^1.9.5",
+    "@tailwindcss/vite": "4.2.4",
+    "basecoat-css": "0.3.11",
+    "solid-js": "^1.9.12",
     "split-grid": "^1.0.11",
     "tailwindcss": "4.1.3"
   },
