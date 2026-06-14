@@ -28,7 +28,7 @@
     "@typescript/native-preview": "7.0.0-dev.20250904.1",
     "cypress": "15.1.0",
     "cypress-iframe": "1.0.1",
-    "esbuild": "0.25.9",
+    "esbuild": "0.28.1",
     "linkedom": "0.18.12",
     "msw": "^2.0.0",
     "start-server-and-test": "^2.0.13",
