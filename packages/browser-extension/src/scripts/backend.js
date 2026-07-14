@@ -133,24 +133,84 @@ export function init(forceStart = false) {
           if (!isLeafStackEntry) {
             mergedDataStack = Object.assign(mergedDataStack, stackEntry);
           } else {
-            Object.entries(Object.getOwnPropertyDescriptors(stackEntry)).forEach(
-              ([prop, descriptor]) => {
-                if (!descriptor.enumerable) {
-                  // magics are non-enumerable
-                  return;
-                }
-                if (typeof descriptor.get === 'function') {
-                  // this is a getter, evaluate with nested context
-                  leafDataObj[prop] = descriptor.get.call(mergedDataStack);
-                  // TODO: need to hide the edit button etc, if this
-                  // doesn't have a `descriptor.set !== 'function'` function
-                  // and/or `!!descriptor.writable`
-                } else {
-                  leafDataObj[prop] = descriptor.value;
-                }
-                return;
-              },
-            );
+            // First collect own properties of the child (non-getters)
+            const leafOwnData = {};
+
+            // Helper to process descriptors from object and its prototype chain
+            function processDescriptors(obj, contextObj) {
+              let currentObj = obj;
+              const visitedPrototypes = new Set();
+
+              while (
+                currentObj &&
+                currentObj !== Object.prototype &&
+                !visitedPrototypes.has(currentObj)
+              ) {
+                visitedPrototypes.add(currentObj);
+
+                Object.entries(Object.getOwnPropertyDescriptors(currentObj)).forEach(
+                  ([prop, descriptor]) => {
+                    if (!descriptor.enumerable) {
+                      // magics are non-enumerable
+                      return;
+                    }
+                    if (typeof descriptor.get !== 'function') {
+                      leafOwnData[prop] = descriptor.value;
+                    }
+                  },
+                );
+
+                currentObj = Object.getPrototypeOf(currentObj);
+              }
+            }
+
+            processDescriptors(stackEntry, stackEntry);
+
+            // Full context: parent + child (child overrides parent)
+            const getterContext = Object.assign({}, mergedDataStack, leafOwnData);
+
+            // Now process all properties with the correct context (including prototype chain)
+            function processDescriptorsWithGetters(obj, contextObj) {
+              let currentObj = obj;
+              const visitedPrototypes = new Set();
+
+              while (
+                currentObj &&
+                currentObj !== Object.prototype &&
+                !visitedPrototypes.has(currentObj)
+              ) {
+                visitedPrototypes.add(currentObj);
+
+                Object.entries(Object.getOwnPropertyDescriptors(currentObj)).forEach(
+                  ([prop, descriptor]) => {
+                    if (!descriptor.enumerable) {
+                      // magics are non-enumerable
+                      return;
+                    }
+                    if (typeof descriptor.get === 'function') {
+                      // this is a getter, evaluate with nested context (parent + child)
+                      // avoid duplicate evaluation if already processed
+                      if (!(prop in leafDataObj)) {
+                        leafDataObj[prop] = descriptor.get.call(contextObj);
+                      }
+                      // TODO: need to hide the edit button etc, if this
+                      // doesn't have a `descriptor.set !== 'function'` function
+                      // and/or `!!descriptor.writable`
+                    } else {
+                      // only set if not already set
+                      if (!(prop in leafDataObj)) {
+                        leafDataObj[prop] = descriptor.value;
+                      }
+                    }
+                    return;
+                  },
+                );
+
+                currentObj = Object.getPrototypeOf(currentObj);
+              }
+            }
+
+            processDescriptorsWithGetters(stackEntry, getterContext);
           }
 
           i--;
@@ -326,18 +386,45 @@ export function init(forceStart = false) {
         if (this.isV3) {
           const componentData = this.getAlpineDataInstance(rootEl);
           window?.Alpine?.effect(() => {
-            Object.keys(componentData).forEach((key) => {
+            // Helper to get all enumerable property names including from prototype chain
+            function getAllEnumerablePropertyNames(obj) {
+              const props = new Set();
+              let currentObj = obj;
+              const visitedPrototypes = new Set();
+
+              while (
+                currentObj &&
+                currentObj !== Object.prototype &&
+                !visitedPrototypes.has(currentObj)
+              ) {
+                visitedPrototypes.add(currentObj);
+
+                Object.entries(Object.getOwnPropertyDescriptors(currentObj)).forEach(
+                  ([prop, descriptor]) => {
+                    if (descriptor.enumerable && !prop.startsWith('$') && !prop.startsWith('_x')) {
+                      props.add(prop);
+                    }
+                  },
+                );
+
+                currentObj = Object.getPrototypeOf(currentObj);
+              }
+
+              return Array.from(props);
+            }
+
+            getAllEnumerablePropertyNames(componentData).forEach((key) => {
               let recursionDepth = 0;
               function visit(componentData, key) {
                 recursionDepth += 1;
                 const descriptor = Object.getOwnPropertyDescriptor(componentData, key);
-                if (descriptor.get && !descriptor.set && !descriptor.value) {
+                if (descriptor && descriptor.get && !descriptor.set && !descriptor.value) {
                   // this is a getter, we don't need to re-run getters
                   // unless there's a setter
                   for (const stack of rootEl._x_dataStack.slice(1)) {
                     // But ensure Alpine recomputes this effect if any of
                     // the parents change as they could be used in the getter
-                    Object.keys(stack).forEach((k) => {
+                    getAllEnumerablePropertyNames(stack).forEach((k) => {
                       if (recursionDepth >= 10) {
                         return;
                       }
@@ -357,11 +444,9 @@ export function init(forceStart = false) {
                     // access the length to be notified of new array items
                     void componentData[key].length;
                   } else {
-                    Object.keys(componentData[key])
-                      .filter((k) => !k.startsWith('$') && !k.startsWith('_x'))
-                      .forEach((k) => {
-                        visit(componentData[key], k);
-                      });
+                    getAllEnumerablePropertyNames(componentData[key]).forEach((k) => {
+                      visit(componentData[key], k);
+                    });
                   }
                 }
               }
