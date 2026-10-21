@@ -29,7 +29,7 @@
     "esbuild": "0.25.9",
     "linkedom": "0.18.12",
     "msw": "^2.0.0",
-    "vite": "^7.1.4",
+    "vite": "^7.3.7",
     "vite-plugin-solid": "^2.11.6"
   },
   "dependencies": {
